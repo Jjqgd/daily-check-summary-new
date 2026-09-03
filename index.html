@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover" />
     <title>湖口检查工区日检查总结</title>
     <style>
-        /* ===== 基础样式 ===== */
+        /* ===== 样式保持不变 ===== */
         :root {
             --bg: #eef3f9;
             --card: #ffffff;
@@ -1313,7 +1313,7 @@
             }
 
             // ============================================================
-            // 导出功能
+            // 导出功能 - 优化版（兼容手机）
             // ============================================================
             function buildExportText(data) {
                 var lines = [];
@@ -1351,6 +1351,7 @@
                 return lines.join('\n');
             }
 
+            // 导出文本
             document.getElementById('exportTxt').addEventListener('click', function() {
                 var data = gatherFormData();
                 var text = buildExportText(data);
@@ -1360,14 +1361,28 @@
                     var a = document.createElement('a');
                     a.href = url;
                     a.download = '日检查总结_' + (data.date || todayStr) + '.txt';
+                    document.body.appendChild(a);
                     a.click();
-                    URL.revokeObjectURL(url);
+                    setTimeout(function() {
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }, 100);
                     showToast('📄 文本已导出');
                 } catch (e) {
-                    showToast('❌ 导出失败，请重试');
+                    // 如果下载失败，尝试复制到剪贴板
+                    try {
+                        navigator.clipboard.writeText(text).then(function() {
+                            showToast('📄 内容已复制到剪贴板');
+                        }).catch(function() {
+                            showToast('❌ 导出失败，请手动复制');
+                        });
+                    } catch (e2) {
+                        showToast('❌ 导出失败，请重试');
+                    }
                 }
             });
 
+            // 导出图片 - 直接打开新窗口显示图片，用户可长按保存
             document.getElementById('exportImg').addEventListener('click', function() {
                 var data = gatherFormData();
                 var text = buildExportText(data);
@@ -1404,11 +1419,28 @@
                         ctx.fillStyle = '#0b3b5c';
                         ctx.fillText(l, padding, y);
                     });
-                    var link = document.createElement('a');
-                    link.download = '日检查总结_' + (data.date || todayStr) + '.png';
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                    showToast('🖼️ 图片已导出');
+                    // 转为dataURL
+                    var dataURL = canvas.toDataURL('image/png');
+                    // 方式1：在新窗口打开图片，用户可长按保存
+                    var win = window.open();
+                    if (win) {
+                        win.document.write('<img src="' + dataURL + '" style="max-width:100%;" />');
+                        win.document.title = '日检查总结_' + (data.date || todayStr);
+                        showToast('🖼️ 图片已生成，请长按保存');
+                    } else {
+                        // 如果弹窗被拦截，尝试下载
+                        try {
+                            var link = document.createElement('a');
+                            link.href = dataURL;
+                            link.download = '日检查总结_' + (data.date || todayStr) + '.png';
+                            document.body.appendChild(link);
+                            link.click();
+                            setTimeout(function() { document.body.removeChild(link); }, 100);
+                            showToast('🖼️ 图片已导出');
+                        } catch (e2) {
+                            showToast('❌ 导出失败，请允许弹窗后重试');
+                        }
+                    }
                 } catch (e) {
                     showToast('❌ 导出失败，请重试');
                 }
@@ -1550,7 +1582,7 @@
                     md += '\n\n---\n\n';
                 }
 
-                // 突出问题统计（取消红圆圈和感叹号，改用纯文字统计）
+                // 突出问题统计（取消红圆圈和感叹号）
                 if (data.problems && data.problems.length > 0) {
                     var title = '**突出问题（共' + stats.total + '条';
                     if (stats.serious > 0) title += '，<font color="#b22234">严重' + stats.serious + '条</font>';
@@ -1560,8 +1592,7 @@
                     md += title + '\n\n';
 
                     data.problems.forEach(function(pr, idx) {
-                        // 严重程度颜色区分
-                        var sevColor = '#0b3b5c'; // 默认蓝色
+                        var sevColor = '#0b3b5c';
                         var sevLabel = '一般';
                         if (pr.severity === '严重') { sevColor = '#b22234';
                             sevLabel = '严重'; } else if (pr.severity === '较重') { sevColor = '#b9770e';
@@ -1571,7 +1602,6 @@
                         line += '   病害：' + (pr.desc || '未描述') + '\n';
                         line += '   严重程度：<font color="' + sevColor + '">' + sevLabel + '</font>';
 
-                        // 严重时加粗
                         if (pr.severity === '严重') {
                             line = '**' + line + '**';
                         }
