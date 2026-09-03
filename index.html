@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover" />
     <title>湖口检查工区日检查总结</title>
     <style>
-        /* ===== 深蓝主调 · 大字体 · 移动优化 ===== */
+        /* ===== 样式区（保持不变，只做了代码整理） ===== */
         :root {
             --bg: #eef3f9;
             --card: #ffffff;
@@ -32,7 +32,6 @@
         }
         .container { max-width: 600px; margin: 0 auto; padding: 0 12px; }
 
-        /* ===== 标题栏：纯文字，居中 ===== */
         .title-row {
             padding: 12px 4px 10px;
             display: flex;
@@ -64,7 +63,6 @@
             white-space: nowrap;
         }
 
-        /* ===== 卡片：大圆角 + 深阴影 ===== */
         .card {
             background: var(--card);
             border-radius: var(--radius);
@@ -72,7 +70,6 @@
             padding: 16px 14px;
             margin-bottom: 16px;
             border: 1px solid rgba(11, 59, 92, 0.08);
-            transition: box-shadow 0.2s;
         }
         .card-title {
             font-size: 1rem;
@@ -87,7 +84,6 @@
         }
         .card-title .icon { font-size: 1.2rem; }
 
-        /* ===== 表单 ===== */
         .form-group { margin-bottom: 14px; width: 100%; }
         .form-group label {
             display: block;
@@ -131,7 +127,6 @@
         .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .row-2 .form-group { margin-bottom: 0; }
 
-        /* ===== 计划兑现 ===== */
         .check-group { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
         .check-pill {
             display: flex;
@@ -144,7 +139,6 @@
             font-size: 0.85rem;
             cursor: pointer;
             border: 2px solid transparent;
-            transition: all 0.15s;
             user-select: none;
             font-weight: 500;
             color: var(--text-light);
@@ -169,7 +163,7 @@
             color: var(--danger);
         }
 
-        /* ===== 多选 ===== */
+        /* 多选 */
         .multi-select-wrap { position: relative; width: 100%; }
         .multi-select-display {
             display: flex;
@@ -244,7 +238,7 @@
         .multi-select-option.selected .option-check { opacity: 1; }
         .multi-select-option.selected { background: var(--primary-light); }
 
-        /* ===== 问题列表 ===== */
+        /* 问题列表 */
         .problem-list { display: flex; flex-direction: column; gap: 14px; }
         .problem-item {
             border: 1.5px solid var(--border);
@@ -300,7 +294,6 @@
         }
         .problem-item .remove-btn:active { background: #fca5a5; }
 
-        /* ===== 按钮 ===== */
         .btn {
             display: flex;
             align-items: center;
@@ -312,8 +305,6 @@
             font-size: 1rem;
             border: none;
             cursor: pointer;
-            transition: all 0.15s;
-            font-family: inherit;
             width: 100%;
             min-height: var(--touch-target);
         }
@@ -335,7 +326,6 @@
             border: 2px solid var(--danger);
         }
 
-        /* ===== 底部固定栏 ===== */
         .summary-bar {
             position: fixed;
             bottom: 0;
@@ -351,11 +341,10 @@
             flex-direction: column;
             gap: 8px;
         }
-        .summary-bar .btn { width: 100%; padding: 14px; font-size: 1rem; }
+        .summary-bar .btn { padding: 14px; font-size: 1rem; }
         .summary-bar .btn-row { display: flex; gap: 10px; }
         .summary-bar .btn-row .btn { flex: 1; padding: 12px; font-size: 0.85rem; }
 
-        /* ===== Toast ===== */
         .toast {
             position: fixed;
             bottom: 140px;
@@ -378,7 +367,6 @@
         .toast.show { opacity: 1; }
         .hidden { display: none !important; }
 
-        /* ===== 历史记录面板 ===== */
         .history-panel {
             margin-top: 12px;
             border-top: 2px dashed var(--border);
@@ -437,7 +425,6 @@
         }
         .history-item .actions button:hover { background: var(--primary-light); }
 
-        /* ===== 页脚 ===== */
         .footer {
             text-align: center;
             font-size: 0.7rem;
@@ -452,7 +439,6 @@
             color: var(--primary);
         }
 
-        /* ===== 移动端适配 ===== */
         @media screen and (max-width: 480px) {
             html { font-size: 16px; }
             .container { padding: 0 8px; }
@@ -470,7 +456,6 @@
             .toast { font-size: 0.8rem; padding: 10px 18px; bottom: 120px; }
             .history-item .preview { max-width: 100px; }
         }
-
         @media screen and (max-width: 360px) {
             .check-group { grid-template-columns: 1fr; }
             .check-pill { padding: 8px; }
@@ -479,13 +464,13 @@
 </head>
 <body>
     <div class="container">
-        <!-- ===== 标题栏：纯文字，居中 ===== -->
+        <!-- 标题 -->
         <div class="title-row">
             <span class="title">湖口检查工区日检查总结</span>
             <span class="save-hint" id="saveStatus">💾 自动保存</span>
         </div>
 
-        <!-- ===== 检查概况 ===== -->
+        <!-- 检查概况 -->
         <div class="card">
             <div class="card-title"><span class="icon">📋</span> 检查概况</div>
             <div class="row-2">
@@ -559,7 +544,7 @@
                 </div>
             </div>
 
-            <!-- ===== 检查设备 ===== -->
+            <!-- 检查设备 -->
             <div class="card" style="box-shadow:none;padding:0;border:none;margin-top:8px;">
                 <div class="card-title" style="border-bottom-color:var(--border);font-size:0.9rem;">检查设备</div>
                 <div class="row-2">
@@ -607,7 +592,7 @@
             </div>
         </div>
 
-        <!-- ===== 突出问题 ===== -->
+        <!-- 突出问题 -->
         <div class="card">
             <div class="card-title"><span class="icon">🔍</span> 突出问题 <span style="font-size:0.7rem;font-weight:400;color:var(--text-light);">(条数不限)</span></div>
             <div class="problem-list" id="problemList"></div>
@@ -617,7 +602,7 @@
             </div>
         </div>
 
-        <!-- ===== 备注 ===== -->
+        <!-- 备注 -->
         <div class="card">
             <div class="card-title"><span class="icon">📝</span> 备注 / 需协调事项</div>
             <div class="form-group" style="margin-bottom:0;">
@@ -625,19 +610,17 @@
             </div>
         </div>
 
-        <!-- ===== 页脚信息 ===== -->
+        <!-- 页脚 -->
         <div class="footer">
             湖口线路车间检查工区 &nbsp;|&nbsp; 联系电话 <span class="phone">18779278003</span>
         </div>
 
-        <!-- ===== 历史记录（可折叠） ===== -->
+        <!-- 历史记录 -->
         <div class="card" style="margin-top:12px;">
             <div class="history-panel">
                 <details>
                     <summary>📜 查看历史提交记录</summary>
-                    <div class="history-list" id="historyList">
-                        <div style="color:var(--text-light);font-size:0.8rem;text-align:center;padding:8px;">暂无提交记录</div>
-                    </div>
+                    <div class="history-list" id="historyList"><div style="color:var(--text-light);font-size:0.8rem;text-align:center;padding:8px;">暂无提交记录</div></div>
                     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
                         <button class="btn btn-outline" id="exportTxt" style="flex:1;padding:8px;font-size:0.8rem;">📄 导出为文本</button>
                         <button class="btn btn-outline" id="exportImg" style="flex:1;padding:8px;font-size:0.8rem;">🖼️ 导出为图片</button>
@@ -647,12 +630,12 @@
         </div>
     </div>
 
-    <!-- ===== 底部固定栏 ===== -->
+    <!-- 底部 -->
     <div class="summary-bar">
         <button class="btn btn-primary" id="submitBtn">📤 提交并推送钉钉群</button>
         <div class="btn-row">
-            <button class="btn btn-outline" id="saveDraftBtn">💾 保存草稿</button>
-            <button class="btn btn-outline" id="resetBtn" style="border-color:#c5d5e6;color:var(--text-light);">🔄 重置</button>
+            <button class="btn btn-outline" id="saveDraftBtn" style="flex:1;">💾 保存草稿</button>
+            <button class="btn btn-outline" id="resetBtn" style="flex:1;border-color:#c5d5e6;color:var(--text-light);">🔄 重置</button>
         </div>
     </div>
 
@@ -663,23 +646,47 @@
             'use strict';
 
             // ============================================================
-            // 日检查独立代理（与无人机完全隔离）
+            // 1. 联动配置
+            // ============================================================
+            var LINE_FILTERS = {
+                '衢九线': {
+                    directions: ['上行', '下行', '站内'],
+                    sections: ['湖口站', '湖口至琵琶湖', '琵琶湖站', '琵琶湖至九江']
+                },
+                '铜九线': {
+                    directions: ['单线', '站内'],
+                    sections: ['香隅至马垱', '马垱站', '马垱至泉山', '泉山站', '泉山至彭泽', '彭泽站', '彭泽至流泗', '流泗站', '流泗至湖口', '湖口站']
+                },
+                '湖口疏解线': {
+                    directions: ['单线', '站内'],
+                    sections: ['湖口站']
+                },
+                '煤专线': {
+                    directions: ['单线', '站内'],
+                    sections: ['煤专线', '装卸站']
+                }
+            };
+
+            var ALL_DIRECTIONS = ['上行', '下行', '单线', '站内', '其他'];
+            var ALL_SECTIONS = ['香隅至马垱', '马垱站', '马垱至泉山', '泉山站', '泉山至彭泽', '彭泽站', '彭泽至流泗', '流泗站', '流泗至湖口', '湖口站', '湖口至琵琶湖', '琵琶湖站', '琵琶湖至九江', '煤专线', '装卸站'];
+
+            // ============================================================
+            // 2. 代理和存储配置
             // ============================================================
             var DINGTALK_WEBHOOK = '/.netlify/functions/send-daily-check';
-
             var STORAGE_KEY = 'daily_check_data';
             var HISTORY_KEY = 'daily_check_history';
 
-            // ===== 工具函数 =====
+            // ============================================================
+            // 3. 工具函数
+            // ============================================================
             function showToast(msg, duration) {
                 duration = duration || 2000;
                 var toast = document.getElementById('toast');
                 toast.textContent = msg;
                 toast.classList.add('show');
                 if (toast._timer) clearTimeout(toast._timer);
-                toast._timer = setTimeout(function() {
-                    toast.classList.remove('show');
-                }, duration);
+                toast._timer = setTimeout(function() { toast.classList.remove('show'); }, duration);
             }
 
             function getTodayStr() {
@@ -687,13 +694,15 @@
                 return now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
             }
 
-            // ===== 日期初始化 + 禁止未来日期 =====
+            // ============================================================
+            // 4. 日期和自动填充
+            // ============================================================
             var dateInput = document.getElementById('checkDate');
             var todayStr = getTodayStr();
             dateInput.value = todayStr;
             dateInput.setAttribute('max', todayStr);
 
-            // ===== 实际检查设备自动填充计划 =====
+            // 实际检查设备自动填充
             var planLine = document.getElementById('planLine');
             var actualLine = document.getElementById('actualLine');
             var planSwitch = document.getElementById('planSwitch');
@@ -709,19 +718,17 @@
                     }
                 });
                 dst.addEventListener('input', function() {
-                    if (this.value !== src.value) {
-                        this.dataset.auto = 'false';
-                    } else {
-                        this.dataset.auto = 'true';
-                    }
+                    dst.dataset.auto = (this.value === src.value) ? 'true' : 'false';
                 });
             }
             autoFillActual(planLine, actualLine);
             autoFillActual(planSwitch, actualSwitch);
             autoFillActual(planTrack, actualTrack);
 
-            // ===== 多选组件 =====
-            function initMultiSelect(wrapId, displayId, dropdownId, selectedSet) {
+            // ============================================================
+            // 5. 主表单多选组件（含联动）
+            // ============================================================
+            function initMultiSelect(wrapId, displayId, dropdownId, selectedSet, onUpdate) {
                 var wrap = document.getElementById(wrapId);
                 var display = document.getElementById(displayId);
                 var dropdown = document.getElementById(dropdownId);
@@ -729,37 +736,29 @@
 
                 display.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    var allDropdowns = document.querySelectorAll('.multi-select-dropdown');
-                    for (var i = 0; i < allDropdowns.length; i++) {
-                        if (allDropdowns[i] !== dropdown) {
-                            allDropdowns[i].classList.remove('show');
-                        }
-                    }
+                    document.querySelectorAll('.multi-select-dropdown').forEach(d => d.classList.remove('show'));
                     dropdown.classList.toggle('show');
                 });
 
                 document.addEventListener('click', function(e) {
-                    if (!wrap.contains(e.target)) {
-                        dropdown.classList.remove('show');
-                    }
+                    if (!wrap.contains(e.target)) dropdown.classList.remove('show');
                 });
 
-                for (var i = 0; i < options.length; i++) {
-                    (function(opt) {
-                        opt.addEventListener('click', function() {
-                            var val = this.dataset.value;
-                            if (selectedSet.has(val)) {
-                                selectedSet.delete(val);
-                                this.classList.remove('selected');
-                            } else {
-                                selectedSet.add(val);
-                                this.classList.add('selected');
-                            }
-                            updateDisplay();
-                            autoSave();
-                        });
-                    })(options[i]);
-                }
+                options.forEach(function(opt) {
+                    opt.addEventListener('click', function() {
+                        var val = this.dataset.value;
+                        if (selectedSet.has(val)) {
+                            selectedSet.delete(val);
+                            this.classList.remove('selected');
+                        } else {
+                            selectedSet.add(val);
+                            this.classList.add('selected');
+                        }
+                        updateDisplay();
+                        if (typeof onUpdate === 'function') onUpdate();
+                        autoSave();
+                    });
+                });
 
                 function updateDisplay() {
                     if (selectedSet.size === 0) {
@@ -770,35 +769,33 @@
                             html += '<span class="multi-select-tag">' + val + '<span class="remove-tag" data-val="' + val + '">×</span></span>';
                         });
                         display.innerHTML = html;
-                        var tags = display.querySelectorAll('.remove-tag');
-                        for (var i = 0; i < tags.length; i++) {
-                            (function(tag) {
-                                tag.addEventListener('click', function(e) {
-                                    e.stopPropagation();
-                                    var val = this.dataset.val;
-                                    selectedSet.delete(val);
-                                    var opt = dropdown.querySelector('.multi-select-option[data-value="' + val + '"]');
-                                    if (opt) opt.classList.remove('selected');
-                                    updateDisplay();
-                                    autoSave();
-                                });
-                            })(tags[i]);
-                        }
+                        display.querySelectorAll('.remove-tag').forEach(function(tag) {
+                            tag.addEventListener('click', function(e) {
+                                e.stopPropagation();
+                                var val = this.dataset.val;
+                                selectedSet.delete(val);
+                                var opt = dropdown.querySelector('.multi-select-option[data-value="' + val + '"]');
+                                if (opt) opt.classList.remove('selected');
+                                updateDisplay();
+                                if (typeof onUpdate === 'function') onUpdate();
+                                autoSave();
+                            });
+                        });
                     }
                 }
 
                 function setValues(values) {
                     selectedSet.clear();
-                    for (var i = 0; i < options.length; i++) {
-                        var opt = options[i];
+                    options.forEach(function(opt) {
                         if (values.indexOf(opt.dataset.value) !== -1) {
                             selectedSet.add(opt.dataset.value);
                             opt.classList.add('selected');
                         } else {
                             opt.classList.remove('selected');
                         }
-                    }
+                    });
                     updateDisplay();
+                    if (typeof onUpdate === 'function') onUpdate();
                 }
 
                 return { updateDisplay: updateDisplay, selectedSet: selectedSet, setValues: setValues };
@@ -806,60 +803,182 @@
 
             var selectedWorkAreas = new Set();
             var workAreaSelect = initMultiSelect('workAreaWrap','workAreaDisplay','workAreaDropdown', selectedWorkAreas);
+
             var selectedLines = new Set();
-            var lineSelect = initMultiSelect('lineNameWrap','lineNameDisplay','lineNameDropdown', selectedLines);
+            var lineSelect = initMultiSelect('lineNameWrap','lineNameDisplay','lineNameDropdown', selectedLines, function() {
+                updateDirectionAndSectionOptions(); // 线名变化时联动
+            });
+
             var selectedSections = new Set();
             var sectionSelect = initMultiSelect('sectionWrap','sectionDisplay','sectionDropdown', selectedSections);
 
-            // ===== 计划兑现 =====
+            // ============================================================
+            // 6. 主表单联动更新
+            // ============================================================
+            function updateDirectionAndSectionOptions() {
+                var directionSelect = document.getElementById('direction');
+                var sectionDropdown = document.getElementById('sectionDropdown');
+                var sectionOptions = sectionDropdown.querySelectorAll('.multi-select-option');
+
+                var selectedLineValues = Array.from(selectedLines);
+                var availableDirections = [], availableSections = [];
+
+                if (selectedLineValues.length === 0) {
+                    availableDirections = ALL_DIRECTIONS;
+                    availableSections = ALL_SECTIONS;
+                } else {
+                    var dirSet = new Set(), secSet = new Set();
+                    selectedLineValues.forEach(function(line) {
+                        var filter = LINE_FILTERS[line];
+                        if (filter) {
+                            filter.directions.forEach(d => dirSet.add(d));
+                            filter.sections.forEach(s => secSet.add(s));
+                        }
+                    });
+                    availableDirections = dirSet.size > 0 ? Array.from(dirSet) : ALL_DIRECTIONS;
+                    availableSections = secSet.size > 0 ? Array.from(secSet) : ALL_SECTIONS;
+                }
+
+                // 更新行别
+                var currentDirection = directionSelect.value;
+                directionSelect.innerHTML = '<option value="">请选择</option>';
+                availableDirections.forEach(function(d) {
+                    var opt = document.createElement('option');
+                    opt.value = d;
+                    opt.textContent = d;
+                    directionSelect.appendChild(opt);
+                });
+                directionSelect.value = (availableDirections.indexOf(currentDirection) !== -1) ? currentDirection : '';
+
+                // 更新区段/站场（仅显示可用选项）
+                sectionOptions.forEach(function(opt) {
+                    var val = opt.dataset.value;
+                    if (availableSections.indexOf(val) !== -1) {
+                        opt.style.display = 'flex';
+                    } else {
+                        opt.style.display = 'none';
+                        if (selectedSections.has(val)) {
+                            selectedSections.delete(val);
+                            opt.classList.remove('selected');
+                        }
+                    }
+                });
+                sectionSelect.updateDisplay();
+
+                // 如果当前选中的区段都被隐藏，清空选中
+                var hasVisibleSelected = Array.from(selectedSections).some(v => availableSections.indexOf(v) !== -1);
+                if (!hasVisibleSelected) {
+                    selectedSections.clear();
+                    sectionOptions.forEach(opt => opt.classList.remove('selected'));
+                    sectionSelect.updateDisplay();
+                }
+                autoSave();
+            }
+
+            // ============================================================
+            // 7. 计划兑现
+            // ============================================================
             var completionPills = document.querySelectorAll('.check-pill');
             var unfinishedWrap = document.getElementById('unfinishedWrap');
             var unfinishedDeviceInput = document.getElementById('unfinishedDevice');
 
-            for (var i = 0; i < completionPills.length; i++) {
-                (function(pill) {
-                    pill.addEventListener('click', function() {
-                        for (var j = 0; j < completionPills.length; j++) {
-                            completionPills[j].classList.remove('selected');
-                        }
-                        this.classList.add('selected');
-                        var radio = this.querySelector('input');
-                        if (radio) radio.checked = true;
-                        var val = this.dataset.value;
-                        if (val === '部分完成' || val === '未完成') {
-                            unfinishedWrap.classList.remove('hidden');
-                            unfinishedDeviceInput.placeholder = val === '未完成' ? '未检查原因及涉及设备' : '未兑现设备有哪些？';
-                        } else {
-                            unfinishedWrap.classList.add('hidden');
-                            unfinishedDeviceInput.value = '';
-                        }
-                        autoSave();
-                    });
-                })(completionPills[i]);
-            }
+            completionPills.forEach(function(pill) {
+                pill.addEventListener('click', function() {
+                    completionPills.forEach(p => p.classList.remove('selected'));
+                    this.classList.add('selected');
+                    var radio = this.querySelector('input');
+                    if (radio) radio.checked = true;
+                    var val = this.dataset.value;
+                    if (val === '部分完成' || val === '未完成') {
+                        unfinishedWrap.classList.remove('hidden');
+                        unfinishedDeviceInput.placeholder = val === '未完成' ? '未检查原因及涉及设备' : '未兑现设备有哪些？';
+                    } else {
+                        unfinishedWrap.classList.add('hidden');
+                        unfinishedDeviceInput.value = '';
+                    }
+                    autoSave();
+                });
+            });
 
-            // ===== 问题列表 =====
+            // ============================================================
+            // 8. 突出问题（含联动）
+            // ============================================================
             var problemList = document.getElementById('problemList');
             var lineOptions = ['衢九线','铜九线','湖口疏解线','煤专线'];
             var stationOptions = ['香隅至马垱','马垱站','马垱至泉山','泉山站','泉山至彭泽','彭泽站','彭泽至流泗','流泗站','流泗至湖口','湖口站','湖口至琵琶湖','琵琶湖站','琵琶湖至九江','煤专线','装卸站'];
+
+            // 根据线名过滤行别和区段
+            function getFilteredOptions(lineVal) {
+                var filter = LINE_FILTERS[lineVal];
+                if (filter) {
+                    return {
+                        directions: filter.directions,
+                        sections: filter.sections
+                    };
+                }
+                return { directions: ALL_DIRECTIONS, sections: ALL_SECTIONS };
+            }
+
+            // 更新问题行中的下拉选项
+            function updateProblemRowOptions(row, lineVal) {
+                var dirSelect = row.querySelector('.p-dir');
+                var sectionSelect = row.querySelector('.p-section');
+                var filtered = getFilteredOptions(lineVal);
+
+                // 保存当前选中的值
+                var currentDir = dirSelect.value;
+                var currentSection = sectionSelect.value;
+
+                // 更新行别
+                dirSelect.innerHTML = '<option value="">选择</option>';
+                filtered.directions.forEach(function(d) {
+                    var opt = document.createElement('option');
+                    opt.value = d;
+                    opt.textContent = d;
+                    dirSelect.appendChild(opt);
+                });
+                dirSelect.value = (filtered.directions.indexOf(currentDir) !== -1) ? currentDir : '';
+
+                // 更新区段
+                sectionSelect.innerHTML = '<option value="">选择</option>';
+                filtered.sections.forEach(function(s) {
+                    var opt = document.createElement('option');
+                    opt.value = s;
+                    opt.textContent = s;
+                    sectionSelect.appendChild(opt);
+                });
+                sectionSelect.value = (filtered.sections.indexOf(currentSection) !== -1) ? currentSection : '';
+            }
 
             function createProblemItem(data) {
                 data = data || {};
                 var item = document.createElement('div');
                 item.className = 'problem-item';
+
+                var lineVal = data.line || '';
+                var filtered = getFilteredOptions(lineVal);
+
                 var lineOpts = '';
-                for (var li = 0; li < lineOptions.length; li++) {
-                    var selected = (data.line === lineOptions[li]) ? 'selected' : '';
-                    lineOpts += '<option value="' + lineOptions[li] + '" ' + selected + '>' + lineOptions[li] + '</option>';
-                }
-                var stationOpts = '';
-                for (var si = 0; si < stationOptions.length; si++) {
-                    var sselected = (data.section === stationOptions[si]) ? 'selected' : '';
-                    stationOpts += '<option value="' + stationOptions[si] + '" ' + sselected + '>' + stationOptions[si] + '</option>';
-                }
+                lineOptions.forEach(function(l) {
+                    var selected = (data.line === l) ? 'selected' : '';
+                    lineOpts += '<option value="' + l + '" ' + selected + '>' + l + '</option>';
+                });
+
+                var dirOpts = '';
+                filtered.directions.forEach(function(d) {
+                    var selected = (data.dir === d) ? 'selected' : '';
+                    dirOpts += '<option value="' + d + '" ' + selected + '>' + d + '</option>';
+                });
+
+                var sectionOpts = '';
+                filtered.sections.forEach(function(s) {
+                    var selected = (data.section === s) ? 'selected' : '';
+                    sectionOpts += '<option value="' + s + '" ' + selected + '>' + s + '</option>';
+                });
+
                 var typeVal = data.type || '线路';
-                var dirVal = data.dir || '上行';
                 var sevVal = data.severity || '一般';
+
                 item.innerHTML = `
                     <button class="remove-btn" type="button" title="删除">×</button>
                     <div class="row-2">
@@ -883,25 +1002,22 @@
                         <div class="field">
                             <label>行别</label>
                             <select class="p-dir">
-                                <option value="上行" ${dirVal === '上行' ? 'selected' : ''}>上行</option>
-                                <option value="下行" ${dirVal === '下行' ? 'selected' : ''}>下行</option>
-                                <option value="单线" ${dirVal === '单线' ? 'selected' : ''}>单线</option>
-                                <option value="站内" ${dirVal === '站内' ? 'selected' : ''}>站内</option>
-                                <option value="其他" ${dirVal === '其他' ? 'selected' : ''}>其他</option>
+                                <option value="">选择</option>
+                                ${dirOpts}
                             </select>
                         </div>
                         <div class="field">
                             <label>区段/站场</label>
                             <select class="p-section">
                                 <option value="">选择</option>
-                                ${stationOpts}
+                                ${sectionOpts}
                             </select>
                         </div>
                     </div>
                     <div class="row-2">
                         <div class="field">
                             <label>里程/道岔编号/股道编号</label>
-                            <textarea class="p-location" rows="1" placeholder="K___+___ / 道岔编号 / 股道">${data.location || ''}</textarea>
+                            <input class="p-location" placeholder="K___+___ / 道岔编号 / 股道" value="${data.location || ''}" />
                         </div>
                         <div class="field">
                             <label>严重程度</label>
@@ -917,18 +1033,28 @@
                         <textarea class="p-desc" rows="1" placeholder="请描述病害情况...">${data.desc || ''}</textarea>
                     </div>
                 `;
+
+                // 删除按钮
                 var removeBtn = item.querySelector('.remove-btn');
                 removeBtn.addEventListener('click', function() {
                     item.remove();
                     autoSave();
                 });
-                var fields = item.querySelectorAll('select, textarea');
-                for (var fi = 0; fi < fields.length; fi++) {
-                    (function(field) {
-                        field.addEventListener('change', autoSave);
-                        field.addEventListener('input', autoSave);
-                    })(fields[fi]);
-                }
+
+                // 线名变化触发联动
+                var lineSelectEl = item.querySelector('.p-line');
+                lineSelectEl.addEventListener('change', function() {
+                    updateProblemRowOptions(item, this.value);
+                    autoSave();
+                });
+
+                // 其他输入变化自动保存
+                var fields = item.querySelectorAll('select, input, textarea');
+                fields.forEach(function(field) {
+                    field.addEventListener('change', autoSave);
+                    field.addEventListener('input', autoSave);
+                });
+
                 return item;
             }
 
@@ -946,24 +1072,21 @@
                 autoSave();
             }
 
-            document.getElementById('addProblemRow').addEventListener('click', function() {
-                addProblemItem();
-            });
+            document.getElementById('addProblemRow').addEventListener('click', function() { addProblemItem(); });
             document.getElementById('clearProblems').addEventListener('click', function() {
-                if (confirm('确定清空所有问题记录吗？')) {
-                    clearAllProblems();
-                }
+                if (confirm('确定清空所有问题记录吗？')) clearAllProblems();
             });
-
             addProblemItem();
 
-            // ===== 数据收集 =====
+            // ============================================================
+            // 9. 数据收集和填充
+            // ============================================================
             function gatherFormData() {
                 var data = {
                     date: document.getElementById('checkDate').value || todayStr,
-                    workAreas: [],
+                    workAreas: Array.from(selectedWorkAreas),
                     inspector: document.getElementById('inspector').value.trim(),
-                    lines: [],
+                    lines: Array.from(selectedLines),
                     direction: document.getElementById('direction').value,
                     sections: [],
                     planLine: document.getElementById('planLine').value.trim(),
@@ -977,14 +1100,20 @@
                     problems: [],
                     remarks: document.getElementById('remarks').value.trim()
                 };
-                selectedWorkAreas.forEach(function(v) { data.workAreas.push(v); });
-                selectedLines.forEach(function(v) { data.lines.push(v); });
-                selectedSections.forEach(function(v) { data.sections.push(v); });
+
+                // 收集可见的区段
+                var sectionOptions = document.querySelectorAll('#sectionDropdown .multi-select-option');
+                sectionOptions.forEach(function(opt) {
+                    if (opt.style.display !== 'none' && selectedSections.has(opt.dataset.value)) {
+                        data.sections.push(opt.dataset.value);
+                    }
+                });
+
                 var selectedPill = document.querySelector('.check-pill.selected');
                 if (selectedPill) data.completion = selectedPill.dataset.value;
+
                 var items = problemList.querySelectorAll('.problem-item');
-                for (var i = 0; i < items.length; i++) {
-                    var item = items[i];
+                items.forEach(function(item) {
                     var type = item.querySelector('.p-type').value;
                     var line = item.querySelector('.p-line').value;
                     var dir = item.querySelector('.p-dir').value;
@@ -993,9 +1122,9 @@
                     var desc = item.querySelector('.p-desc').value.trim();
                     var sev = item.querySelector('.p-severity').value;
                     if (loc || desc || line || section || type) {
-                        data.problems.push({ type: type, line: line, dir: dir, section: section, location: loc, desc: desc, severity: sev });
+                        data.problems.push({ type, line, dir, section, location: loc, desc, severity: sev });
                     }
-                }
+                });
                 return data;
             }
 
@@ -1014,34 +1143,52 @@
                 if (data.unfinishedDevice) document.getElementById('unfinishedDevice').value = data.unfinishedDevice;
                 if (data.workAreas) workAreaSelect.setValues(data.workAreas);
                 if (data.lines) lineSelect.setValues(data.lines);
-                if (data.sections) sectionSelect.setValues(data.sections);
+
+                // 填充区段
+                setTimeout(function() {
+                    if (data.sections) {
+                        var sectionOptions = document.querySelectorAll('#sectionDropdown .multi-select-option');
+                        sectionOptions.forEach(opt => opt.classList.remove('selected'));
+                        selectedSections.clear();
+                        data.sections.forEach(function(secVal) {
+                            var opt = document.querySelector('#sectionDropdown .multi-select-option[data-value="' + secVal + '"]');
+                            if (opt && opt.style.display !== 'none') {
+                                selectedSections.add(secVal);
+                                opt.classList.add('selected');
+                            }
+                        });
+                        sectionSelect.updateDisplay();
+                    }
+                }, 100);
+
+                // 计划兑现
                 if (data.completion) {
-                    for (var i = 0; i < completionPills.length; i++) {
-                        var p = completionPills[i];
+                    completionPills.forEach(function(p) {
                         p.classList.remove('selected');
                         if (p.dataset.value === data.completion) {
                             p.classList.add('selected');
                             var radio = p.querySelector('input');
                             if (radio) radio.checked = true;
                         }
-                    }
+                    });
                     if (data.completion === '部分完成' || data.completion === '未完成') {
                         unfinishedWrap.classList.remove('hidden');
                         unfinishedDeviceInput.placeholder = data.completion === '未完成' ? '未检查原因及涉及设备' : '未兑现设备有哪些？';
                     }
                 }
+
+                // 填充问题列表
+                problemList.innerHTML = '';
                 if (data.problems && data.problems.length > 0) {
-                    problemList.innerHTML = '';
-                    for (var j = 0; j < data.problems.length; j++) {
-                        addProblemItem(data.problems[j]);
-                    }
+                    data.problems.forEach(function(p) { addProblemItem(p); });
                 } else {
-                    problemList.innerHTML = '';
                     addProblemItem();
                 }
             }
 
-            // ===== 历史记录管理 =====
+            // ============================================================
+            // 10. 历史记录和导出
+            // ============================================================
             function loadHistory() {
                 try {
                     var raw = localStorage.getItem(HISTORY_KEY);
@@ -1071,8 +1218,7 @@
                     return;
                 }
                 var html = '';
-                for (var i = 0; i < history.length; i++) {
-                    var h = history[i];
+                history.forEach(function(h, i) {
                     var preview = h.planLine || h.planSwitch || h.planTrack || '无设备';
                     if (preview.length > 20) preview = preview.substring(0, 20) + '…';
                     html += '<div class="history-item">';
@@ -1082,7 +1228,7 @@
                     html += '<button class="load-history" data-index="' + i + '" title="加载此记录">📂</button>';
                     html += '<button class="del-history" data-index="' + i + '" title="删除">🗑️</button>';
                     html += '</span></div>';
-                }
+                });
                 container.innerHTML = html;
 
                 container.querySelectorAll('.load-history').forEach(function(btn) {
@@ -1091,10 +1237,7 @@
                         var history = loadHistory();
                         if (history && history[idx]) {
                             var data = history[idx].data;
-                            if (data) {
-                                fillFormData(data);
-                                showToast('📂 已加载历史记录');
-                            }
+                            if (data) { fillFormData(data); showToast('📂 已加载历史记录'); }
                         }
                     });
                 });
@@ -1113,7 +1256,6 @@
                 });
             }
 
-            // ===== 导出功能 =====
             function buildExportText(data) {
                 var lines = [];
                 lines.push('📋 湖口检查工区日检查总结');
@@ -1135,11 +1277,10 @@
                 if (data.unfinishedDevice) lines.push('未兑现设备：' + data.unfinishedDevice);
                 lines.push('--- 突出问题 (' + (data.problems ? data.problems.length : 0) + '条) ---');
                 if (data.problems && data.problems.length > 0) {
-                    for (var i = 0; i < data.problems.length; i++) {
-                        var p = data.problems[i];
+                    data.problems.forEach(function(p, i) {
                         lines.push((i+1) + '. [' + (p.type || '') + '] ' + (p.line || '') + ' ' + (p.dir || '') + ' ' + (p.section ? '['+p.section+']' : '') + ' ' + (p.location || ''));
                         lines.push('   病害：' + (p.desc || '未描述') + ' | 严重程度：' + (p.severity || '一般'));
-                    }
+                    });
                 } else {
                     lines.push('✅ 本次检查未发现突出问题');
                 }
@@ -1170,15 +1311,13 @@
                 var canvas = document.createElement('canvas');
                 var ctx = canvas.getContext('2d');
                 var lines = text.split('\n');
-                var fontSize = 14;
-                var lineHeight = 26;
-                var padding = 24;
+                var fontSize = 14, lineHeight = 26, padding = 24;
                 var maxWidth = 0;
                 ctx.font = fontSize + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
-                for (var i = 0; i < lines.length; i++) {
-                    var w = ctx.measureText(lines[i]).width;
+                lines.forEach(function(l) {
+                    var w = ctx.measureText(l).width;
                     if (w > maxWidth) maxWidth = w;
-                }
+                });
                 var width = Math.max(400, maxWidth + padding * 2);
                 var height = lines.length * lineHeight + padding * 2 + 20;
                 canvas.width = width;
@@ -1188,17 +1327,17 @@
                 ctx.font = fontSize + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
                 ctx.fillStyle = '#0b3b5c';
                 ctx.textBaseline = 'top';
-                for (var j = 0; j < lines.length; j++) {
+                lines.forEach(function(l, j) {
                     var y = padding + j * lineHeight;
-                    if (lines[j].indexOf('=') !== -1 || lines[j].indexOf('---') !== -1) {
+                    if (l.indexOf('=') !== -1 || l.indexOf('---') !== -1) {
                         ctx.fillStyle = '#c5d5e6';
                         ctx.fillRect(0, y + 6, width, 1);
                         ctx.fillStyle = '#0b3b5c';
-                        continue;
+                        return;
                     }
                     ctx.fillStyle = '#0b3b5c';
-                    ctx.fillText(lines[j], padding, y);
-                }
+                    ctx.fillText(l, padding, y);
+                });
                 var link = document.createElement('a');
                 link.download = '日检查总结_' + (data.date || todayStr) + '.png';
                 link.href = canvas.toDataURL('image/png');
@@ -1206,8 +1345,11 @@
                 showToast('🖼️ 图片已导出');
             });
 
-            // ===== 自动保存 =====
+            // ============================================================
+            // 11. 自动保存和重置
+            // ============================================================
             var saveTimeout = null;
+
             function autoSave() {
                 if (saveTimeout) clearTimeout(saveTimeout);
                 saveTimeout = setTimeout(function() {
@@ -1222,14 +1364,12 @@
                 }, 500);
             }
 
-            var allInputs = document.querySelectorAll('input, textarea, select');
-            for (var i = 0; i < allInputs.length; i++) {
-                var el = allInputs[i];
+            document.querySelectorAll('input, textarea, select').forEach(function(el) {
                 if (el.id !== 'checkDate' && el.id !== 'inspector') {
                     el.addEventListener('input', autoSave);
                     el.addEventListener('change', autoSave);
                 }
-            }
+            });
             document.getElementById('checkDate').addEventListener('change', autoSave);
             document.getElementById('inspector').addEventListener('input', autoSave);
 
@@ -1237,9 +1377,7 @@
                 try {
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(gatherFormData()));
                     showToast('✅ 草稿已保存');
-                } catch (e) {
-                    showToast('❌ 保存失败');
-                }
+                } catch (e) { showToast('❌ 保存失败'); }
             });
 
             function loadDraft() {
@@ -1269,25 +1407,20 @@
                 selectedWorkAreas.clear();
                 selectedLines.clear();
                 selectedSections.clear();
-                var allOpts = document.querySelectorAll('.multi-select-option');
-                for (var i = 0; i < allOpts.length; i++) {
-                    allOpts[i].classList.remove('selected');
-                }
-                var displays = document.querySelectorAll('.multi-select-display');
-                for (var j = 0; j < displays.length; j++) {
-                    displays[j].innerHTML = '<span class="placeholder">点击选择</span>';
-                }
-                for (var k = 0; k < completionPills.length; k++) {
-                    completionPills[k].classList.remove('selected');
-                }
+                document.querySelectorAll('.multi-select-option').forEach(el => el.classList.remove('selected'));
+                document.querySelectorAll('.multi-select-display').forEach(el => el.innerHTML = '<span class="placeholder">点击选择</span>');
+                completionPills.forEach(p => p.classList.remove('selected'));
                 unfinishedWrap.classList.add('hidden');
                 problemList.innerHTML = '';
                 addProblemItem();
                 localStorage.removeItem(STORAGE_KEY);
+                updateDirectionAndSectionOptions();
                 showToast('已重置');
             });
 
-            // ===== 验证 =====
+            // ============================================================
+            // 12. 验证和提交
+            // ============================================================
             function validateData(data) {
                 if (!data.date) { showToast('请选择检查日期'); return false; }
                 if (new Date(data.date) > new Date(todayStr)) { showToast('日期不能晚于今天'); return false; }
@@ -1302,10 +1435,8 @@
                 return true;
             }
 
-            // ===== 构建钉钉消息 =====
             function buildDingTalkMarkdown(data) {
                 var md = '**湖口检查工区日检查总结**\n\n';
-
                 if (data.date) md += '检查日期：' + data.date + '\n\n';
                 if (data.workAreas && data.workAreas.length) md += '设备工区：' + data.workAreas.join('、') + '\n\n';
                 if (data.inspector) md += '检查负责人：' + data.inspector + '\n\n';
@@ -1314,8 +1445,7 @@
                 }
                 if (data.sections && data.sections.length) md += '区间/站场：' + data.sections.join('、') + '\n\n';
 
-                var hasDevice = false;
-                var deviceLines = [];
+                var hasDevice = false, deviceLines = [];
                 if (data.planLine || data.actualLine) {
                     if (data.planLine) deviceLines.push('计划线路：' + data.planLine);
                     if (data.actualLine) deviceLines.push('实际线路：' + data.actualLine);
@@ -1337,9 +1467,7 @@
                 }
 
                 if (data.completion) {
-                    var icon = '✅';
-                    if (data.completion === '部分完成') icon = '⚠️';
-                    if (data.completion === '未完成') icon = '❌';
+                    var icon = data.completion === '已全部完成' ? '✅' : (data.completion === '部分完成' ? '⚠️' : '❌');
                     md += '计划兑现：' + icon + ' ' + data.completion;
                     if ((data.completion === '部分完成' || data.completion === '未完成') && data.unfinishedDevice) {
                         md += '（' + data.unfinishedDevice + '）';
@@ -1348,84 +1476,55 @@
                 }
 
                 if (data.problems && data.problems.length > 0) {
-                    var hasSerious = false;
-                    var hasMajor = false;
-                    for (var i = 0; i < data.problems.length; i++) {
-                        if (data.problems[i].severity === '严重') hasSerious = true;
-                        if (data.problems[i].severity === '较重') hasMajor = true;
-                    }
+                    var hasSerious = data.problems.some(p => p.severity === '严重');
+                    var hasMajor = data.problems.some(p => p.severity === '较重');
                     var title = '突出问题（' + data.problems.length + '条）';
                     if (hasSerious) title = '🔴 突出问题（' + data.problems.length + '条）- ⚠️ 含严重病害';
                     else if (hasMajor) title = '🟠 突出问题（' + data.problems.length + '条）- ⚠️ 含较重病害';
                     md += title + '\n\n';
 
-                    for (var p = 0; p < data.problems.length; p++) {
-                        var pr = data.problems[p];
-                        var sevIcon = '🟡';
-                        if (pr.severity === '较重') sevIcon = '🟠';
-                        if (pr.severity === '严重') sevIcon = '🔴';
-
-                        var line = (p+1) + '. [' + pr.type + '] ' + (pr.line || '') + ' ' + (pr.dir || '') + ' ' + (pr.section ? '['+pr.section+']' : '') + ' ' + (pr.location || '') + '\n';
+                    data.problems.forEach(function(pr, idx) {
+                        var sevIcon = pr.severity === '严重' ? '🔴' : (pr.severity === '较重' ? '🟠' : '🟡');
+                        var line = (idx+1) + '. [' + pr.type + '] ' + (pr.line || '') + ' ' + (pr.dir || '') + ' ' + (pr.section ? '['+pr.section+']' : '') + ' ' + (pr.location || '') + '\n';
                         line += '   病害：' + (pr.desc || '未描述') + '\n';
                         line += '   严重程度：' + sevIcon + ' ' + pr.severity;
-
-                        if (pr.severity === '严重') {
-                            line = '**' + line + '**';
-                        }
+                        if (pr.severity === '严重') line = '**' + line + '**';
                         md += line + '\n\n';
-                    }
+                    });
                 } else {
-                    md += '突出问题（0条）\n';
-                    md += '本次检查未发现突出问题\n\n';
+                    md += '突出问题（0条）\n本次检查未发现突出问题\n\n';
                 }
 
                 if (data.remarks) md += '---\n\n备注 / 需协调事项：' + data.remarks + '\n';
-
-                md = md.replace(/\n{3,}/g, '\n\n');
-                return md;
+                return md.replace(/\n{3,}/g, '\n\n');
             }
 
-            // ===== 发送钉钉 =====
             async function sendToDingTalk(markdown) {
                 try {
                     var response = await fetch(DINGTALK_WEBHOOK, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            msgtype: 'markdown',
-                            markdown: { title: '湖口检查工区日检查总结', text: markdown }
-                        })
+                        body: JSON.stringify({ msgtype: 'markdown', markdown: { title: '湖口检查工区日检查总结', text: markdown } })
                     });
                     var result = await response.json();
-                    if (result.errcode === 0) {
-                        return { success: true };
-                    } else {
-                        return { success: false, msg: result.errmsg || '推送失败' };
-                    }
+                    if (result.errcode === 0) return { success: true };
+                    return { success: false, msg: result.errmsg || '推送失败' };
                 } catch (err) {
-                    console.error('推送异常：', err);
                     return { success: false, msg: err.message || '网络请求失败' };
                 }
             }
 
-            // ===== 提交按钮 =====
             document.getElementById('submitBtn').addEventListener('click', async function() {
                 var data = gatherFormData();
                 if (!validateData(data)) return;
-
-                try {
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-                } catch(e) {}
+                try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
 
                 var markdown = buildDingTalkMarkdown(data);
                 var result = await sendToDingTalk(markdown);
 
                 if (result.success) {
                     showToast('✅ 已推送钉钉群');
-                    saveHistory({
-                        time: new Date().toLocaleString(),
-                        data: data
-                    });
+                    saveHistory({ time: new Date().toLocaleString(), data: data });
                 } else {
                     var copySuccess = false;
                     try {
@@ -1452,9 +1551,13 @@
                 }
             });
 
-            // ===== 加载草稿和历史 =====
+            // ============================================================
+            // 13. 初始化
+            // ============================================================
             loadDraft();
             loadHistory();
+            updateDirectionAndSectionOptions();
+
         })();
     </script>
 </body>
