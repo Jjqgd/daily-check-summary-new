@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover" />
     <title>湖口检查工区日检查总结</title>
     <style>
-        /* ===== 样式保持不变 ===== */
+        /* ===== 精简版样式 ===== */
         :root {
             --bg: #eef3f9;
             --card: #ffffff;
@@ -16,24 +16,25 @@
             --border: #c5d5e6;
             --danger: #b22234;
             --warning: #b9770e;
-            --shadow: 0 8px 24px rgba(11, 59, 92, 0.12);
-            --radius: 18px;
-            --touch-target: 48px;
+            --shadow: 0 4px 12px rgba(11, 59, 92, 0.08);
+            --radius: 12px;
+            --touch-target: 40px;
         }
         * { margin:0; padding:0; box-sizing:border-box; }
-        html { font-size: 18px; }
+        html { font-size: 16px; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
             background: var(--bg);
             color: var(--text);
-            padding: 0 0 140px 0;
-            line-height: 1.6;
+            padding: 0 0 120px 0;
+            line-height: 1.5;
             min-height: 100vh;
         }
-        .container { max-width: 600px; margin: 0 auto; padding: 0 12px; }
+        .container { max-width: 600px; margin: 0 auto; padding: 0 8px; }
 
+        /* 标题 */
         .title-row {
-            padding: 12px 4px 10px;
+            padding: 8px 4px 6px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -41,51 +42,44 @@
             top: 0;
             background: var(--bg);
             z-index: 50;
-            gap: 10px;
+            gap: 6px;
             flex-wrap: wrap;
         }
-        .title-row .title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .title-row .title { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
         .save-hint {
-            font-size: 0.65rem;
+            font-size: 0.55rem;
             color: var(--text-light);
             background: #dce4ed;
-            padding: 4px 12px;
-            border-radius: 30px;
+            padding: 2px 10px;
+            border-radius: 20px;
             position: absolute;
-            right: 8px;
+            right: 6px;
             white-space: nowrap;
         }
 
+        /* 卡片 - 更紧凑 */
         .card {
             background: var(--card);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            padding: 16px 14px;
-            margin-bottom: 16px;
-            border: 1px solid rgba(11, 59, 92, 0.08);
+            padding: 10px 10px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(11, 59, 92, 0.06);
         }
         .card-title {
-            font-size: 1rem;
+            font-size: 0.85rem;
             font-weight: 700;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             color: var(--primary);
-            padding-bottom: 8px;
-            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 4px;
+            border-bottom: 1.5px solid var(--primary-light);
             flex-wrap: wrap;
         }
-        .card-title .icon { font-size: 1.2rem; }
         .card-title .stat {
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             font-weight: 400;
             color: var(--text-light);
             margin-left: auto;
@@ -94,205 +88,189 @@
         .card-title .stat .major { color: var(--warning); font-weight: 600; }
         .card-title .stat .normal { color: var(--primary); font-weight: 600; }
 
-        .form-group { margin-bottom: 14px; width: 100%; }
+        /* 表单 - 更紧凑 */
+        .form-group { margin-bottom: 6px; width: 100%; }
         .form-group label {
             display: block;
-            font-size: 0.8rem;
+            font-size: 0.65rem;
             font-weight: 600;
             color: var(--text-light);
-            margin-bottom: 4px;
+            margin-bottom: 1px;
         }
         .form-group textarea,
         .form-group input,
         .form-group select {
             width: 100%;
-            padding: 12px 14px;
+            padding: 6px 10px;
             border: 1.5px solid var(--border);
-            border-radius: 12px;
-            font-size: 0.95rem;
+            border-radius: 8px;
+            font-size: 0.82rem;
             background: #f8fcff;
             font-family: inherit;
             color: var(--text);
             min-height: var(--touch-target);
             -webkit-appearance: none;
             appearance: none;
-            transition: border 0.2s, box-shadow 0.2s;
+            transition: border 0.2s;
         }
-        .form-group textarea { resize: vertical; min-height: 52px; max-height: 120px; }
+        .form-group textarea { resize: vertical; min-height: 34px; max-height: 70px; }
         .form-group select {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%233a5a78' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%233a5a78' stroke-width='2' fill='none'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 14px center;
-            background-size: 14px;
+            background-position: right 10px center;
+            background-size: 10px;
         }
         .form-group input:focus,
         .form-group textarea:focus,
         .form-group select:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(11, 59, 92, 0.12);
+            box-shadow: 0 0 0 3px rgba(11, 59, 92, 0.08);
             background: #ffffff;
         }
 
-        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
         .row-2 .form-group { margin-bottom: 0; }
 
-        .check-group { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+        /* 计划兑现 */
+        .check-group { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; }
         .check-pill {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 4px;
-            padding: 10px 6px;
+            gap: 2px;
+            padding: 6px 4px;
             background: #f1f5f9;
-            border-radius: 40px;
-            font-size: 0.85rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
             cursor: pointer;
             border: 2px solid transparent;
             user-select: none;
             font-weight: 500;
             color: var(--text-light);
-            min-height: var(--touch-target);
+            min-height: 32px;
             text-align: center;
         }
         .check-pill input { display: none; }
-        .check-pill.selected {
-            background: var(--primary-light);
-            border-color: var(--primary);
-            color: var(--primary);
-            font-weight: 600;
-        }
-        .check-pill.warning.selected {
-            background: #fef5e7;
-            border-color: var(--warning);
-            color: var(--warning);
-        }
-        .check-pill.danger.selected {
-            background: #fde8e8;
-            border-color: var(--danger);
-            color: var(--danger);
-        }
+        .check-pill.selected { background: var(--primary-light); border-color: var(--primary); color: var(--primary); font-weight: 600; }
+        .check-pill.warning.selected { background: #fef5e7; border-color: var(--warning); color: var(--warning); }
+        .check-pill.danger.selected { background: #fde8e8; border-color: var(--danger); color: var(--danger); }
 
+        /* 多选 */
         .multi-select-wrap { position: relative; width: 100%; }
         .multi-select-display {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
-            padding: 10px 12px;
+            gap: 3px;
+            padding: 4px 8px;
             border: 1.5px solid var(--border);
-            border-radius: 12px;
+            border-radius: 8px;
             background: #f8fcff;
             min-height: var(--touch-target);
             cursor: pointer;
             align-items: center;
         }
-        .multi-select-display .placeholder { color: #8aa0b8; font-size: 0.9rem; }
+        .multi-select-display .placeholder { color: #8aa0b8; font-size: 0.75rem; }
         .multi-select-tag {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
             background: var(--primary-light);
             color: var(--primary);
-            padding: 4px 12px;
-            border-radius: 30px;
-            font-size: 0.8rem;
+            padding: 1px 8px;
+            border-radius: 20px;
+            font-size: 0.65rem;
             font-weight: 500;
         }
-        .multi-select-tag .remove-tag {
-            cursor: pointer;
-            font-weight: 700;
-            margin-left: 4px;
-            font-size: 1rem;
-            line-height: 1;
-        }
+        .multi-select-tag .remove-tag { cursor: pointer; font-weight: 700; margin-left: 2px; font-size: 0.8rem; }
         .multi-select-dropdown {
             display: none;
             position: absolute;
-            top: calc(100% + 6px);
+            top: calc(100% + 4px);
             left: 0;
             right: 0;
             background: #fff;
             border: 1.5px solid var(--border);
-            border-radius: 14px;
-            max-height: 220px;
+            border-radius: 10px;
+            max-height: 180px;
             overflow-y: auto;
             z-index: 99;
-            box-shadow: 0 12px 32px rgba(11, 59, 92, 0.16);
-            font-size: 0.9rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            font-size: 0.78rem;
         }
         .multi-select-dropdown.show { display: block; }
         .multi-select-option {
-            padding: 12px 16px;
+            padding: 8px 12px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid #eef3f8;
-            min-height: 44px;
-            transition: background 0.12s;
+            gap: 8px;
+            border-bottom: 1px solid #f0f2f5;
+            min-height: 36px;
             user-select: none;
         }
         .multi-select-option:last-child { border-bottom: none; }
-        .multi-select-option:active { background: #e6edf6; }
         .multi-select-option .option-check {
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: var(--primary);
             font-weight: 700;
             opacity: 0;
             transition: opacity 0.15s;
-            width: 22px;
+            width: 18px;
             text-align: center;
             flex-shrink: 0;
         }
         .multi-select-option.selected .option-check { opacity: 1; }
         .multi-select-option.selected { background: var(--primary-light); }
 
-        .problem-list { display: flex; flex-direction: column; gap: 14px; }
+        /* ===== 突出问题 - 紧凑卡片 ===== */
+        .problem-list { display: flex; flex-direction: column; gap: 6px; }
         .problem-item {
             border: 1.5px solid var(--border);
-            border-radius: 16px;
-            padding: 12px 12px 8px;
+            border-radius: 10px;
+            padding: 8px 8px 4px;
             background: #fafdff;
             position: relative;
         }
-        .problem-item .field { margin-bottom: 8px; width: 100%; }
+        .problem-item .field { margin-bottom: 4px; width: 100%; }
         .problem-item label {
-            font-size: 0.7rem;
+            font-size: 0.55rem;
             color: var(--text-light);
             font-weight: 600;
             display: block;
-            margin-bottom: 2px;
+            margin-bottom: 1px;
         }
         .problem-item select,
         .problem-item input,
         .problem-item textarea {
             width: 100%;
-            padding: 8px 10px;
+            padding: 4px 6px;
             border: 1px solid var(--border);
-            border-radius: 10px;
-            font-size: 0.85rem;
+            border-radius: 6px;
+            font-size: 0.72rem;
             background: #fff;
             font-family: inherit;
-            min-height: 40px;
+            min-height: 28px;
         }
         .problem-item select {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%233a5a78' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M1 1l3 3 3-3' stroke='%233a5a78' stroke-width='2' fill='none'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 10px center;
+            background-position: right 6px center;
+            background-size: 8px;
         }
-        .problem-item textarea { resize: vertical; min-height: 40px; max-height: 90px; }
-        .problem-item .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .problem-item textarea { resize: vertical; min-height: 28px; max-height: 60px; }
+        .problem-item .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
         .problem-item .remove-btn {
             position: absolute;
-            top: 6px;
-            right: 6px;
+            top: 2px;
+            right: 2px;
             background: #fee2e2;
             color: var(--danger);
             border: none;
             border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            font-size: 1rem;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -302,179 +280,136 @@
         }
         .problem-item .remove-btn:active { background: #fca5a5; }
 
+        /* 按钮 */
         .btn {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            padding: 14px 16px;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 1rem;
+            gap: 4px;
+            padding: 10px 12px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.85rem;
             border: none;
             cursor: pointer;
             width: 100%;
-            min-height: var(--touch-target);
+            min-height: 40px;
+            transition: 0.15s;
         }
         .btn:active { transform: scale(0.97); }
-        .btn-primary {
-            background: var(--primary);
-            color: #fff;
-            box-shadow: 0 6px 14px rgba(11, 59, 92, 0.30);
-        }
+        .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(11, 59, 92, 0.25); }
         .btn-primary:active { background: #0a2f4a; }
-        .btn-outline {
-            background: #fff;
-            color: var(--primary);
-            border: 2px solid var(--primary);
-        }
-        .btn-danger-outline {
-            background: #fff;
-            color: var(--danger);
-            border: 2px solid var(--danger);
-        }
+        .btn-outline { background: #fff; color: var(--primary); border: 1.5px solid var(--primary); }
+        .btn-danger-outline { background: #fff; color: var(--danger); border: 1.5px solid var(--danger); }
 
         .summary-bar {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(255,255,255,0.92);
-            backdrop-filter: blur(6px);
-            padding: 12px 14px calc(14px + env(safe-area-inset-bottom));
-            box-shadow: 0 -6px 24px rgba(11, 59, 92, 0.10);
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(4px);
+            padding: 8px 10px calc(10px + env(safe-area-inset-bottom));
+            box-shadow: 0 -4px 16px rgba(11, 59, 92, 0.08);
             z-index: 100;
             border-top: 1px solid rgba(11, 59, 92, 0.06);
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
-        .summary-bar .btn { padding: 14px; font-size: 1rem; }
-        .summary-bar .btn-row { display: flex; gap: 10px; }
-        .summary-bar .btn-row .btn { flex: 1; padding: 12px; font-size: 0.85rem; }
+        .summary-bar .btn { padding: 10px; font-size: 0.85rem; }
+        .summary-bar .btn-row { display: flex; gap: 6px; }
+        .summary-bar .btn-row .btn { flex: 1; padding: 8px; font-size: 0.7rem; }
 
         .toast {
             position: fixed;
-            bottom: 140px;
+            bottom: 110px;
             left: 50%;
             transform: translateX(-50%);
             background: #0b3b5c;
             color: #fff;
-            padding: 12px 24px;
-            border-radius: 40px;
-            font-size: 0.9rem;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 0.8rem;
             font-weight: 500;
             opacity: 0;
             transition: opacity 0.3s;
             pointer-events: none;
             z-index: 200;
             white-space: nowrap;
-            max-width: 92vw;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.20);
+            max-width: 90vw;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
         }
         .toast.show { opacity: 1; }
         .hidden { display: none !important; }
 
-        .history-panel {
-            margin-top: 12px;
-            border-top: 2px dashed var(--border);
-            padding-top: 12px;
-        }
-        .history-panel summary {
-            font-weight: 600;
-            color: var(--primary);
-            cursor: pointer;
-            font-size: 0.9rem;
-            padding: 4px 0;
-        }
+        .history-panel { margin-top: 8px; border-top: 1.5px dashed var(--border); padding-top: 8px; }
+        .history-panel summary { font-weight: 600; color: var(--primary); cursor: pointer; font-size: 0.75rem; padding: 2px 0; }
         .history-list {
-            max-height: 300px;
+            max-height: 160px;
             overflow-y: auto;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             background: #f8fcff;
-            border-radius: 12px;
-            padding: 8px 6px;
-            margin-top: 8px;
+            border-radius: 8px;
+            padding: 4px 6px;
+            margin-top: 4px;
             border: 1px solid var(--border);
         }
         .history-item {
-            padding: 8px 10px;
+            padding: 4px 6px;
             border-bottom: 1px solid #eef3f8;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 8px;
+            gap: 4px;
             flex-wrap: wrap;
             cursor: pointer;
         }
         .history-item:last-child { border-bottom: none; }
-        .history-item:hover { background: var(--primary-light); }
-        .history-item .time { color: var(--text-light); font-size: 0.65rem; font-weight: 600; }
-        .history-item .preview {
-            color: var(--text);
-            font-weight: 500;
-            flex: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            max-width: 160px;
-        }
-        .history-item .actions {
-            display: flex;
-            gap: 6px;
-            flex-shrink: 0;
-        }
-        .history-item .actions button {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            font-size: 0.8rem;
-            padding: 2px 8px;
-            border-radius: 4px;
-            color: var(--text-light);
-        }
-        .history-item .actions button:hover { background: #e6edf6; }
+        .history-item .time { color: var(--text-light); font-size: 0.55rem; font-weight: 600; }
+        .history-item .preview { color: var(--text); font-weight: 500; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 120px; }
+        .history-item .actions { display: flex; gap: 4px; flex-shrink: 0; }
+        .history-item .actions button { background: transparent; border: none; cursor: pointer; font-size: 0.7rem; padding: 1px 6px; border-radius: 4px; color: var(--text-light); }
 
         .footer {
             text-align: center;
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             color: var(--text-light);
-            padding: 16px 0 4px;
+            padding: 10px 0 2px;
             border-top: 1px solid var(--border);
-            margin-top: 12px;
-            line-height: 1.8;
+            margin-top: 8px;
+            line-height: 1.6;
         }
-        .footer .phone {
-            font-weight: 600;
-            color: var(--primary);
-        }
+        .footer .phone { font-weight: 600; color: var(--primary); }
 
         @media screen and (max-width: 480px) {
-            html { font-size: 16px; }
-            .container { padding: 0 8px; }
-            .title-row .title { font-size: 1.1rem; gap: 6px; }
-            .save-hint { font-size: 0.55rem; padding: 2px 8px; position: static; }
-            .title-row { flex-wrap: wrap; justify-content: center; gap: 4px; }
-            .row-2 { grid-template-columns: 1fr; gap: 10px; }
-            .check-group { grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
-            .problem-item .row-2 { grid-template-columns: 1fr; gap: 6px; }
-            .card { padding: 14px 10px; border-radius: 14px; }
-            .btn { padding: 12px; font-size: 0.95rem; }
-            .summary-bar { padding: 10px 10px calc(10px + env(safe-area-inset-bottom)); }
-            .summary-bar .btn-row .btn { font-size: 0.8rem; padding: 10px; }
-            .multi-select-tag { font-size: 0.75rem; padding: 2px 10px; }
-            .toast { font-size: 0.8rem; padding: 10px 18px; bottom: 120px; }
-            .history-item .preview { max-width: 100px; }
+            html { font-size: 15px; }
+            .container { padding: 0 6px; }
+            .title-row .title { font-size: 1rem; }
+            .save-hint { font-size: 0.5rem; padding: 1px 8px; position: static; }
+            .title-row { flex-wrap: wrap; justify-content: center; gap: 2px; }
+            .row-2 { grid-template-columns: 1fr; gap: 4px; }
+            .check-group { grid-template-columns: 1fr 1fr 1fr; gap: 4px; }
+            .problem-item .row-2 { grid-template-columns: 1fr; gap: 4px; }
+            .card { padding: 8px 8px; border-radius: 10px; }
+            .btn { padding: 8px; font-size: 0.8rem; }
+            .summary-bar { padding: 6px 8px calc(8px + env(safe-area-inset-bottom)); }
+            .summary-bar .btn-row .btn { font-size: 0.65rem; padding: 6px; }
+            .multi-select-tag { font-size: 0.6rem; padding: 1px 6px; }
+            .toast { font-size: 0.7rem; padding: 6px 14px; bottom: 100px; }
+            .problem-item .field { margin-bottom: 2px; }
+            .problem-item select, .problem-item input, .problem-item textarea { min-height: 24px; font-size: 0.68rem; padding: 3px 5px; }
+            .problem-item .remove-btn { width: 18px; height: 18px; font-size: 0.6rem; }
         }
         @media screen and (max-width: 360px) {
             .check-group { grid-template-columns: 1fr; }
-            .check-pill { padding: 8px; }
+            .check-pill { padding: 4px; min-height: 28px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- 标题 -->
+        <!-- ===== 标题 ===== -->
         <div class="title-row">
             <span class="title">湖口检查工区日检查总结</span>
             <span class="save-hint" id="saveStatus">💾 自动保存</span>
@@ -482,7 +417,7 @@
 
         <!-- ===== 检查概况 ===== -->
         <div class="card">
-            <div class="card-title"><span class="icon">📋</span> 检查概况</div>
+            <div class="card-title">📋 检查概况</div>
             <div class="row-2">
                 <div class="form-group">
                     <label>检查日期</label>
@@ -494,7 +429,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <label>设备工区（可多选）</label>
+                <label>设备工区</label>
                 <div class="multi-select-wrap" id="workAreaWrap">
                     <div class="multi-select-display" id="workAreaDisplay"><span class="placeholder">点击选择</span></div>
                     <div class="multi-select-dropdown" id="workAreaDropdown">
@@ -507,7 +442,7 @@
             </div>
             <div class="row-2">
                 <div class="form-group">
-                    <label>线名（可多选）</label>
+                    <label>线名</label>
                     <div class="multi-select-wrap" id="lineNameWrap">
                         <div class="multi-select-display" id="lineNameDisplay"><span class="placeholder">点击选择</span></div>
                         <div class="multi-select-dropdown" id="lineNameDropdown">
@@ -520,18 +455,11 @@
                 </div>
                 <div class="form-group">
                     <label>行别</label>
-                    <select id="direction">
-                        <option value="">请选择</option>
-                        <option value="上行">上行</option>
-                        <option value="下行">下行</option>
-                        <option value="单线">单线</option>
-                        <option value="站内">站内</option>
-                        <option value="其他">其他</option>
-                    </select>
+                    <select id="direction"><option value="">请选择</option><option value="上行">上行</option><option value="下行">下行</option><option value="单线">单线</option><option value="站内">站内</option><option value="其他">其他</option></select>
                 </div>
             </div>
             <div class="form-group">
-                <label>区间/站场（可多选）</label>
+                <label>区间/站场</label>
                 <div class="multi-select-wrap" id="sectionWrap">
                     <div class="multi-select-display" id="sectionDisplay"><span class="placeholder">点击选择</span></div>
                     <div class="multi-select-dropdown" id="sectionDropdown">
@@ -554,38 +482,20 @@
                 </div>
             </div>
 
-            <!-- 检查设备 -->
-            <div class="card" style="box-shadow:none;padding:0;border:none;margin-top:8px;">
-                <div class="card-title" style="border-bottom-color:var(--border);font-size:0.9rem;">检查设备</div>
+            <!-- ===== 检查设备 ===== -->
+            <div style="margin-top:4px;">
+                <div class="card-title" style="font-size:0.8rem;border-bottom-color:var(--border);margin-bottom:4px;">检查设备</div>
                 <div class="row-2">
-                    <div class="form-group">
-                        <label>计划检查设备 (线路)</label>
-                        <input type="text" id="planLine" placeholder="如：K1250+000~K1252+000" />
-                    </div>
-                    <div class="form-group">
-                        <label>实际检查设备 (线路)</label>
-                        <input type="text" id="actualLine" placeholder="默认同计划" />
-                    </div>
+                    <div class="form-group"><label>计划线路</label><input type="text" id="planLine" placeholder="K1250+000~K1252+000" /></div>
+                    <div class="form-group"><label>实际线路</label><input type="text" id="actualLine" placeholder="默认同计划" /></div>
                 </div>
                 <div class="row-2">
-                    <div class="form-group">
-                        <label>计划检查设备 (道岔)</label>
-                        <input type="text" id="planSwitch" placeholder="如：湖口站3#、5#" />
-                    </div>
-                    <div class="form-group">
-                        <label>实际检查设备 (道岔)</label>
-                        <input type="text" id="actualSwitch" placeholder="默认同计划" />
-                    </div>
+                    <div class="form-group"><label>计划道岔</label><input type="text" id="planSwitch" placeholder="湖口站3#、5#" /></div>
+                    <div class="form-group"><label>实际道岔</label><input type="text" id="actualSwitch" placeholder="默认同计划" /></div>
                 </div>
                 <div class="row-2">
-                    <div class="form-group">
-                        <label>计划检查设备 (股道)</label>
-                        <input type="text" id="planTrack" placeholder="如：1道、3道" />
-                    </div>
-                    <div class="form-group">
-                        <label>实际检查设备 (股道)</label>
-                        <input type="text" id="actualTrack" placeholder="默认同计划" />
-                    </div>
+                    <div class="form-group"><label>计划股道</label><input type="text" id="planTrack" placeholder="1道、3道" /></div>
+                    <div class="form-group"><label>实际股道</label><input type="text" id="actualTrack" placeholder="默认同计划" /></div>
                 </div>
             </div>
 
@@ -596,7 +506,7 @@
                     <label class="check-pill warning" data-value="部分完成"><input type="radio" name="completion" value="部分完成" /> ⚠️ 部分</label>
                     <label class="check-pill danger" data-value="未完成"><input type="radio" name="completion" value="未完成" /> ❌ 未完成</label>
                 </div>
-                <div id="unfinishedWrap" class="hidden" style="margin-top:8px;">
+                <div id="unfinishedWrap" class="hidden" style="margin-top:4px;">
                     <textarea id="unfinishedDevice" rows="1" placeholder="未兑现设备有哪些？"></textarea>
                 </div>
             </div>
@@ -605,19 +515,19 @@
         <!-- ===== 突出问题 ===== -->
         <div class="card">
             <div class="card-title" id="problemTitle">
-                <span class="icon">🔍</span> 突出问题
+                🔍 突出问题
                 <span class="stat" id="problemStats">(0条)</span>
             </div>
             <div class="problem-list" id="problemList"></div>
-            <div style="display:flex;gap:8px;margin-top:12px;">
-                <button class="btn btn-outline" id="addProblemRow" style="flex:1;padding:10px;font-size:0.85rem;">+ 添加一条</button>
-                <button class="btn btn-danger-outline" id="clearProblems" style="flex:1;padding:10px;font-size:0.85rem;">清空</button>
+            <div style="display:flex;gap:4px;margin-top:6px;">
+                <button class="btn btn-outline" id="addProblemRow" style="flex:1;padding:6px;font-size:0.7rem;">+ 添加</button>
+                <button class="btn btn-danger-outline" id="clearProblems" style="flex:1;padding:6px;font-size:0.7rem;">清空</button>
             </div>
         </div>
 
         <!-- ===== 备注 ===== -->
         <div class="card">
-            <div class="card-title"><span class="icon">📝</span> 备注 / 需协调事项</div>
+            <div class="card-title">📝 备注 / 需协调事项</div>
             <div class="form-group" style="margin-bottom:0;">
                 <textarea id="remarks" rows="1" placeholder="填写备注或需协调事项..."></textarea>
             </div>
@@ -629,16 +539,14 @@
         </div>
 
         <!-- ===== 历史记录 ===== -->
-        <div class="card" style="margin-top:12px;">
+        <div class="card" style="margin-top:6px;">
             <div class="history-panel">
                 <details>
                     <summary>📜 查看历史提交记录</summary>
-                    <div class="history-list" id="historyList">
-                        <div style="color:var(--text-light);font-size:0.8rem;text-align:center;padding:8px;">暂无提交记录</div>
-                    </div>
-                    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
-                        <button class="btn btn-outline" id="exportTxt" style="flex:1;padding:8px;font-size:0.8rem;">📄 导出为文本</button>
-                        <button class="btn btn-outline" id="exportImg" style="flex:1;padding:8px;font-size:0.8rem;">🖼️ 导出为图片</button>
+                    <div class="history-list" id="historyList"><div style="color:var(--text-light);font-size:0.7rem;text-align:center;padding:4px;">暂无提交记录</div></div>
+                    <div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap;">
+                        <button class="btn btn-outline" id="exportTxt" style="flex:1;padding:4px;font-size:0.65rem;">📄 导出文本</button>
+                        <button class="btn btn-outline" id="exportImg" style="flex:1;padding:4px;font-size:0.65rem;">🖼️ 导出图片</button>
                     </div>
                 </details>
             </div>
@@ -672,16 +580,10 @@
             var ALL_DIRECTIONS = ['上行', '下行', '单线', '站内', '其他'];
             var ALL_SECTIONS = ['香隅至马垱', '马垱站', '马垱至泉山', '泉山站', '泉山至彭泽', '彭泽站', '彭泽至流泗', '流泗站', '流泗至湖口', '湖口站', '湖口至琵琶湖', '琵琶湖站', '琵琶湖至九江', '煤专线', '装卸站'];
 
-            // ============================================================
-            // 代理
-            // ============================================================
             var DINGTALK_WEBHOOK = '/.netlify/functions/send-daily-check';
             var STORAGE_KEY = 'daily_check_data';
             var HISTORY_KEY = 'daily_check_history';
 
-            // ============================================================
-            // 工具函数
-            // ============================================================
             function showToast(msg, duration) {
                 duration = duration || 2000;
                 var toast = document.getElementById('toast');
@@ -696,17 +598,12 @@
                 return now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
             }
 
-            // ============================================================
-            // 日期
-            // ============================================================
             var dateInput = document.getElementById('checkDate');
             var todayStr = getTodayStr();
             dateInput.value = todayStr;
             dateInput.setAttribute('max', todayStr);
 
-            // ============================================================
             // 自动填充
-            // ============================================================
             var planLine = document.getElementById('planLine');
             var actualLine = document.getElementById('actualLine');
             var planSwitch = document.getElementById('planSwitch');
@@ -729,9 +626,7 @@
             autoFillActual(planSwitch, actualSwitch);
             autoFillActual(planTrack, actualTrack);
 
-            // ============================================================
             // 多选组件
-            // ============================================================
             function initMultiSelect(wrapId, displayId, dropdownId, selectedSet, onUpdate) {
                 var wrap = document.getElementById(wrapId);
                 var display = document.getElementById(displayId);
@@ -743,7 +638,6 @@
                     document.querySelectorAll('.multi-select-dropdown').forEach(d => d.classList.remove('show'));
                     dropdown.classList.toggle('show');
                 });
-
                 document.addEventListener('click', function(e) {
                     if (!wrap.contains(e.target)) dropdown.classList.remove('show');
                 });
@@ -801,33 +695,25 @@
                     updateDisplay();
                     if (typeof onUpdate === 'function') onUpdate();
                 }
-
                 return { updateDisplay: updateDisplay, selectedSet: selectedSet, setValues: setValues };
             }
 
             var selectedWorkAreas = new Set();
             var workAreaSelect = initMultiSelect('workAreaWrap', 'workAreaDisplay', 'workAreaDropdown', selectedWorkAreas);
-
             var selectedLines = new Set();
             var lineSelect = initMultiSelect('lineNameWrap', 'lineNameDisplay', 'lineNameDropdown', selectedLines, function() {
                 updateDirectionAndSectionOptions();
             });
-
             var selectedSections = new Set();
             var sectionSelect = initMultiSelect('sectionWrap', 'sectionDisplay', 'sectionDropdown', selectedSections);
 
-            // ============================================================
-            // 主表单联动
-            // ============================================================
             function updateDirectionAndSectionOptions() {
                 var directionSelect = document.getElementById('direction');
                 var sectionDropdown = document.getElementById('sectionDropdown');
                 var sectionOptions = sectionDropdown.querySelectorAll('.multi-select-option');
-
                 var selectedLineValues = Array.from(selectedLines);
                 var availableDirections = [],
                     availableSections = [];
-
                 if (selectedLineValues.length === 0) {
                     availableDirections = ALL_DIRECTIONS;
                     availableSections = ALL_SECTIONS;
@@ -844,7 +730,6 @@
                     availableDirections = dirSet.size > 0 ? Array.from(dirSet) : ALL_DIRECTIONS;
                     availableSections = secSet.size > 0 ? Array.from(secSet) : ALL_SECTIONS;
                 }
-
                 var currentDirection = directionSelect.value;
                 directionSelect.innerHTML = '<option value="">请选择</option>';
                 availableDirections.forEach(function(d) {
@@ -854,7 +739,6 @@
                     directionSelect.appendChild(opt);
                 });
                 directionSelect.value = (availableDirections.indexOf(currentDirection) !== -1) ? currentDirection : '';
-
                 sectionOptions.forEach(function(opt) {
                     var val = opt.dataset.value;
                     if (availableSections.indexOf(val) !== -1) {
@@ -868,7 +752,6 @@
                     }
                 });
                 sectionSelect.updateDisplay();
-
                 var hasVisibleSelected = Array.from(selectedSections).some(v => availableSections.indexOf(v) !== -1);
                 if (!hasVisibleSelected) {
                     selectedSections.clear();
@@ -878,13 +761,10 @@
                 autoSave();
             }
 
-            // ============================================================
             // 计划兑现
-            // ============================================================
             var completionPills = document.querySelectorAll('.check-pill');
             var unfinishedWrap = document.getElementById('unfinishedWrap');
             var unfinishedDeviceInput = document.getElementById('unfinishedDevice');
-
             completionPills.forEach(function(pill) {
                 pill.addEventListener('click', function() {
                     completionPills.forEach(p => p.classList.remove('selected'));
@@ -903,9 +783,7 @@
                 });
             });
 
-            // ============================================================
-            // 统计函数
-            // ============================================================
+            // 统计
             function getProblemStats(problems) {
                 var serious = 0,
                     major = 0,
@@ -947,9 +825,7 @@
                 return stats;
             }
 
-            // ============================================================
-            // 突出问题
-            // ============================================================
+            // 问题列表
             var problemList = document.getElementById('problemList');
             var lineOptions = ['衢九线', '铜九线', '湖口疏解线', '煤专线'];
             var stationOptions = ['香隅至马垱', '马垱站', '马垱至泉山', '泉山站', '泉山至彭泽', '彭泽站', '彭泽至流泗', '流泗站', '流泗至湖口', '湖口站', '湖口至琵琶湖', '琵琶湖站', '琵琶湖至九江', '煤专线', '装卸站'];
@@ -964,10 +840,8 @@
                 var dirSelect = row.querySelector('.p-dir');
                 var sectionSelect = row.querySelector('.p-section');
                 var filtered = getFilteredOptions(lineVal);
-
                 var currentDir = dirSelect.value;
                 var currentSection = sectionSelect.value;
-
                 dirSelect.innerHTML = '<option value="">选择</option>';
                 filtered.directions.forEach(function(d) {
                     var opt = document.createElement('option');
@@ -976,7 +850,6 @@
                     dirSelect.appendChild(opt);
                 });
                 dirSelect.value = (filtered.directions.indexOf(currentDir) !== -1) ? currentDir : '';
-
                 sectionSelect.innerHTML = '<option value="">选择</option>';
                 filtered.sections.forEach(function(s) {
                     var opt = document.createElement('option');
@@ -991,112 +864,60 @@
                 data = data || {};
                 var item = document.createElement('div');
                 item.className = 'problem-item';
-
                 var lineVal = data.line || '';
                 var filtered = getFilteredOptions(lineVal);
-
                 var lineOpts = '';
                 lineOptions.forEach(function(l) {
                     var selected = (data.line === l) ? 'selected' : '';
                     lineOpts += '<option value="' + l + '" ' + selected + '>' + l + '</option>';
                 });
-
                 var dirOpts = '';
                 filtered.directions.forEach(function(d) {
                     var selected = (data.dir === d) ? 'selected' : '';
                     dirOpts += '<option value="' + d + '" ' + selected + '>' + d + '</option>';
                 });
-
                 var sectionOpts = '';
                 filtered.sections.forEach(function(s) {
                     var selected = (data.section === s) ? 'selected' : '';
                     sectionOpts += '<option value="' + s + '" ' + selected + '>' + s + '</option>';
                 });
-
                 var typeVal = data.type || '线路';
                 var sevVal = data.severity || '一般';
-
                 item.innerHTML = `
                     <button class="remove-btn" type="button" title="删除">×</button>
                     <div class="row-2">
-                        <div class="field">
-                            <label>设备类型</label>
-                            <select class="p-type">
-                                <option value="线路" ${typeVal === '线路' ? 'selected' : ''}>线路</option>
-                                <option value="道岔" ${typeVal === '道岔' ? 'selected' : ''}>道岔</option>
-                                <option value="其他" ${typeVal === '其他' ? 'selected' : ''}>其他</option>
-                            </select>
-                        </div>
-                        <div class="field">
-                            <label>线名</label>
-                            <select class="p-line">
-                                <option value="">选择</option>
-                                ${lineOpts}
-                            </select>
-                        </div>
+                        <div class="field"><label>设备类型</label><select class="p-type"><option value="线路" ${typeVal==='线路'?'selected':''}>线路</option><option value="道岔" ${typeVal==='道岔'?'selected':''}>道岔</option><option value="其他" ${typeVal==='其他'?'selected':''}>其他</option></select></div>
+                        <div class="field"><label>线名</label><select class="p-line"><option value="">选择</option>${lineOpts}</select></div>
                     </div>
                     <div class="row-2">
-                        <div class="field">
-                            <label>行别</label>
-                            <select class="p-dir">
-                                <option value="">选择</option>
-                                ${dirOpts}
-                            </select>
-                        </div>
-                        <div class="field">
-                            <label>区段/站场</label>
-                            <select class="p-section">
-                                <option value="">选择</option>
-                                ${sectionOpts}
-                            </select>
-                        </div>
+                        <div class="field"><label>行别</label><select class="p-dir"><option value="">选择</option>${dirOpts}</select></div>
+                        <div class="field"><label>区段/站场</label><select class="p-section"><option value="">选择</option>${sectionOpts}</select></div>
                     </div>
                     <div class="row-2">
-                        <div class="field">
-                            <label>里程/道岔编号/股道编号</label>
-                            <input class="p-location" placeholder="K___+___ / 道岔编号 / 股道" value="${data.location || ''}" />
-                        </div>
-                        <div class="field">
-                            <label>严重程度</label>
-                            <select class="p-severity">
-                                <option value="一般" ${sevVal === '一般' ? 'selected' : ''}>一般</option>
-                                <option value="较重" ${sevVal === '较重' ? 'selected' : ''}>较重</option>
-                                <option value="严重" ${sevVal === '严重' ? 'selected' : ''}>严重</option>
-                            </select>
-                        </div>
+                        <div class="field"><label>里程/道岔/股道</label><input class="p-location" placeholder="K___+___ / 道岔 / 股道" value="${data.location||''}" /></div>
+                        <div class="field"><label>严重程度</label><select class="p-severity"><option value="一般" ${sevVal==='一般'?'selected':''}>一般</option><option value="较重" ${sevVal==='较重'?'selected':''}>较重</option><option value="严重" ${sevVal==='严重'?'selected':''}>严重</option></select></div>
                     </div>
-                    <div class="field">
-                        <label>病害描述</label>
-                        <textarea class="p-desc" rows="1" placeholder="请描述病害情况...">${data.desc || ''}</textarea>
-                    </div>
+                    <div class="field"><label>病害描述</label><textarea class="p-desc" rows="1" placeholder="请描述病害情况...">${data.desc||''}</textarea></div>
                 `;
-
                 var removeBtn = item.querySelector('.remove-btn');
                 removeBtn.addEventListener('click', function() {
                     item.remove();
                     updateProblemStats();
                     autoSave();
                 });
-
                 var lineSelectEl = item.querySelector('.p-line');
                 lineSelectEl.addEventListener('change', function() {
                     updateProblemRowOptions(item, this.value);
                     updateProblemStats();
                     autoSave();
                 });
-
                 var fields = item.querySelectorAll('select, input, textarea');
                 fields.forEach(function(field) {
-                    field.addEventListener('change', function() {
-                        updateProblemStats();
-                        autoSave();
-                    });
-                    field.addEventListener('input', function() {
-                        updateProblemStats();
-                        autoSave();
-                    });
+                    field.addEventListener('change', function() { updateProblemStats();
+                        autoSave(); });
+                    field.addEventListener('input', function() { updateProblemStats();
+                        autoSave(); });
                 });
-
                 return item;
             }
 
@@ -1115,16 +936,13 @@
                 updateProblemStats();
                 autoSave();
             }
-
             document.getElementById('addProblemRow').addEventListener('click', function() { addProblemItem(); });
             document.getElementById('clearProblems').addEventListener('click', function() {
                 if (confirm('确定清空所有问题记录吗？')) clearAllProblems();
             });
             addProblemItem();
 
-            // ============================================================
             // 数据收集
-            // ============================================================
             function gatherFormData() {
                 var data = {
                     date: document.getElementById('checkDate').value || todayStr,
@@ -1144,17 +962,14 @@
                     problems: [],
                     remarks: document.getElementById('remarks').value.trim()
                 };
-
                 var sectionOptions = document.querySelectorAll('#sectionDropdown .multi-select-option');
                 sectionOptions.forEach(function(opt) {
                     if (opt.style.display !== 'none' && selectedSections.has(opt.dataset.value)) {
                         data.sections.push(opt.dataset.value);
                     }
                 });
-
                 var selectedPill = document.querySelector('.check-pill.selected');
                 if (selectedPill) data.completion = selectedPill.dataset.value;
-
                 var items = problemList.querySelectorAll('.problem-item');
                 items.forEach(function(item) {
                     var type = item.querySelector('.p-type').value;
@@ -1186,7 +1001,6 @@
                 if (data.unfinishedDevice) document.getElementById('unfinishedDevice').value = data.unfinishedDevice;
                 if (data.workAreas) workAreaSelect.setValues(data.workAreas);
                 if (data.lines) lineSelect.setValues(data.lines);
-
                 setTimeout(function() {
                     if (data.sections) {
                         var sectionOptions = document.querySelectorAll('#sectionDropdown .multi-select-option');
@@ -1202,7 +1016,6 @@
                         sectionSelect.updateDisplay();
                     }
                 }, 100);
-
                 if (data.completion) {
                     completionPills.forEach(function(p) {
                         p.classList.remove('selected');
@@ -1217,7 +1030,6 @@
                         unfinishedDeviceInput.placeholder = data.completion === '未完成' ? '未检查原因及涉及设备' : '未兑现设备有哪些？';
                     }
                 }
-
                 problemList.innerHTML = '';
                 if (data.problems && data.problems.length > 0) {
                     data.problems.forEach(function(p) { addProblemItem(p); });
@@ -1227,9 +1039,7 @@
                 updateProblemStats();
             }
 
-            // ============================================================
             // 历史记录
-            // ============================================================
             function loadHistory() {
                 try {
                     var raw = localStorage.getItem(HISTORY_KEY);
@@ -1255,7 +1065,7 @@
             function renderHistory(history) {
                 var container = document.getElementById('historyList');
                 if (!history || history.length === 0) {
-                    container.innerHTML = '<div style="color:var(--text-light);font-size:0.8rem;text-align:center;padding:8px;">暂无提交记录</div>';
+                    container.innerHTML = '<div style="color:var(--text-light);font-size:0.7rem;text-align:center;padding:4px;">暂无提交记录</div>';
                     return;
                 }
                 var html = '';
@@ -1266,12 +1076,11 @@
                     html += '<span class="time">' + (h.time || '') + '</span>';
                     html += '<span class="preview" title="' + (h.planLine || '') + ' ' + (h.planSwitch || '') + ' ' + (h.planTrack || '') + '">' + preview + '</span>';
                     html += '<span class="actions">';
-                    html += '<button class="load-history" data-index="' + i + '" title="加载此记录">📂 加载</button>';
+                    html += '<button class="load-history" data-index="' + i + '" title="加载">📂</button>';
                     html += '<button class="del-history" data-index="' + i + '" title="删除">🗑️</button>';
                     html += '</span></div>';
                 });
                 container.innerHTML = html;
-
                 container.querySelectorAll('.load-history').forEach(function(btn) {
                     btn.addEventListener('click', function(e) {
                         e.stopPropagation();
@@ -1298,7 +1107,6 @@
                         }
                     });
                 });
-                // 点击整个条目也可以加载
                 container.querySelectorAll('.history-item').forEach(function(item) {
                     item.addEventListener('click', function() {
                         var idx = parseInt(this.dataset.index);
@@ -1312,9 +1120,7 @@
                 });
             }
 
-            // ============================================================
-            // 导出功能 - 优化版（兼容手机）
-            // ============================================================
+            // 导出
             function buildExportText(data) {
                 var lines = [];
                 lines.push('📋 湖口检查工区日检查总结');
@@ -1351,7 +1157,6 @@
                 return lines.join('\n');
             }
 
-            // 导出文本
             document.getElementById('exportTxt').addEventListener('click', function() {
                 var data = gatherFormData();
                 var text = buildExportText(data);
@@ -1363,26 +1168,18 @@
                     a.download = '日检查总结_' + (data.date || todayStr) + '.txt';
                     document.body.appendChild(a);
                     a.click();
-                    setTimeout(function() {
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                    }, 100);
+                    setTimeout(function() { document.body.removeChild(a);
+                        URL.revokeObjectURL(url); }, 100);
                     showToast('📄 文本已导出');
                 } catch (e) {
-                    // 如果下载失败，尝试复制到剪贴板
                     try {
                         navigator.clipboard.writeText(text).then(function() {
                             showToast('📄 内容已复制到剪贴板');
-                        }).catch(function() {
-                            showToast('❌ 导出失败，请手动复制');
-                        });
-                    } catch (e2) {
-                        showToast('❌ 导出失败，请重试');
-                    }
+                        }).catch(function() { showToast('❌ 导出失败，请手动复制'); });
+                    } catch (e2) { showToast('❌ 导出失败，请重试'); }
                 }
             });
 
-            // 导出图片 - 直接打开新窗口显示图片，用户可长按保存
             document.getElementById('exportImg').addEventListener('click', function() {
                 var data = gatherFormData();
                 var text = buildExportText(data);
@@ -1390,17 +1187,17 @@
                     var canvas = document.createElement('canvas');
                     var ctx = canvas.getContext('2d');
                     var lines = text.split('\n');
-                    var fontSize = 14,
-                        lineHeight = 26,
-                        padding = 24;
+                    var fontSize = 12,
+                        lineHeight = 20,
+                        padding = 16;
                     var maxWidth = 0;
                     ctx.font = fontSize + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
                     lines.forEach(function(l) {
                         var w = ctx.measureText(l).width;
                         if (w > maxWidth) maxWidth = w;
                     });
-                    var width = Math.max(400, maxWidth + padding * 2);
-                    var height = lines.length * lineHeight + padding * 2 + 20;
+                    var width = Math.max(320, maxWidth + padding * 2);
+                    var height = lines.length * lineHeight + padding * 2 + 10;
                     canvas.width = width;
                     canvas.height = height;
                     ctx.fillStyle = '#ffffff';
@@ -1412,23 +1209,20 @@
                         var y = padding + j * lineHeight;
                         if (l.indexOf('=') !== -1 || l.indexOf('---') !== -1) {
                             ctx.fillStyle = '#c5d5e6';
-                            ctx.fillRect(0, y + 6, width, 1);
+                            ctx.fillRect(0, y + 4, width, 1);
                             ctx.fillStyle = '#0b3b5c';
                             return;
                         }
                         ctx.fillStyle = '#0b3b5c';
                         ctx.fillText(l, padding, y);
                     });
-                    // 转为dataURL
                     var dataURL = canvas.toDataURL('image/png');
-                    // 方式1：在新窗口打开图片，用户可长按保存
                     var win = window.open();
                     if (win) {
                         win.document.write('<img src="' + dataURL + '" style="max-width:100%;" />');
                         win.document.title = '日检查总结_' + (data.date || todayStr);
                         showToast('🖼️ 图片已生成，请长按保存');
                     } else {
-                        // 如果弹窗被拦截，尝试下载
                         try {
                             var link = document.createElement('a');
                             link.href = dataURL;
@@ -1437,18 +1231,12 @@
                             link.click();
                             setTimeout(function() { document.body.removeChild(link); }, 100);
                             showToast('🖼️ 图片已导出');
-                        } catch (e2) {
-                            showToast('❌ 导出失败，请允许弹窗后重试');
-                        }
+                        } catch (e2) { showToast('❌ 导出失败，请允许弹窗后重试'); }
                     }
-                } catch (e) {
-                    showToast('❌ 导出失败，请重试');
-                }
+                } catch (e) { showToast('❌ 导出失败，请重试'); }
             });
 
-            // ============================================================
             // 自动保存
-            // ============================================================
             var saveTimeout = null;
 
             function autoSave() {
@@ -1464,7 +1252,6 @@
                     } catch (e) {}
                 }, 500);
             }
-
             document.querySelectorAll('input, textarea, select').forEach(function(el) {
                 if (el.id !== 'checkDate' && el.id !== 'inspector') {
                     el.addEventListener('input', autoSave);
@@ -1520,9 +1307,7 @@
                 showToast('已重置');
             });
 
-            // ============================================================
             // 验证
-            // ============================================================
             function validateData(data) {
                 if (!data.date) { showToast('请选择检查日期'); return false; }
                 if (new Date(data.date) > new Date(todayStr)) { showToast('日期不能晚于今天'); return false; }
@@ -1537,9 +1322,7 @@
                 return true;
             }
 
-            // ============================================================
             // 钉钉消息
-            // ============================================================
             function buildDingTalkMarkdown(data) {
                 var stats = getProblemStats(data.problems || []);
                 var md = '**湖口检查工区日检查总结**\n\n';
@@ -1550,7 +1333,6 @@
                     md += '线名：' + data.lines.join('、') + (data.direction ? ' ｜ ' + data.direction : '') + '\n\n';
                 }
                 if (data.sections && data.sections.length) md += '区间/站场：' + data.sections.join('、') + '\n\n';
-
                 var hasDevice = false,
                     deviceLines = [];
                 if (data.planLine || data.actualLine) {
@@ -1572,7 +1354,6 @@
                     md += '--- 检查设备 ---\n';
                     md += deviceLines.join('\n') + '\n\n';
                 }
-
                 if (data.completion) {
                     var icon = data.completion === '已全部完成' ? '✅' : (data.completion === '部分完成' ? '⚠️' : '❌');
                     md += '计划兑现：' + icon + ' ' + data.completion;
@@ -1581,8 +1362,6 @@
                     }
                     md += '\n\n---\n\n';
                 }
-
-                // 突出问题统计（取消红圆圈和感叹号）
                 if (data.problems && data.problems.length > 0) {
                     var title = '**突出问题（共' + stats.total + '条';
                     if (stats.serious > 0) title += '，<font color="#b22234">严重' + stats.serious + '条</font>';
@@ -1590,35 +1369,26 @@
                     if (stats.normal > 0) title += '，<font color="#0b3b5c">一般' + stats.normal + '条</font>';
                     title += '）**';
                     md += title + '\n\n';
-
                     data.problems.forEach(function(pr, idx) {
-                        var sevColor = '#0b3b5c';
-                        var sevLabel = '一般';
+                        var sevColor = '#0b3b5c',
+                            sevLabel = '一般';
                         if (pr.severity === '严重') { sevColor = '#b22234';
                             sevLabel = '严重'; } else if (pr.severity === '较重') { sevColor = '#b9770e';
                             sevLabel = '较重'; }
-
                         var line = (idx + 1) + '. [' + pr.type + '] ' + (pr.line || '') + ' ' + (pr.dir || '') + ' ' + (pr.section ? '[' + pr.section + ']' : '') + ' ' + (pr.location || '') + '\n';
                         line += '   病害：' + (pr.desc || '未描述') + '\n';
                         line += '   严重程度：<font color="' + sevColor + '">' + sevLabel + '</font>';
-
-                        if (pr.severity === '严重') {
-                            line = '**' + line + '**';
-                        }
+                        if (pr.severity === '严重') { line = '**' + line + '**'; }
                         md += line + '\n\n';
                     });
                 } else {
                     md += '**突出问题（0条）**\n';
                     md += '本次检查未发现突出问题\n\n';
                 }
-
                 if (data.remarks) md += '---\n\n备注 / 需协调事项：' + data.remarks + '\n';
                 return md.replace(/\n{3,}/g, '\n\n');
             }
 
-            // ============================================================
-            // 发送钉钉
-            // ============================================================
             async function sendToDingTalk(markdown) {
                 try {
                     var response = await fetch(DINGTALK_WEBHOOK, {
@@ -1634,17 +1404,12 @@
                 }
             }
 
-            // ============================================================
-            // 提交
-            // ============================================================
             document.getElementById('submitBtn').addEventListener('click', async function() {
                 var data = gatherFormData();
                 if (!validateData(data)) return;
                 try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
-
                 var markdown = buildDingTalkMarkdown(data);
                 var result = await sendToDingTalk(markdown);
-
                 if (result.success) {
                     showToast('✅ 已推送钉钉群');
                     saveHistory({ time: new Date().toLocaleString(), data: data });
@@ -1674,9 +1439,6 @@
                 }
             });
 
-            // ============================================================
-            // 初始化
-            // ============================================================
             loadDraft();
             loadHistory();
             updateDirectionAndSectionOptions();
