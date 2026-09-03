@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover" />
     <title>湖口检查工区日检查总结</title>
     <style>
-        /* ===== 深蓝主调 · 字体大小保持不变 ===== */
+        /* ===== 深蓝主调 ===== */
         :root {
             --bg: #eef3f9;
             --card: #ffffff;
@@ -18,10 +18,11 @@
             --warning: #b9770e;
             --shadow: 0 4px 12px rgba(11, 59, 92, 0.08);
             --radius: 12px;
-            --touch-target: 40px;
+            --touch-target: 44px;
         }
         * { margin:0; padding:0; box-sizing:border-box; }
-        html { font-size: 18px; }
+        /* 基础字号增大 */
+        html { font-size: 20px; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
             background: var(--bg);
@@ -45,12 +46,12 @@
             gap: 6px;
             flex-wrap: wrap;
         }
-        .title-row .title { font-size: 1.15rem; font-weight: 700; color: var(--primary); }
+        .title-row .title { font-size: 1.25rem; font-weight: 700; color: var(--primary); }
         .save-hint {
-            font-size: 0.6rem;
+            font-size: 0.65rem;
             color: var(--text-light);
             background: #dce4ed;
-            padding: 2px 10px;
+            padding: 2px 12px;
             border-radius: 20px;
             position: absolute;
             right: 6px;
@@ -62,24 +63,24 @@
             background: var(--card);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            padding: 12px 12px;
-            margin-bottom: 10px;
+            padding: 14px 14px;
+            margin-bottom: 12px;
             border: 1px solid rgba(11, 59, 92, 0.06);
         }
         .card-title {
-            font-size: 0.9rem;
+            font-size: 1rem;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 6px;
             color: var(--primary);
-            padding-bottom: 4px;
+            padding-bottom: 6px;
             border-bottom: 1.5px solid var(--primary-light);
             flex-wrap: wrap;
         }
         .card-title .stat {
-            font-size: 0.7rem;
+            font-size: 0.8rem;
             font-weight: 400;
             color: var(--text-light);
             margin-left: auto;
@@ -89,10 +90,10 @@
         .card-title .stat .normal { color: var(--primary); font-weight: 600; }
 
         /* 表单 */
-        .form-group { margin-bottom: 8px; width: 100%; }
+        .form-group { margin-bottom: 10px; width: 100%; }
         .form-group label {
             display: block;
-            font-size: 0.7rem;
+            font-size: 0.8rem;
             font-weight: 600;
             color: var(--text-light);
             margin-bottom: 2px;
@@ -101,10 +102,10 @@
         .form-group input,
         .form-group select {
             width: 100%;
-            padding: 8px 12px;
+            padding: 10px 14px;
             border: 1.5px solid var(--border);
             border-radius: 8px;
-            font-size: 0.85rem;
+            font-size: 0.95rem;
             background: #f8fcff;
             font-family: inherit;
             color: var(--text);
@@ -113,12 +114,12 @@
             appearance: none;
             transition: border 0.2s;
         }
-        .form-group textarea { resize: vertical; min-height: 40px; max-height: 80px; }
+        .form-group textarea { resize: vertical; min-height: 44px; max-height: 90px; }
         .form-group select {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%233a5a78' stroke-width='2' fill='none'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 10px;
+            background-position: right 14px center;
+            background-size: 12px;
         }
         .form-group input:focus,
         .form-group textarea:focus,
@@ -129,27 +130,27 @@
             background: #ffffff;
         }
 
-        /* 双列布局 */
-        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        /* 双列 */
+        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .row-2 .form-group { margin-bottom: 0; }
 
         /* 计划兑现 */
-        .check-group { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+        .check-group { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
         .check-pill {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 4px;
-            padding: 8px 6px;
+            padding: 10px 6px;
             background: #f1f5f9;
             border-radius: 30px;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             cursor: pointer;
             border: 2px solid transparent;
             user-select: none;
             font-weight: 500;
             color: var(--text-light);
-            min-height: 38px;
+            min-height: 42px;
             text-align: center;
         }
         .check-pill input { display: none; }
@@ -163,7 +164,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 4px;
-            padding: 6px 10px;
+            padding: 8px 12px;
             border: 1.5px solid var(--border);
             border-radius: 8px;
             background: #f8fcff;
@@ -171,19 +172,19 @@
             cursor: pointer;
             align-items: center;
         }
-        .multi-select-display .placeholder { color: #8aa0b8; font-size: 0.8rem; }
+        .multi-select-display .placeholder { color: #8aa0b8; font-size: 0.9rem; }
         .multi-select-tag {
             display: inline-flex;
             align-items: center;
             gap: 3px;
             background: var(--primary-light);
             color: var(--primary);
-            padding: 2px 10px;
+            padding: 4px 12px;
             border-radius: 20px;
-            font-size: 0.7rem;
+            font-size: 0.8rem;
             font-weight: 500;
         }
-        .multi-select-tag .remove-tag { cursor: pointer; font-weight: 700; margin-left: 2px; font-size: 0.85rem; }
+        .multi-select-tag .remove-tag { cursor: pointer; font-weight: 700; margin-left: 2px; font-size: 0.95rem; }
         .multi-select-dropdown {
             display: none;
             position: absolute;
@@ -197,22 +198,22 @@
             overflow-y: auto;
             z-index: 99;
             box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-            font-size: 0.8rem;
+            font-size: 0.9rem;
         }
         .multi-select-dropdown.show { display: block; }
         .multi-select-option {
-            padding: 10px 14px;
+            padding: 12px 16px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
             border-bottom: 1px solid #f0f2f5;
-            min-height: 40px;
+            min-height: 44px;
             user-select: none;
         }
         .multi-select-option:last-child { border-bottom: none; }
         .multi-select-option .option-check {
-            font-size: 0.95rem;
+            font-size: 1rem;
             color: var(--primary);
             font-weight: 700;
             opacity: 0;
@@ -225,33 +226,33 @@
         .multi-select-option.selected { background: var(--primary-light); }
 
         /* 突出问题 */
-        .problem-list { display: flex; flex-direction: column; gap: 8px; }
+        .problem-list { display: flex; flex-direction: column; gap: 10px; }
         .problem-item {
             border: 1.5px solid var(--border);
             border-radius: 10px;
-            padding: 10px 10px 6px;
+            padding: 12px 12px 8px;
             background: #fafdff;
             position: relative;
         }
-        .problem-item .field { margin-bottom: 6px; width: 100%; }
+        .problem-item .field { margin-bottom: 8px; width: 100%; }
         .problem-item label {
-            font-size: 0.6rem;
+            font-size: 0.7rem;
             color: var(--text-light);
             font-weight: 600;
             display: block;
-            margin-bottom: 1px;
+            margin-bottom: 2px;
         }
         .problem-item select,
         .problem-item input,
         .problem-item textarea {
             width: 100%;
-            padding: 5px 8px;
+            padding: 6px 10px;
             border: 1px solid var(--border);
             border-radius: 6px;
-            font-size: 0.76rem;
+            font-size: 0.85rem;
             background: #fff;
             font-family: inherit;
-            min-height: 32px;
+            min-height: 36px;
         }
         .problem-item select {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M1 1l3 3 3-3' stroke='%233a5a78' stroke-width='2' fill='none'/%3E%3C/svg%3E");
@@ -259,8 +260,8 @@
             background-position: right 8px center;
             background-size: 8px;
         }
-        .problem-item textarea { resize: vertical; min-height: 32px; max-height: 70px; }
-        .problem-item .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .problem-item textarea { resize: vertical; min-height: 36px; max-height: 80px; }
+        .problem-item .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .problem-item .remove-btn {
             position: absolute;
             top: 4px;
@@ -269,9 +270,9 @@
             color: var(--danger);
             border: none;
             border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            font-size: 0.75rem;
+            width: 24px;
+            height: 24px;
+            font-size: 0.85rem;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -287,14 +288,14 @@
             align-items: center;
             justify-content: center;
             gap: 4px;
-            padding: 10px 14px;
+            padding: 12px 16px;
             border-radius: 30px;
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.95rem;
             border: none;
             cursor: pointer;
             width: 100%;
-            min-height: 42px;
+            min-height: 46px;
             transition: 0.15s;
         }
         .btn:active { transform: scale(0.97); }
@@ -310,28 +311,28 @@
             right: 0;
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(4px);
-            padding: 10px 12px calc(12px + env(safe-area-inset-bottom));
+            padding: 12px 14px calc(14px + env(safe-area-inset-bottom));
             box-shadow: 0 -4px 16px rgba(11, 59, 92, 0.08);
             z-index: 100;
             border-top: 1px solid rgba(11, 59, 92, 0.06);
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
         }
-        .summary-bar .btn { padding: 10px; font-size: 0.85rem; }
-        .summary-bar .btn-row { display: flex; gap: 8px; }
-        .summary-bar .btn-row .btn { flex: 1; padding: 8px; font-size: 0.75rem; }
+        .summary-bar .btn { padding: 12px; font-size: 0.95rem; }
+        .summary-bar .btn-row { display: flex; gap: 10px; }
+        .summary-bar .btn-row .btn { flex: 1; padding: 10px; font-size: 0.8rem; }
 
         .toast {
             position: fixed;
-            bottom: 110px;
+            bottom: 120px;
             left: 50%;
             transform: translateX(-50%);
             background: #0b3b5c;
             color: #fff;
-            padding: 8px 18px;
+            padding: 10px 22px;
             border-radius: 30px;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             font-weight: 500;
             opacity: 0;
             transition: opacity 0.3s;
@@ -344,20 +345,20 @@
         .toast.show { opacity: 1; }
         .hidden { display: none !important; }
 
-        .history-panel { margin-top: 8px; border-top: 1.5px dashed var(--border); padding-top: 8px; }
-        .history-panel summary { font-weight: 600; color: var(--primary); cursor: pointer; font-size: 0.8rem; padding: 2px 0; }
+        .history-panel { margin-top: 10px; border-top: 1.5px dashed var(--border); padding-top: 10px; }
+        .history-panel summary { font-weight: 600; color: var(--primary); cursor: pointer; font-size: 0.85rem; padding: 4px 0; }
         .history-list {
             max-height: 180px;
             overflow-y: auto;
-            font-size: 0.7rem;
+            font-size: 0.8rem;
             background: #f8fcff;
             border-radius: 8px;
-            padding: 4px 6px;
+            padding: 6px 8px;
             margin-top: 4px;
             border: 1px solid var(--border);
         }
         .history-item {
-            padding: 6px 8px;
+            padding: 8px 10px;
             border-bottom: 1px solid #eef3f8;
             display: flex;
             justify-content: space-between;
@@ -367,41 +368,50 @@
             cursor: pointer;
         }
         .history-item:last-child { border-bottom: none; }
-        .history-item .time { color: var(--text-light); font-size: 0.6rem; font-weight: 600; }
+        .history-item .time { color: var(--text-light); font-size: 0.7rem; font-weight: 600; }
         .history-item .preview { color: var(--text); font-weight: 500; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px; }
         .history-item .actions { display: flex; gap: 4px; flex-shrink: 0; }
-        .history-item .actions button { background: transparent; border: none; cursor: pointer; font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; color: var(--text-light); }
+        .history-item .actions button { background: transparent; border: none; cursor: pointer; font-size: 0.8rem; padding: 2px 8px; border-radius: 4px; color: var(--text-light); }
 
         .footer {
             text-align: center;
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             color: var(--text-light);
-            padding: 12px 0 2px;
+            padding: 14px 0 4px;
             border-top: 1px solid var(--border);
-            margin-top: 8px;
+            margin-top: 10px;
             line-height: 1.8;
         }
         .footer .phone { font-weight: 600; color: var(--primary); }
 
+        /* ===== 手机端适配 ===== */
         @media screen and (max-width: 480px) {
-            html { font-size: 16px; }
+            html { font-size: 18px; }
             .container { padding: 0 6px; }
-            .title-row .title { font-size: 1rem; }
-            .save-hint { font-size: 0.5rem; padding: 1px 8px; position: static; }
+            .title-row .title { font-size: 1.1rem; }
+            .save-hint { font-size: 0.55rem; padding: 1px 10px; position: static; }
             .title-row { flex-wrap: wrap; justify-content: center; gap: 2px; }
-            .row-2 { grid-template-columns: 1fr; gap: 6px; }
-            .check-group { grid-template-columns: 1fr 1fr 1fr; gap: 4px; }
-            .problem-item .row-2 { grid-template-columns: 1fr; gap: 4px; }
-            .card { padding: 10px 8px; border-radius: 10px; }
-            .btn { padding: 8px 10px; font-size: 0.8rem; }
-            .summary-bar { padding: 6px 8px calc(8px + env(safe-area-inset-bottom)); }
-            .summary-bar .btn-row .btn { font-size: 0.65rem; padding: 6px; }
-            .multi-select-tag { font-size: 0.6rem; padding: 1px 6px; }
-            .toast { font-size: 0.7rem; padding: 6px 14px; bottom: 100px; }
-            .problem-item .field { margin-bottom: 4px; }
-            .problem-item select, .problem-item input, .problem-item textarea { min-height: 28px; font-size: 0.7rem; padding: 4px 6px; }
+
+            .row-2 { gap: 8px; }
+            .problem-item .row-2 { gap: 6px; }
+
+            .card { padding: 12px 10px; border-radius: 10px; }
+            .btn { padding: 10px 12px; font-size: 0.85rem; min-height: 40px; }
+            .summary-bar { padding: 8px 10px calc(10px + env(safe-area-inset-bottom)); }
+            .summary-bar .btn-row .btn { font-size: 0.7rem; padding: 8px; }
+            .multi-select-tag { font-size: 0.7rem; padding: 2px 8px; }
+            .toast { font-size: 0.8rem; padding: 8px 16px; bottom: 110px; }
+            .problem-item .field { margin-bottom: 6px; }
+            .problem-item select, .problem-item input, .problem-item textarea { min-height: 32px; font-size: 0.8rem; padding: 5px 8px; }
+            .check-group { gap: 6px; }
+            .check-pill { font-size: 0.8rem; padding: 8px 4px; min-height: 36px; }
         }
+
+        /* 极端小屏 */
         @media screen and (max-width: 360px) {
+            html { font-size: 16px; }
+            .row-2 { grid-template-columns: 1fr; gap: 6px; }
+            .problem-item .row-2 { grid-template-columns: 1fr; gap: 4px; }
             .check-group { grid-template-columns: 1fr; }
             .check-pill { padding: 6px; min-height: 32px; }
         }
@@ -482,9 +492,9 @@
                 </div>
             </div>
 
-            <!-- ===== 检查设备 - 全部双列 ===== -->
-            <div style="margin-top:6px;">
-                <div class="card-title" style="font-size:0.85rem;border-bottom-color:var(--border);margin-bottom:4px;">检查设备</div>
+            <!-- ===== 检查设备 ===== -->
+            <div style="margin-top:8px;">
+                <div class="card-title" style="font-size:0.95rem;border-bottom-color:var(--border);margin-bottom:6px;">检查设备</div>
                 <div class="row-2">
                     <div class="form-group"><label>计划线路</label><input type="text" id="planLine" placeholder="K1250+000~K1252+000" /></div>
                     <div class="form-group"><label>实际线路</label><input type="text" id="actualLine" placeholder="默认同计划" /></div>
@@ -506,7 +516,7 @@
                     <label class="check-pill warning" data-value="部分完成"><input type="radio" name="completion" value="部分完成" /> ⚠️ 部分</label>
                     <label class="check-pill danger" data-value="未完成"><input type="radio" name="completion" value="未完成" /> ❌ 未完成</label>
                 </div>
-                <div id="unfinishedWrap" class="hidden" style="margin-top:4px;">
+                <div id="unfinishedWrap" class="hidden" style="margin-top:6px;">
                     <textarea id="unfinishedDevice" rows="1" placeholder="未兑现设备有哪些？"></textarea>
                 </div>
             </div>
@@ -519,9 +529,9 @@
                 <span class="stat" id="problemStats">(0条)</span>
             </div>
             <div class="problem-list" id="problemList"></div>
-            <div style="display:flex;gap:6px;margin-top:8px;">
-                <button class="btn btn-outline" id="addProblemRow" style="flex:1;padding:8px;font-size:0.75rem;">+ 添加</button>
-                <button class="btn btn-danger-outline" id="clearProblems" style="flex:1;padding:8px;font-size:0.75rem;">清空</button>
+            <div style="display:flex;gap:8px;margin-top:10px;">
+                <button class="btn btn-outline" id="addProblemRow" style="flex:1;padding:10px;font-size:0.85rem;">+ 添加</button>
+                <button class="btn btn-danger-outline" id="clearProblems" style="flex:1;padding:10px;font-size:0.85rem;">清空</button>
             </div>
         </div>
 
@@ -539,14 +549,14 @@
         </div>
 
         <!-- ===== 历史记录 ===== -->
-        <div class="card" style="margin-top:6px;">
+        <div class="card" style="margin-top:8px;">
             <div class="history-panel">
                 <details>
                     <summary>📜 查看历史提交记录</summary>
-                    <div class="history-list" id="historyList"><div style="color:var(--text-light);font-size:0.7rem;text-align:center;padding:4px;">暂无提交记录</div></div>
-                    <div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap;">
-                        <button class="btn btn-outline" id="exportTxt" style="flex:1;padding:6px;font-size:0.7rem;">📄 导出文本</button>
-                        <button class="btn btn-outline" id="exportImg" style="flex:1;padding:6px;font-size:0.7rem;">🖼️ 导出图片</button>
+                    <div class="history-list" id="historyList"><div style="color:var(--text-light);font-size:0.8rem;text-align:center;padding:6px;">暂无提交记录</div></div>
+                    <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;">
+                        <button class="btn btn-outline" id="exportTxt" style="flex:1;padding:8px;font-size:0.75rem;">📄 导出文本</button>
+                        <button class="btn btn-outline" id="exportImg" style="flex:1;padding:8px;font-size:0.75rem;">🖼️ 导出图片</button>
                     </div>
                 </details>
             </div>
@@ -1065,7 +1075,7 @@
             function renderHistory(history) {
                 var container = document.getElementById('historyList');
                 if (!history || history.length === 0) {
-                    container.innerHTML = '<div style="color:var(--text-light);font-size:0.7rem;text-align:center;padding:4px;">暂无提交记录</div>';
+                    container.innerHTML = '<div style="color:var(--text-light);font-size:0.8rem;text-align:center;padding:6px;">暂无提交记录</div>';
                     return;
                 }
                 var html = '';
@@ -1187,16 +1197,16 @@
                     var canvas = document.createElement('canvas');
                     var ctx = canvas.getContext('2d');
                     var lines = text.split('\n');
-                    var fontSize = 12,
-                        lineHeight = 20,
-                        padding = 16;
+                    var fontSize = 13,
+                        lineHeight = 22,
+                        padding = 18;
                     var maxWidth = 0;
                     ctx.font = fontSize + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
                     lines.forEach(function(l) {
                         var w = ctx.measureText(l).width;
                         if (w > maxWidth) maxWidth = w;
                     });
-                    var width = Math.max(320, maxWidth + padding * 2);
+                    var width = Math.max(340, maxWidth + padding * 2);
                     var height = lines.length * lineHeight + padding * 2 + 10;
                     canvas.width = width;
                     canvas.height = height;
