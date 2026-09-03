@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover" />
     <title>湖口检查工区日检查总结</title>
     <style>
-        /* ===== 精简版样式 ===== */
+        /* ===== 深蓝主调 · 字体大小保持不变 ===== */
         :root {
             --bg: #eef3f9;
             --card: #ffffff;
@@ -21,7 +21,7 @@
             --touch-target: 40px;
         }
         * { margin:0; padding:0; box-sizing:border-box; }
-        html { font-size: 16px; }
+        html { font-size: 18px; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
             background: var(--bg);
@@ -34,7 +34,7 @@
 
         /* 标题 */
         .title-row {
-            padding: 8px 4px 6px;
+            padding: 10px 4px 8px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -45,9 +45,9 @@
             gap: 6px;
             flex-wrap: wrap;
         }
-        .title-row .title { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
+        .title-row .title { font-size: 1.15rem; font-weight: 700; color: var(--primary); }
         .save-hint {
-            font-size: 0.55rem;
+            font-size: 0.6rem;
             color: var(--text-light);
             background: #dce4ed;
             padding: 2px 10px;
@@ -57,17 +57,17 @@
             white-space: nowrap;
         }
 
-        /* 卡片 - 更紧凑 */
+        /* 卡片 */
         .card {
             background: var(--card);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            padding: 10px 10px;
+            padding: 12px 12px;
             margin-bottom: 10px;
             border: 1px solid rgba(11, 59, 92, 0.06);
         }
         .card-title {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 700;
             margin-bottom: 8px;
             display: flex;
@@ -79,7 +79,7 @@
             flex-wrap: wrap;
         }
         .card-title .stat {
-            font-size: 0.6rem;
+            font-size: 0.7rem;
             font-weight: 400;
             color: var(--text-light);
             margin-left: auto;
@@ -88,23 +88,23 @@
         .card-title .stat .major { color: var(--warning); font-weight: 600; }
         .card-title .stat .normal { color: var(--primary); font-weight: 600; }
 
-        /* 表单 - 更紧凑 */
-        .form-group { margin-bottom: 6px; width: 100%; }
+        /* 表单 */
+        .form-group { margin-bottom: 8px; width: 100%; }
         .form-group label {
             display: block;
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             font-weight: 600;
             color: var(--text-light);
-            margin-bottom: 1px;
+            margin-bottom: 2px;
         }
         .form-group textarea,
         .form-group input,
         .form-group select {
             width: 100%;
-            padding: 6px 10px;
+            padding: 8px 12px;
             border: 1.5px solid var(--border);
             border-radius: 8px;
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             background: #f8fcff;
             font-family: inherit;
             color: var(--text);
@@ -113,11 +113,11 @@
             appearance: none;
             transition: border 0.2s;
         }
-        .form-group textarea { resize: vertical; min-height: 34px; max-height: 70px; }
+        .form-group textarea { resize: vertical; min-height: 40px; max-height: 80px; }
         .form-group select {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%233a5a78' stroke-width='2' fill='none'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 10px center;
+            background-position: right 12px center;
             background-size: 10px;
         }
         .form-group input:focus,
@@ -129,26 +129,27 @@
             background: #ffffff;
         }
 
-        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        /* 双列布局 */
+        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .row-2 .form-group { margin-bottom: 0; }
 
         /* 计划兑现 */
-        .check-group { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; }
+        .check-group { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
         .check-pill {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 2px;
-            padding: 6px 4px;
+            gap: 4px;
+            padding: 8px 6px;
             background: #f1f5f9;
             border-radius: 30px;
-            font-size: 0.7rem;
+            font-size: 0.8rem;
             cursor: pointer;
             border: 2px solid transparent;
             user-select: none;
             font-weight: 500;
             color: var(--text-light);
-            min-height: 32px;
+            min-height: 38px;
             text-align: center;
         }
         .check-pill input { display: none; }
@@ -161,8 +162,8 @@
         .multi-select-display {
             display: flex;
             flex-wrap: wrap;
-            gap: 3px;
-            padding: 4px 8px;
+            gap: 4px;
+            padding: 6px 10px;
             border: 1.5px solid var(--border);
             border-radius: 8px;
             background: #f8fcff;
@@ -170,19 +171,19 @@
             cursor: pointer;
             align-items: center;
         }
-        .multi-select-display .placeholder { color: #8aa0b8; font-size: 0.75rem; }
+        .multi-select-display .placeholder { color: #8aa0b8; font-size: 0.8rem; }
         .multi-select-tag {
             display: inline-flex;
             align-items: center;
             gap: 3px;
             background: var(--primary-light);
             color: var(--primary);
-            padding: 1px 8px;
+            padding: 2px 10px;
             border-radius: 20px;
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             font-weight: 500;
         }
-        .multi-select-tag .remove-tag { cursor: pointer; font-weight: 700; margin-left: 2px; font-size: 0.8rem; }
+        .multi-select-tag .remove-tag { cursor: pointer; font-weight: 700; margin-left: 2px; font-size: 0.85rem; }
         .multi-select-dropdown {
             display: none;
             position: absolute;
@@ -192,49 +193,49 @@
             background: #fff;
             border: 1.5px solid var(--border);
             border-radius: 10px;
-            max-height: 180px;
+            max-height: 200px;
             overflow-y: auto;
             z-index: 99;
             box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-            font-size: 0.78rem;
+            font-size: 0.8rem;
         }
         .multi-select-dropdown.show { display: block; }
         .multi-select-option {
-            padding: 8px 12px;
+            padding: 10px 14px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
             border-bottom: 1px solid #f0f2f5;
-            min-height: 36px;
+            min-height: 40px;
             user-select: none;
         }
         .multi-select-option:last-child { border-bottom: none; }
         .multi-select-option .option-check {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: var(--primary);
             font-weight: 700;
             opacity: 0;
             transition: opacity 0.15s;
-            width: 18px;
+            width: 20px;
             text-align: center;
             flex-shrink: 0;
         }
         .multi-select-option.selected .option-check { opacity: 1; }
         .multi-select-option.selected { background: var(--primary-light); }
 
-        /* ===== 突出问题 - 紧凑卡片 ===== */
-        .problem-list { display: flex; flex-direction: column; gap: 6px; }
+        /* 突出问题 */
+        .problem-list { display: flex; flex-direction: column; gap: 8px; }
         .problem-item {
             border: 1.5px solid var(--border);
             border-radius: 10px;
-            padding: 8px 8px 4px;
+            padding: 10px 10px 6px;
             background: #fafdff;
             position: relative;
         }
-        .problem-item .field { margin-bottom: 4px; width: 100%; }
+        .problem-item .field { margin-bottom: 6px; width: 100%; }
         .problem-item label {
-            font-size: 0.55rem;
+            font-size: 0.6rem;
             color: var(--text-light);
             font-weight: 600;
             display: block;
@@ -244,33 +245,33 @@
         .problem-item input,
         .problem-item textarea {
             width: 100%;
-            padding: 4px 6px;
+            padding: 5px 8px;
             border: 1px solid var(--border);
             border-radius: 6px;
-            font-size: 0.72rem;
+            font-size: 0.76rem;
             background: #fff;
             font-family: inherit;
-            min-height: 28px;
+            min-height: 32px;
         }
         .problem-item select {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M1 1l3 3 3-3' stroke='%233a5a78' stroke-width='2' fill='none'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 6px center;
+            background-position: right 8px center;
             background-size: 8px;
         }
-        .problem-item textarea { resize: vertical; min-height: 28px; max-height: 60px; }
-        .problem-item .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+        .problem-item textarea { resize: vertical; min-height: 32px; max-height: 70px; }
+        .problem-item .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
         .problem-item .remove-btn {
             position: absolute;
-            top: 2px;
-            right: 2px;
+            top: 4px;
+            right: 4px;
             background: #fee2e2;
             color: var(--danger);
             border: none;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            font-size: 0.7rem;
+            width: 22px;
+            height: 22px;
+            font-size: 0.75rem;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -286,14 +287,14 @@
             align-items: center;
             justify-content: center;
             gap: 4px;
-            padding: 10px 12px;
+            padding: 10px 14px;
             border-radius: 30px;
             font-weight: 600;
             font-size: 0.85rem;
             border: none;
             cursor: pointer;
             width: 100%;
-            min-height: 40px;
+            min-height: 42px;
             transition: 0.15s;
         }
         .btn:active { transform: scale(0.97); }
@@ -309,7 +310,7 @@
             right: 0;
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(4px);
-            padding: 8px 10px calc(10px + env(safe-area-inset-bottom));
+            padding: 10px 12px calc(12px + env(safe-area-inset-bottom));
             box-shadow: 0 -4px 16px rgba(11, 59, 92, 0.08);
             z-index: 100;
             border-top: 1px solid rgba(11, 59, 92, 0.06);
@@ -318,8 +319,8 @@
             gap: 6px;
         }
         .summary-bar .btn { padding: 10px; font-size: 0.85rem; }
-        .summary-bar .btn-row { display: flex; gap: 6px; }
-        .summary-bar .btn-row .btn { flex: 1; padding: 8px; font-size: 0.7rem; }
+        .summary-bar .btn-row { display: flex; gap: 8px; }
+        .summary-bar .btn-row .btn { flex: 1; padding: 8px; font-size: 0.75rem; }
 
         .toast {
             position: fixed;
@@ -344,11 +345,11 @@
         .hidden { display: none !important; }
 
         .history-panel { margin-top: 8px; border-top: 1.5px dashed var(--border); padding-top: 8px; }
-        .history-panel summary { font-weight: 600; color: var(--primary); cursor: pointer; font-size: 0.75rem; padding: 2px 0; }
+        .history-panel summary { font-weight: 600; color: var(--primary); cursor: pointer; font-size: 0.8rem; padding: 2px 0; }
         .history-list {
-            max-height: 160px;
+            max-height: 180px;
             overflow-y: auto;
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             background: #f8fcff;
             border-radius: 8px;
             padding: 4px 6px;
@@ -356,54 +357,53 @@
             border: 1px solid var(--border);
         }
         .history-item {
-            padding: 4px 6px;
+            padding: 6px 8px;
             border-bottom: 1px solid #eef3f8;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
             flex-wrap: wrap;
             cursor: pointer;
         }
         .history-item:last-child { border-bottom: none; }
-        .history-item .time { color: var(--text-light); font-size: 0.55rem; font-weight: 600; }
-        .history-item .preview { color: var(--text); font-weight: 500; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 120px; }
+        .history-item .time { color: var(--text-light); font-size: 0.6rem; font-weight: 600; }
+        .history-item .preview { color: var(--text); font-weight: 500; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px; }
         .history-item .actions { display: flex; gap: 4px; flex-shrink: 0; }
-        .history-item .actions button { background: transparent; border: none; cursor: pointer; font-size: 0.7rem; padding: 1px 6px; border-radius: 4px; color: var(--text-light); }
+        .history-item .actions button { background: transparent; border: none; cursor: pointer; font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; color: var(--text-light); }
 
         .footer {
             text-align: center;
-            font-size: 0.6rem;
+            font-size: 0.65rem;
             color: var(--text-light);
-            padding: 10px 0 2px;
+            padding: 12px 0 2px;
             border-top: 1px solid var(--border);
             margin-top: 8px;
-            line-height: 1.6;
+            line-height: 1.8;
         }
         .footer .phone { font-weight: 600; color: var(--primary); }
 
         @media screen and (max-width: 480px) {
-            html { font-size: 15px; }
+            html { font-size: 16px; }
             .container { padding: 0 6px; }
             .title-row .title { font-size: 1rem; }
             .save-hint { font-size: 0.5rem; padding: 1px 8px; position: static; }
             .title-row { flex-wrap: wrap; justify-content: center; gap: 2px; }
-            .row-2 { grid-template-columns: 1fr; gap: 4px; }
+            .row-2 { grid-template-columns: 1fr; gap: 6px; }
             .check-group { grid-template-columns: 1fr 1fr 1fr; gap: 4px; }
             .problem-item .row-2 { grid-template-columns: 1fr; gap: 4px; }
-            .card { padding: 8px 8px; border-radius: 10px; }
-            .btn { padding: 8px; font-size: 0.8rem; }
+            .card { padding: 10px 8px; border-radius: 10px; }
+            .btn { padding: 8px 10px; font-size: 0.8rem; }
             .summary-bar { padding: 6px 8px calc(8px + env(safe-area-inset-bottom)); }
             .summary-bar .btn-row .btn { font-size: 0.65rem; padding: 6px; }
             .multi-select-tag { font-size: 0.6rem; padding: 1px 6px; }
             .toast { font-size: 0.7rem; padding: 6px 14px; bottom: 100px; }
-            .problem-item .field { margin-bottom: 2px; }
-            .problem-item select, .problem-item input, .problem-item textarea { min-height: 24px; font-size: 0.68rem; padding: 3px 5px; }
-            .problem-item .remove-btn { width: 18px; height: 18px; font-size: 0.6rem; }
+            .problem-item .field { margin-bottom: 4px; }
+            .problem-item select, .problem-item input, .problem-item textarea { min-height: 28px; font-size: 0.7rem; padding: 4px 6px; }
         }
         @media screen and (max-width: 360px) {
             .check-group { grid-template-columns: 1fr; }
-            .check-pill { padding: 4px; min-height: 28px; }
+            .check-pill { padding: 6px; min-height: 32px; }
         }
     </style>
 </head>
@@ -482,9 +482,9 @@
                 </div>
             </div>
 
-            <!-- ===== 检查设备 ===== -->
-            <div style="margin-top:4px;">
-                <div class="card-title" style="font-size:0.8rem;border-bottom-color:var(--border);margin-bottom:4px;">检查设备</div>
+            <!-- ===== 检查设备 - 全部双列 ===== -->
+            <div style="margin-top:6px;">
+                <div class="card-title" style="font-size:0.85rem;border-bottom-color:var(--border);margin-bottom:4px;">检查设备</div>
                 <div class="row-2">
                     <div class="form-group"><label>计划线路</label><input type="text" id="planLine" placeholder="K1250+000~K1252+000" /></div>
                     <div class="form-group"><label>实际线路</label><input type="text" id="actualLine" placeholder="默认同计划" /></div>
@@ -519,9 +519,9 @@
                 <span class="stat" id="problemStats">(0条)</span>
             </div>
             <div class="problem-list" id="problemList"></div>
-            <div style="display:flex;gap:4px;margin-top:6px;">
-                <button class="btn btn-outline" id="addProblemRow" style="flex:1;padding:6px;font-size:0.7rem;">+ 添加</button>
-                <button class="btn btn-danger-outline" id="clearProblems" style="flex:1;padding:6px;font-size:0.7rem;">清空</button>
+            <div style="display:flex;gap:6px;margin-top:8px;">
+                <button class="btn btn-outline" id="addProblemRow" style="flex:1;padding:8px;font-size:0.75rem;">+ 添加</button>
+                <button class="btn btn-danger-outline" id="clearProblems" style="flex:1;padding:8px;font-size:0.75rem;">清空</button>
             </div>
         </div>
 
@@ -545,8 +545,8 @@
                     <summary>📜 查看历史提交记录</summary>
                     <div class="history-list" id="historyList"><div style="color:var(--text-light);font-size:0.7rem;text-align:center;padding:4px;">暂无提交记录</div></div>
                     <div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap;">
-                        <button class="btn btn-outline" id="exportTxt" style="flex:1;padding:4px;font-size:0.65rem;">📄 导出文本</button>
-                        <button class="btn btn-outline" id="exportImg" style="flex:1;padding:4px;font-size:0.65rem;">🖼️ 导出图片</button>
+                        <button class="btn btn-outline" id="exportTxt" style="flex:1;padding:6px;font-size:0.7rem;">📄 导出文本</button>
+                        <button class="btn btn-outline" id="exportImg" style="flex:1;padding:6px;font-size:0.7rem;">🖼️ 导出图片</button>
                     </div>
                 </details>
             </div>
