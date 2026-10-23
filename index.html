@@ -118,7 +118,6 @@
             box-shadow: 0 -4px 16px rgba(11, 59, 92, 0.08); z-index: 100; border-top: 1px solid rgba(11, 59, 92, 0.06);
             display: flex; flex-direction: column; gap: 8px;
         }
-        /* 底部 2x2 按钮布局 */
         .summary-bar .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .summary-bar .btn { padding: 12px; font-size: 0.9rem; }
 
@@ -130,6 +129,16 @@
         }
         .toast.show { opacity: 1; }
         .hidden { display: none !important; }
+
+        .history-panel { margin-top: 10px; border-top: 1.5px dashed var(--border); padding-top: 10px; }
+        .history-panel summary { font-weight: 600; color: var(--primary); cursor: pointer; font-size: 0.85rem; padding: 4px 0; }
+        .history-list { max-height: 180px; overflow-y: auto; font-size: 0.8rem; background: #f8fcff; border-radius: 8px; padding: 6px 8px; margin-top: 4px; border: 1px solid var(--border); }
+        .history-item { padding: 8px 10px; border-bottom: 1px solid #eef3f8; display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap; cursor: pointer; }
+        .history-item:last-child { border-bottom: none; }
+        .history-item .time { color: var(--text-light); font-size: 0.7rem; font-weight: 600; }
+        .history-item .preview { color: var(--text); font-weight: 500; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px; }
+        .history-item .actions { display: flex; gap: 4px; flex-shrink: 0; }
+        .history-item .actions button { background: transparent; border: none; cursor: pointer; font-size: 0.8rem; padding: 2px 8px; border-radius: 4px; color: var(--text-light); }
 
         .footer { text-align: center; font-size: 0.7rem; color: var(--text-light); padding: 14px 0 4px; border-top: 1px solid var(--border); margin-top: 10px; line-height: 1.8; }
         .footer .phone { font-weight: 600; color: var(--primary); }
@@ -230,6 +239,19 @@
         <div class="footer">
             湖口线路车间检查工区 &nbsp;|&nbsp; 联系电话 <span class="phone">18779278003</span>
         </div>
+
+        <div class="card" style="margin-top:8px;">
+            <div class="history-panel">
+                <details>
+                    <summary>📜 查看历史提交记录</summary>
+                    <div class="history-list" id="historyList"><div style="color:var(--text-light);font-size:0.8rem;text-align:center;padding:6px;">暂无提交记录</div></div>
+                    <div style="display:flex;gap:8px;margin-top:6px;">
+                        <button class="btn btn-outline" id="exportTxt" style="flex:1;padding:8px;font-size:0.75rem;">📄 导出文本</button>
+                        <button class="btn btn-outline" id="exportWordHistory" style="flex:1;padding:8px;font-size:0.75rem;">📘 导出Word</button>
+                    </div>
+                </details>
+            </div>
+        </div>
     </div>
 
     <!-- 底部 2x2 按钮功能栏 -->
@@ -245,640 +267,780 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        (function() {
-            'use strict';
+        // ================== 全局变量与工具函数 ==================
+        var LINE_FILTERS = {
+            '衢九线': { directions: ['上行', '下行', '站内'], sections: ['湖口站', '湖口至琵琶湖', '琵琶湖站', '琵琶湖至九江'] },
+            '铜九线': { directions: ['单线', '站内'], sections: ['香隅至马垱', '马垱站', '马垱至泉山', '泉山站', '泉山至彭泽', '彭泽站', '彭泽至流泗', '流泗站', '流泗至湖口', '湖口站'] },
+            '湖口疏解线': { directions: ['单线', '站内'], sections: ['湖口站'] },
+            '煤专线': { directions: ['单线', '站内'], sections: ['煤专线', '装卸站'] }
+        };
+        var ALL_DIRECTIONS = ['上行', '下行', '单线', '站内', '其他'];
+        var ALL_SECTIONS = ['香隅至马垱', '马垱站', '马垱至泉山', '泉山站', '泉山至彭泽', '彭泽站', '彭泽至流泗', '流泗站', '流泗至湖口', '湖口站', '湖口至琵琶湖', '琵琶湖站', '琵琶湖至九江', '煤专线', '装卸站'];
+        var LINE_OPTIONS = ['衢九线', '铜九线', '湖口疏解线', '煤专线'];
+        var WORK_AREAS = ['湖口道岔联整打磨工区', '湖口维修工区', '琵琶湖维修一工区', '琵琶湖维修二工区'];
+        var DINGTALK_WEBHOOK = '/.netlify/functions/send-daily-check';
+        var STORAGE_KEY = 'daily_check_data';
+        var HISTORY_KEY = 'daily_check_history';
 
-            // 清理旧数据，保证默认空页面
-            try { localStorage.removeItem('daily_check_data'); } catch(e) {}
+        function showToast(msg) {
+            var toast = document.getElementById('toast');
+            toast.textContent = msg; toast.classList.add('show');
+            if (toast._timer) clearTimeout(toast._timer);
+            toast._timer = setTimeout(function() { toast.classList.remove('show'); }, 2000);
+        }
 
-            var LINE_FILTERS = {
-                '衢九线': { directions: ['上行', '下行', '站内'], sections: ['湖口站', '湖口至琵琶湖', '琵琶湖站', '琵琶湖至九江'] },
-                '铜九线': { directions: ['单线', '站内'], sections: ['香隅至马垱', '马垱站', '马垱至泉山', '泉山站', '泉山至彭泽', '彭泽站', '彭泽至流泗', '流泗站', '流泗至湖口', '湖口站'] },
-                '湖口疏解线': { directions: ['单线', '站内'], sections: ['湖口站'] },
-                '煤专线': { directions: ['单线', '站内'], sections: ['煤专线', '装卸站'] }
-            };
-            var ALL_DIRECTIONS = ['上行', '下行', '单线', '站内', '其他'];
-            var ALL_SECTIONS = ['香隅至马垱', '马垱站', '马垱至泉山', '泉山站', '泉山至彭泽', '彭泽站', '彭泽至流泗', '流泗站', '流泗至湖口', '湖口站', '湖口至琵琶湖', '琵琶湖站', '琵琶湖至九江', '煤专线', '装卸站'];
-            var LINE_OPTIONS = ['衢九线', '铜九线', '湖口疏解线', '煤专线'];
-            var WORK_AREAS = ['湖口道岔联整打磨工区', '湖口维修工区', '琵琶湖维修一工区', '琵琶湖维修二工区'];
+        function getTodayStr() {
+            var now = new Date();
+            return now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+        }
 
-            var DINGTALK_WEBHOOK = '/.netlify/functions/send-daily-check';
-            var STORAGE_KEY = 'daily_check_data';
+        function formatDateCN(dateStr) {
+            var d = dateStr ? new Date(dateStr + 'T00:00:00') : new Date();
+            if (isNaN(d.getTime())) d = new Date();
+            return d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日';
+        }
 
-            function showToast(msg, duration) {
-                duration = duration || 2000;
-                var toast = document.getElementById('toast');
-                toast.textContent = msg; toast.classList.add('show');
-                if (toast._timer) clearTimeout(toast._timer);
-                toast._timer = setTimeout(function() { toast.classList.remove('show'); }, duration);
-            }
+        function getFiltered(lineVal) {
+            return LINE_FILTERS[lineVal] || { directions: ALL_DIRECTIONS, sections: ALL_SECTIONS };
+        }
 
-            function getTodayStr() {
-                var now = new Date();
-                return now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
-            }
+        // ================== 检查设备模块 ==================
+        function addDeviceItem(data) {
+            data = data || {};
+            var f = getFiltered(data.line || '');
+            
+            var lineOpts = '<option value="">选择</option>';
+            for (var i=0; i<LINE_OPTIONS.length; i++) lineOpts += '<option value="'+LINE_OPTIONS[i]+'" '+(data.line===LINE_OPTIONS[i]?'selected':'')+'>'+LINE_OPTIONS[i]+'</option>';
+            
+            var dirOpts = '<option value="">选择</option>';
+            for (var j=0; j<f.directions.length; j++) dirOpts += '<option value="'+f.directions[j]+'" '+(data.dir===f.directions[j]?'selected':'')+'>'+f.directions[j]+'</option>';
+            
+            var workAreaOpts = '<option value="">选择</option>';
+            for (var k=0; k<WORK_AREAS.length; k++) workAreaOpts += '<option value="'+WORK_AREAS[k]+'" '+(data.workArea===WORK_AREAS[k]?'selected':'')+'>'+WORK_AREAS[k]+'</option>';
+            
+            var secOpts = '<option value="">选择</option>';
+            for (var n=0; n<f.sections.length; n++) secOpts += '<option value="'+f.sections[n]+'" '+(data.section===f.sections[n]?'selected':'')+'>'+f.sections[n]+'</option>';
 
-            function formatDateCN(dateStr) {
-                var d = dateStr ? new Date(dateStr + 'T00:00:00') : new Date();
-                if (isNaN(d.getTime())) d = new Date();
-                return d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日';
-            }
+            var html = '<div class="problem-item device-item">';
+            html += '<button class="remove-btn" type="button" onclick="this.parentNode.remove()">×</button>';
+            html += '<div class="row-2"><div class="field"><label>设备工区</label><select class="d-workArea">' + workAreaOpts + '</select></div><div class="field"><label>线名</label><select class="d-line">' + lineOpts + '</select></div></div>';
+            html += '<div class="row-2"><div class="field"><label>行别</label><select class="d-dir">' + dirOpts + '</select></div><div class="field"><label>区间/站场</label><select class="d-section">' + secOpts + '</select></div></div>';
+            html += '<div class="row-2"><div class="field"><label>计划线路</label><input class="d-planLine" placeholder="K1250+000~K1252+000" value="' + (data.planLine||'') + '" /></div><div class="field"><label>实际线路</label><input class="d-actualLine" placeholder="默认同计划" value="' + (data.actualLine||'') + '" /></div></div>';
+            html += '<div class="row-2"><div class="field"><label>计划道岔</label><input class="d-planSwitch" placeholder="湖口站3#、5#" value="' + (data.planSwitch||'') + '" /></div><div class="field"><label>实际道岔</label><input class="d-actualSwitch" placeholder="默认同计划" value="' + (data.actualSwitch||'') + '" /></div></div>';
+            html += '<div class="row-2"><div class="field"><label>计划股道</label><input class="d-planTrack" placeholder="1道、3道" value="' + (data.planTrack||'') + '" /></div><div class="field"><label>实际股道</label><input class="d-actualTrack" placeholder="默认同计划" value="' + (data.actualTrack||'') + '" /></div></div>';
+            html += '</div>';
 
-            var dateInput = document.getElementById('checkDate');
-            var todayStr = getTodayStr();
-            try { dateInput.value = todayStr; } catch(e) {}
-            dateInput.setAttribute('max', todayStr);
+            var div = document.createElement('div');
+            div.innerHTML = html;
+            var item = div.firstElementChild;
+            document.getElementById('deviceList').appendChild(item);
 
-            function getFiltered(lineVal) {
-                var f = LINE_FILTERS[lineVal];
-                if (f) return f;
-                return { directions: ALL_DIRECTIONS, sections: ALL_SECTIONS };
-            }
-
-            var deviceList = document.getElementById('deviceList');
-            var problemList = document.getElementById('problemList');
-            var seriousNoticeCard = document.getElementById('seriousNoticeCard');
-            var seriousNoticeList = document.getElementById('seriousNoticeList');
-            var completionPills = document.querySelectorAll('.check-pill');
-            var unfinishedWrap = document.getElementById('unfinishedWrap');
-            var unfinishedDeviceInput = document.getElementById('unfinishedDevice');
-
-            // --- 检查设备模块 ---
-            function buildDeviceHtml(data) {
-                data = data || {};
-                var f = getFiltered(data.line || '');
+            // 事件绑定
+            var lineSel = item.querySelector('.d-line');
+            lineSel.addEventListener('change', function() {
+                var newF = getFiltered(this.value);
+                var dirSel = item.querySelector('.d-dir'); var curDir = dirSel.value;
+                var secSel = item.querySelector('.d-section'); var curSec = secSel.value;
                 
-                var lineOpts = '<option value="">选择</option>';
-                for (var i=0; i<LINE_OPTIONS.length; i++) lineOpts += '<option value="'+LINE_OPTIONS[i]+'" '+(data.line===LINE_OPTIONS[i]?'selected':'')+'>'+LINE_OPTIONS[i]+'</option>';
+                var dOpts = '<option value="">选择</option>';
+                for (var i=0; i<newF.directions.length; i++) dOpts += '<option value="'+newF.directions[i]+'" '+(curDir===newF.directions[i]?'selected':'')+'>'+newF.directions[i]+'</option>';
+                dirSel.innerHTML = dOpts;
                 
-                var dirOpts = '<option value="">选择</option>';
-                for (var j=0; j<f.directions.length; j++) dirOpts += '<option value="'+f.directions[j]+'" '+(data.dir===f.directions[j]?'selected':'')+'>'+f.directions[j]+'</option>';
-                
-                var workAreaOpts = '<option value="">选择</option>';
-                for (var k=0; k<WORK_AREAS.length; k++) workAreaOpts += '<option value="'+WORK_AREAS[k]+'" '+(data.workArea===WORK_AREAS[k]?'selected':'')+'>'+WORK_AREAS[k]+'</option>';
-                
-                var secOpts = '<option value="">选择</option>';
-                for (var n=0; n<f.sections.length; n++) secOpts += '<option value="'+f.sections[n]+'" '+(data.section===f.sections[n]?'selected':'')+'>'+f.sections[n]+'</option>';
+                var sOpts = '<option value="">选择</option>';
+                for (var j=0; j<newF.sections.length; j++) sOpts += '<option value="'+newF.sections[j]+'" '+(curSec===newF.sections[j]?'selected':'')+'>'+newF.sections[j]+'</option>';
+                secSel.innerHTML = sOpts;
+                autoSave();
+            });
 
-                var html = '<div class="problem-item device-item">';
-                html += '<button class="remove-btn" type="button" onclick="this.parentNode.remove()">×</button>';
-                html += '<div class="row-2"><div class="field"><label>设备工区</label><select class="d-workArea">' + workAreaOpts + '</select></div><div class="field"><label>线名</label><select class="d-line">' + lineOpts + '</select></div></div>';
-                html += '<div class="row-2"><div class="field"><label>行别</label><select class="d-dir">' + dirOpts + '</select></div><div class="field"><label>区间/站场</label><select class="d-section">' + secOpts + '</select></div></div>';
-                html += '<div class="row-2"><div class="field"><label>计划线路</label><input class="d-planLine" placeholder="K1250+000~K1252+000" value="' + (data.planLine||'') + '" /></div><div class="field"><label>实际线路</label><input class="d-actualLine" placeholder="默认同计划" value="' + (data.actualLine||'') + '" /></div></div>';
-                html += '<div class="row-2"><div class="field"><label>计划道岔</label><input class="d-planSwitch" placeholder="湖口站3#、5#" value="' + (data.planSwitch||'') + '" /></div><div class="field"><label>实际道岔</label><input class="d-actualSwitch" placeholder="默认同计划" value="' + (data.actualSwitch||'') + '" /></div></div>';
-                html += '<div class="row-2"><div class="field"><label>计划股道</label><input class="d-planTrack" placeholder="1道、3道" value="' + (data.planTrack||'') + '" /></div><div class="field"><label>实际股道</label><input class="d-actualTrack" placeholder="默认同计划" value="' + (data.actualTrack||'') + '" /></div></div>';
-                html += '</div>';
-                return html;
+            var pairs = [['.d-planLine','.d-actualLine'],['.d-planSwitch','.d-actualSwitch'],['.d-planTrack','.d-actualTrack']];
+            for(var p=0; p<pairs.length; p++) {
+                (function(pair) {
+                    var src = item.querySelector(pair[0]);
+                    var dst = item.querySelector(pair[1]);
+                    if (src.value && !dst.value) { dst.value = src.value; dst.dataset.auto = 'true'; }
+                    src.addEventListener('input', function() { 
+                        if(!dst.value || dst.dataset.auto === 'true') { dst.value = this.value; dst.dataset.auto = 'true'; } 
+                    });
+                    dst.addEventListener('input', function() { 
+                        dst.dataset.auto = (this.value === src.value) ? 'true' : 'false'; 
+                    });
+                })(pairs[p]);
             }
 
-            function addDeviceItem(data) {
-                var div = document.createElement('div');
-                div.innerHTML = buildDeviceHtml(data);
-                var item = div.firstElementChild;
-                deviceList.appendChild(item);
+            var allInputs = item.querySelectorAll('select, input');
+            for(var n=0; n<allInputs.length; n++) { allInputs[n].addEventListener('change', autoSave); allInputs[n].addEventListener('input', autoSave); }
+        }
+
+        // ================== 突出问题模块 ==================
+        function addProblemItem(data) {
+            data = data || {};
+            var f = getFiltered(data.line || '');
+            
+            var waOpts = '<option value="">选择</option>';
+            for (var k=0; k<WORK_AREAS.length; k++) waOpts += '<option value="'+WORK_AREAS[k]+'" '+(data.workArea===WORK_AREAS[k]?'selected':'')+'>'+WORK_AREAS[k]+'</option>';
+            
+            var typeOpts = '';
+            var types = ['线路', '道岔', '股道', '其他'];
+            for (var i=0; i<types.length; i++) typeOpts += '<option value="'+types[i]+'" '+(data.type===types[i]?'selected':'')+'>'+types[i]+'</option>';
+            
+            var lineOpts = '<option value="">选择</option>';
+            for (var j=0; j<LINE_OPTIONS.length; j++) lineOpts += '<option value="'+LINE_OPTIONS[j]+'" '+(data.line===LINE_OPTIONS[j]?'selected':'')+'>'+LINE_OPTIONS[j]+'</option>';
+            
+            var dirOpts = '<option value="">选择</option>';
+            for (var m=0; m<f.directions.length; m++) dirOpts += '<option value="'+f.directions[m]+'" '+(data.dir===f.directions[m]?'selected':'')+'>'+f.directions[m]+'</option>';
+            
+            var secOpts = '<option value="">选择</option>';
+            for (var n=0; n<f.sections.length; n++) secOpts += '<option value="'+f.sections[n]+'" '+(data.section===f.sections[n]?'selected':'')+'>'+f.sections[n]+'</option>';
+
+            var sevVal = data.severity || '一般';
+
+            var html = '<div class="problem-item">';
+            html += '<button class="remove-btn" type="button" onclick="this.parentNode.remove()">×</button>';
+            html += '<div class="row-2"><div class="field"><label>设备工区</label><select class="p-workArea">' + waOpts + '</select></div><div class="field"><label>设备类型</label><select class="p-type">' + typeOpts + '</select></div></div>';
+            html += '<div class="row-2"><div class="field"><label>线名</label><select class="p-line">' + lineOpts + '</select></div><div class="field"><label>行别</label><select class="p-dir">' + dirOpts + '</select></div></div>';
+            html += '<div class="field"><label>区间/站场</label><select class="p-section">' + secOpts + '</select></div>';
+            html += '<div class="field"><label>地点</label><input class="p-location" placeholder="K___+___ / 道岔号 / 股道号" value="' + (data.location||'') + '" /></div>';
+            html += '<div class="field"><label>病害描述</label><textarea class="p-desc" rows="1" placeholder="请描述病害情况...">' + (data.desc||'') + '</textarea></div>';
+            html += '<div class="field"><label>严重程度</label><select class="p-severity"><option value="一般" '+(sevVal==='一般'?'selected':'')+'>一般</option><option value="较重" '+(sevVal==='较重'?'selected':'')+'>较重</option><option value="严重" '+(sevVal==='严重'?'selected':'')+'>严重</option></select></div>';
+            html += '</div>';
+
+            var div = document.createElement('div');
+            div.innerHTML = html;
+            var item = div.firstElementChild;
+            document.getElementById('problemList').appendChild(item);
+            
+            var lineSel = item.querySelector('.p-line');
+            lineSel.addEventListener('change', function() {
+                var newF = getFiltered(this.value);
+                var dirSel = item.querySelector('.p-dir'); var curDir = dirSel.value;
+                var secSel = item.querySelector('.p-section'); var curSec = secSel.value;
                 
-                var lineSel = item.querySelector('.d-line');
-                lineSel.addEventListener('change', function() {
-                    var f = getFiltered(this.value);
-                    var dirSel = item.querySelector('.d-dir'); var curDir = dirSel.value;
-                    var secSel = item.querySelector('.d-section'); var curSec = secSel.value;
-                    
-                    var dirOpts = '<option value="">选择</option>';
-                    for (var i=0; i<f.directions.length; i++) dirOpts += '<option value="'+f.directions[i]+'" '+(curDir===f.directions[i]?'selected':'')+'>'+f.directions[i]+'</option>';
-                    dirSel.innerHTML = dirOpts;
-                    
-                    var secOpts = '<option value="">选择</option>';
-                    for (var j=0; j<f.sections.length; j++) secOpts += '<option value="'+f.sections[j]+'" '+(curSec===f.sections[j]?'selected':'')+'>'+f.sections[j]+'</option>';
-                    secSel.innerHTML = secOpts;
-                    autoSave();
-                });
-
-                var pairs = [['.d-planLine','.d-actualLine'],['.d-planSwitch','.d-actualSwitch'],['.d-planTrack','.d-actualTrack']];
-                for(var p=0; p<pairs.length; p++) {
-                    (function(pair) {
-                        var src = item.querySelector(pair[0]);
-                        var dst = item.querySelector(pair[1]);
-                        if (src.value && !dst.value) { dst.value = src.value; dst.dataset.auto = 'true'; }
-                        src.addEventListener('input', function() { 
-                            if(!dst.value || dst.dataset.auto === 'true') { dst.value = this.value; dst.dataset.auto = 'true'; } 
-                        });
-                        dst.addEventListener('input', function() { 
-                            dst.dataset.auto = (this.value === src.value) ? 'true' : 'false'; 
-                        });
-                    })(pairs[p]);
-                }
-
-                var allInputs = item.querySelectorAll('select, input');
-                for(var n=0; n<allInputs.length; n++) { allInputs[n].addEventListener('change', autoSave); allInputs[n].addEventListener('input', autoSave); }
-            }
-
-            document.getElementById('addDeviceRow').addEventListener('click', function() { addDeviceItem(); });
-            document.getElementById('clearDevices').addEventListener('click', function() {
-                if (confirm('确定清空所有检查设备记录吗？')) { deviceList.innerHTML = ''; autoSave(); }
+                var dOpts = '<option value="">选择</option>';
+                for (var i=0; i<newF.directions.length; i++) dOpts += '<option value="'+newF.directions[i]+'" '+(curDir===newF.directions[i]?'selected':'')+'>'+newF.directions[i]+'</option>';
+                dirSel.innerHTML = dOpts;
+                
+                var sOpts = '<option value="">选择</option>';
+                for (var j=0; j<newF.sections.length; j++) sOpts += '<option value="'+newF.sections[j]+'" '+(curSec===newF.sections[j]?'selected':'')+'>'+newF.sections[j]+'</option>';
+                secSel.innerHTML = sOpts;
+                updateProblemStats(); autoSave();
             });
             
-            // --- 突出问题模块 ---
-            function buildProblemHtml(data) {
-                data = data || {};
-                var f = getFiltered(data.line || '');
-                
-                var waOpts = '<option value="">选择</option>';
-                for (var k=0; k<WORK_AREAS.length; k++) waOpts += '<option value="'+WORK_AREAS[k]+'" '+(data.workArea===WORK_AREAS[k]?'selected':'')+'>'+WORK_AREAS[k]+'</option>';
-                
-                var typeOpts = '';
-                var types = ['线路', '道岔', '股道', '其他'];
-                for (var i=0; i<types.length; i++) typeOpts += '<option value="'+types[i]+'" '+(data.type===types[i]?'selected':'')+'>'+types[i]+'</option>';
-                
-                var lineOpts = '<option value="">选择</option>';
-                for (var j=0; j<LINE_OPTIONS.length; j++) lineOpts += '<option value="'+LINE_OPTIONS[j]+'" '+(data.line===LINE_OPTIONS[j]?'selected':'')+'>'+LINE_OPTIONS[j]+'</option>';
-                
-                var dirOpts = '<option value="">选择</option>';
-                for (var m=0; m<f.directions.length; m++) dirOpts += '<option value="'+f.directions[m]+'" '+(data.dir===f.directions[m]?'selected':'')+'>'+f.directions[m]+'</option>';
-                
-                var secOpts = '<option value="">选择</option>';
-                for (var n=0; n<f.sections.length; n++) secOpts += '<option value="'+f.sections[n]+'" '+(data.section===f.sections[n]?'selected':'')+'>'+f.sections[n]+'</option>';
+            var fields = item.querySelectorAll('select, input, textarea');
+            for(var k=0; k<fields.length; k++) {
+                fields[k].addEventListener('change', function() { updateProblemStats(); autoSave(); });
+                fields[k].addEventListener('input', function() { updateProblemStats(); autoSave(); });
+            }
+            updateProblemStats();
+        }
 
-                var sevVal = data.severity || '一般';
+        // ================== 数据收集与统计 ==================
+        function getProblemStats(problems) {
+            var serious = 0, major = 0, normal = 0;
+            for (var i=0; i<problems.length; i++) {
+                if (problems[i].severity === '严重') serious++;
+                else if (problems[i].severity === '较重') major++;
+                else normal++;
+            }
+            return { serious: serious, major: major, normal: normal, total: problems.length };
+        }
 
-                var html = '<div class="problem-item">';
-                html += '<button class="remove-btn" type="button" onclick="this.parentNode.remove()">×</button>';
-                html += '<div class="row-2"><div class="field"><label>设备工区</label><select class="p-workArea">' + waOpts + '</select></div><div class="field"><label>设备类型</label><select class="p-type">' + typeOpts + '</select></div></div>';
-                html += '<div class="row-2"><div class="field"><label>线名</label><select class="p-line">' + lineOpts + '</select></div><div class="field"><label>行别</label><select class="p-dir">' + dirOpts + '</select></div></div>';
-                html += '<div class="field"><label>区间/站场</label><select class="p-section">' + secOpts + '</select></div>';
-                html += '<div class="field"><label>地点</label><input class="p-location" placeholder="K___+___ / 道岔号 / 股道号" value="' + (data.location||'') + '" /></div>';
-                html += '<div class="field"><label>病害描述</label><textarea class="p-desc" rows="1" placeholder="请描述病害情况...">' + (data.desc||'') + '</textarea></div>';
-                html += '<div class="field"><label>严重程度</label><select class="p-severity"><option value="一般" '+(sevVal==='一般'?'selected':'')+'>一般</option><option value="较重" '+(sevVal==='较重'?'selected':'')+'>较重</option><option value="严重" '+(sevVal==='严重'?'selected':'')+'>严重</option></select></div>';
-                html += '</div>';
-                return html;
+        function updateProblemStats() {
+            var items = document.getElementById('problemList').querySelectorAll('.problem-item');
+            var problems = [];
+            for (var i=0; i<items.length; i++) {
+                var item = items[i];
+                var type = item.querySelector('.p-type').value;
+                var workArea = item.querySelector('.p-workArea').value;
+                var line = item.querySelector('.p-line').value;
+                var dir = item.querySelector('.p-dir').value;
+                var section = item.querySelector('.p-section').value;
+                var loc = item.querySelector('.p-location').value.trim();
+                var desc = item.querySelector('.p-desc').value.trim();
+                var sev = item.querySelector('.p-severity').value;
+                if (loc || desc || type || workArea || line) {
+                    problems.push({ workArea: workArea, type: type, line: line, dir: dir, section: section, location: loc, desc: desc, severity: sev });
+                }
+            }
+            var stats = getProblemStats(problems);
+            var statEl = document.getElementById('problemStats');
+            if (stats.total === 0) statEl.textContent = '(0条)';
+            else {
+                var parts = [];
+                if (stats.serious > 0) parts.push('<span class="serious">严重' + stats.serious + '条</span>');
+                if (stats.major > 0) parts.push('<span class="major">较重' + stats.major + '条</span>');
+                if (stats.normal > 0) parts.push('<span class="normal">一般' + stats.normal + '条</span>');
+                statEl.innerHTML = '（共' + stats.total + '条，' + parts.join('、') + '）';
             }
 
-            function addProblemItem(data) {
-                var div = document.createElement('div');
-                div.innerHTML = buildProblemHtml(data);
-                var item = div.firstElementChild;
-                problemList.appendChild(item);
-                
-                var lineSel = item.querySelector('.p-line');
-                lineSel.addEventListener('change', function() {
-                    var f = getFiltered(this.value);
-                    var dirSel = item.querySelector('.p-dir'); var curDir = dirSel.value;
-                    var secSel = item.querySelector('.p-section'); var curSec = secSel.value;
-                    
-                    var dirOpts = '<option value="">选择</option>';
-                    for (var i=0; i<f.directions.length; i++) dirOpts += '<option value="'+f.directions[i]+'" '+(curDir===f.directions[i]?'selected':'')+'>'+f.directions[i]+'</option>';
-                    dirSel.innerHTML = dirOpts;
-                    
-                    var secOpts = '<option value="">选择</option>';
-                    for (var j=0; j<f.sections.length; j++) secOpts += '<option value="'+f.sections[j]+'" '+(curSec===f.sections[j]?'selected':'')+'>'+f.sections[j]+'</option>';
-                    secSel.innerHTML = secOpts;
-                    updateProblemStats(); autoSave();
+            var seriousProblems = [];
+            for(var j=0; j<problems.length; j++) { if(problems[j].severity === '严重') seriousProblems.push(problems[j]); }
+            
+            var noticeCard = document.getElementById('seriousNoticeCard');
+            var noticeList = document.getElementById('seriousNoticeList');
+            if (seriousProblems.length > 0) {
+                noticeCard.classList.remove('hidden');
+                var nHtml = '';
+                for (var k=0; k<seriousProblems.length; k++) {
+                    var p = seriousProblems[k];
+                    nHtml += '<div class="notice-item">';
+                    nHtml += '<div class="n-title">严重病害 ' + (k+1) + '</div>';
+                    nHtml += '<div class="n-row"><div><span class="n-label">责任工区：</span><span class="n-val">' + (p.workArea || '—') + '</span></div><div><span class="n-label">设备类型：</span><span class="n-val">' + (p.type || '—') + '</span></div></div>';
+                    nHtml += '<div class="n-row"><div><span class="n-label">线&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名：</span><span class="n-val">' + (p.line || '—') + '</span></div><div><span class="n-label">行别：</span><span class="n-val">' + (p.dir || '—') + '</span></div></div>';
+                    nHtml += '<div class="n-row"><div><span class="n-label">区间/站场：</span><span class="n-val">' + (p.section || '—') + '</span></div></div>';
+                    nHtml += '<div class="n-row"><div><span class="n-label">地&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;点：</span><span class="n-val">' + (p.location || '—') + '</span></div></div>';
+                    nHtml += '<div class="n-row"><div><span class="n-label">病害描述：</span><span class="n-val">' + (p.desc || '—') + '</span></div></div>';
+                    nHtml += '</div>';
+                }
+                noticeList.innerHTML = nHtml;
+            } else { noticeCard.classList.add('hidden'); noticeList.innerHTML = ''; }
+            return stats;
+        }
+
+        function gatherDevices() {
+            var devices = [];
+            var items = document.getElementById('deviceList').querySelectorAll('.device-item');
+            for (var i=0; i<items.length; i++) {
+                var item = items[i];
+                var workArea = item.querySelector('.d-workArea').value;
+                var line = item.querySelector('.d-line').value;
+                var dir = item.querySelector('.d-dir').value;
+                var section = item.querySelector('.d-section').value;
+                var planLine = item.querySelector('.d-planLine').value.trim();
+                var actualLine = item.querySelector('.d-actualLine').value.trim();
+                var planSwitch = item.querySelector('.d-planSwitch').value.trim();
+                var actualSwitch = item.querySelector('.d-actualSwitch').value.trim();
+                var planTrack = item.querySelector('.d-planTrack').value.trim();
+                var actualTrack = item.querySelector('.d-actualTrack').value.trim();
+                if (workArea || line || dir || section || planLine || actualLine || planSwitch || actualSwitch || planTrack || actualTrack) {
+                    devices.push({ workArea: workArea, line: line, dir: dir, section: section, planLine: planLine, actualLine: actualLine, planSwitch: planSwitch, actualSwitch: actualSwitch, planTrack: planTrack, actualTrack: actualTrack });
+                }
+            }
+            return devices;
+        }
+
+        function gatherFormData() {
+            var todayStr = getTodayStr();
+            var data = {
+                date: document.getElementById('checkDate').value || todayStr,
+                inspector: document.getElementById('inspector').value.trim(),
+                devices: gatherDevices(),
+                completion: '',
+                unfinishedDevice: document.getElementById('unfinishedDevice').value.trim(),
+                problems: [],
+                remarks: document.getElementById('remarks').value.trim()
+            };
+            var selectedPill = document.querySelector('.check-pill.selected');
+            if (selectedPill) data.completion = selectedPill.getAttribute('data-value');
+            
+            var items = document.getElementById('problemList').querySelectorAll('.problem-item');
+            for (var i=0; i<items.length; i++) {
+                var item = items[i];
+                var type = item.querySelector('.p-type').value;
+                var workArea = item.querySelector('.p-workArea').value;
+                var line = item.querySelector('.p-line').value;
+                var dir = item.querySelector('.p-dir').value;
+                var section = item.querySelector('.p-section').value;
+                var loc = item.querySelector('.p-location').value.trim();
+                var desc = item.querySelector('.p-desc').value.trim();
+                var sev = item.querySelector('.p-severity').value;
+                if (loc || desc || type || workArea || line) {
+                    data.problems.push({ workArea: workArea, type: type, line: line, dir: dir, section: section, location: loc, desc: desc, severity: sev });
+                }
+            }
+            return data;
+        }
+
+        // ================== 历史记录 ==================
+        function loadHistory() {
+            try { var raw = localStorage.getItem(HISTORY_KEY); if (raw) { var history = JSON.parse(raw); renderHistory(history); return history; } } catch (e) {}
+            return [];
+        }
+        function saveHistory(entry) {
+            try { var history = loadHistory(); history.unshift(entry); if (history.length > 50) history = history.slice(0, 50); localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); renderHistory(history); } catch (e) {}
+        }
+        function renderHistory(history) {
+            var container = document.getElementById('historyList');
+            if (!history || history.length === 0) { container.innerHTML = '<div style="color:var(--text-light);font-size:0.8rem;text-align:center;padding:6px;">暂无提交记录</div>'; return; }
+            var html = '';
+            for (var i=0; i<history.length; i++) {
+                var h = history[i];
+                var preview = '无设备';
+                if (h.data && h.data.devices && h.data.devices.length) {
+                    var dev = h.data.devices[0];
+                    preview = dev.planLine || dev.planSwitch || dev.planTrack || dev.line || '设备记录';
+                }
+                if (preview.length > 20) preview = preview.substring(0, 20) + '…';
+                html += '<div class="history-item" data-index="' + i + '"><span class="time">' + (h.time || '') + '</span><span class="preview" title="' + preview + '">' + preview + '</span><span class="actions"><button class="load-history" data-index="' + i + '" title="加载">📂</button><button class="del-history" data-index="' + i + '" title="删除">🗑️</button></span></div>';
+            }
+            container.innerHTML = html;
+            
+            var loadBtns = container.querySelectorAll('.load-history');
+            for(var j=0; j<loadBtns.length; j++) {
+                loadBtns[j].addEventListener('click', function(e) {
+                    e.stopPropagation(); var idx = parseInt(this.getAttribute('data-index')); var history = loadHistory();
+                    if (history && history[idx]) { 
+                        var data = history[idx].data; 
+                        if (data) { 
+                            document.getElementById('checkDate').value = data.date || '';
+                            document.getElementById('inspector').value = data.inspector || '';
+                            document.getElementById('remarks').value = data.remarks || '';
+                            document.getElementById('unfinishedDevice').value = data.unfinishedDevice || '';
+                            
+                            document.getElementById('deviceList').innerHTML = '';
+                            if(data.devices) for(var d=0; d<data.devices.length; d++) addDeviceItem(data.devices[d]);
+                            
+                            document.getElementById('problemList').innerHTML = '';
+                            if(data.problems) for(var p=0; p<data.problems.length; p++) addProblemItem(data.problems[p]);
+                            
+                            var pills = document.querySelectorAll('.check-pill');
+                            for(var c=0; c<pills.length; c++) {
+                                pills[c].classList.remove('selected');
+                                if (pills[c].getAttribute('data-value') === data.completion) pills[c].classList.add('selected');
+                            }
+                            updateProblemStats();
+                            showToast('📂 已加载历史记录'); 
+                        } 
+                    }
                 });
-                
-                var fields = item.querySelectorAll('select, input, textarea');
-                for(var k=0; k<fields.length; k++) {
-                    fields[k].addEventListener('change', function() { updateProblemStats(); autoSave(); });
-                    fields[k].addEventListener('input', function() { updateProblemStats(); autoSave(); });
-                }
-                updateProblemStats();
             }
-
-            document.getElementById('addProblemRow').addEventListener('click', function() { addProblemItem(); });
-            document.getElementById('clearProblems').addEventListener('click', function() {
-                if (confirm('确定清空所有问题记录吗？')) { problemList.innerHTML = ''; updateProblemStats(); autoSave(); }
-            });
-
-            // --- 计划兑现 ---
-            for(var cp=0; cp<completionPills.length; cp++) {
-                completionPills[cp].addEventListener('click', function() {
-                    for(var i=0; i<completionPills.length; i++) completionPills[i].classList.remove('selected');
-                    this.classList.add('selected');
-                    var radio = this.querySelector('input'); if (radio) radio.checked = true;
-                    var val = this.getAttribute('data-value');
-                    if (val === '部分完成' || val === '未完成') {
-                        unfinishedWrap.classList.remove('hidden');
-                        unfinishedDeviceInput.placeholder = val === '未完成' ? '未检查原因及涉及设备' : '未兑现设备有哪些？';
-                    } else { unfinishedWrap.classList.add('hidden'); unfinishedDeviceInput.value = ''; }
-                    autoSave();
+            var delBtns = container.querySelectorAll('.del-history');
+            for(var k=0; k<delBtns.length; k++) {
+                delBtns[k].addEventListener('click', function(e) {
+                    e.stopPropagation(); if (!confirm('确定删除这条历史记录吗？')) return;
+                    var idx = parseInt(this.getAttribute('data-index')); var history = loadHistory();
+                    if (history && history[idx]) { history.splice(idx, 1); localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); renderHistory(history); showToast('🗑️ 已删除'); }
                 });
             }
+        }
 
-            function getProblemStats(problems) {
-                var serious = 0, major = 0, normal = 0;
-                for (var i=0; i<problems.length; i++) {
-                    if (problems[i].severity === '严重') serious++;
-                    else if (problems[i].severity === '较重') major++;
-                    else normal++;
+        // ================== 导出功能 ==================
+        function buildExportText(data) {
+            var stats = getProblemStats(data.problems || []);
+            var lines = [];
+            
+            lines.push('湖口检查工区' + formatDateCN(data.date) + '检查总结');
+            lines.push('');
+            lines.push('检查日期：' + data.date);
+            lines.push('');
+            lines.push('检查负责人：' + data.inspector);
+            lines.push('');
+            
+            if (data.devices && data.devices.length > 0) {
+                lines.push('⑴ 检查设备');
+                for(var i=0; i<data.devices.length; i++) {
+                    var d = data.devices[i];
+                    lines.push((d.workArea||'') + ' ' + (d.line || '') + ' ' + (d.dir || '') + ' ' + (d.section || ''));
+                    if (d.planLine || d.actualLine) lines.push('   线路：计划检查 ' + (d.planLine || '—') + ' ；实际兑现 ' + (d.actualLine || '—'));
+                    if (d.planSwitch || d.actualSwitch) lines.push('   道岔：计划检查 ' + (d.planSwitch || '—') + ' ；实际兑现 ' + (d.actualSwitch || '—'));
+                    if (d.planTrack || d.actualTrack) lines.push('   股道：计划检查 ' + (d.planTrack || '—') + ' ；实际兑现 ' + (d.actualTrack || '—'));
+                    lines.push('');
                 }
-                return { serious: serious, major: major, normal: normal, total: problems.length };
             }
-
-            function updateProblemStats() {
-                var items = problemList.querySelectorAll('.problem-item');
-                var problems = [];
-                for (var i=0; i<items.length; i++) {
-                    var item = items[i];
-                    var type = item.querySelector('.p-type').value;
-                    var workArea = item.querySelector('.p-workArea').value;
-                    var line = item.querySelector('.p-line').value;
-                    var dir = item.querySelector('.p-dir').value;
-                    var section = item.querySelector('.p-section').value;
-                    var loc = item.querySelector('.p-location').value.trim();
-                    var desc = item.querySelector('.p-desc').value.trim();
-                    var sev = item.querySelector('.p-severity').value;
-                    if (loc || desc || type || workArea || line) {
-                        problems.push({ workArea: workArea, type: type, line: line, dir: dir, section: section, location: loc, desc: desc, severity: sev });
-                    }
-                }
-                var stats = getProblemStats(problems);
-                var statEl = document.getElementById('problemStats');
-                if (stats.total === 0) statEl.textContent = '(0条)';
-                else {
-                    var parts = [];
-                    if (stats.serious > 0) parts.push('<span class="serious">严重' + stats.serious + '条</span>');
-                    if (stats.major > 0) parts.push('<span class="major">较重' + stats.major + '条</span>');
-                    if (stats.normal > 0) parts.push('<span class="normal">一般' + stats.normal + '条</span>');
-                    statEl.innerHTML = '（共' + stats.total + '条，' + parts.join('、') + '）';
-                }
-
-                var seriousProblems = [];
-                for(var j=0; j<problems.length; j++) { if(problems[j].severity === '严重') seriousProblems.push(problems[j]); }
-                
-                if (seriousProblems.length > 0) {
-                    seriousNoticeCard.classList.remove('hidden');
-                    var nHtml = '';
-                    for (var k=0; k<seriousProblems.length; k++) {
-                        var p = seriousProblems[k];
-                        nHtml += '<div class="notice-item">';
-                        nHtml += '<div class="n-title">严重病害 ' + (k+1) + '</div>';
-                        nHtml += '<div class="n-row"><div><span class="n-label">责任工区：</span><span class="n-val">' + (p.workArea || '—') + '</span></div><div><span class="n-label">设备类型：</span><span class="n-val">' + (p.type || '—') + '</span></div></div>';
-                        nHtml += '<div class="n-row"><div><span class="n-label">线&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名：</span><span class="n-val">' + (p.line || '—') + '</span></div><div><span class="n-label">行别：</span><span class="n-val">' + (p.dir || '—') + '</span></div></div>';
-                        nHtml += '<div class="n-row"><div><span class="n-label">区间/站场：</span><span class="n-val">' + (p.section || '—') + '</span></div></div>';
-                        nHtml += '<div class="n-row"><div><span class="n-label">地&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;点：</span><span class="n-val">' + (p.location || '—') + '</span></div></div>';
-                        nHtml += '<div class="n-row"><div><span class="n-label">病害描述：</span><span class="n-val">' + (p.desc || '—') + '</span></div></div>';
-                        nHtml += '</div>';
-                    }
-                    seriousNoticeList.innerHTML = nHtml;
-                } else { seriousNoticeCard.classList.add('hidden'); seriousNoticeList.innerHTML = ''; }
-                return stats;
+            
+            if (data.completion) {
+                var icon = data.completion === '已全部完成' ? '✅' : (data.completion === '部分完成' ? '⚠️' : '❌');
+                lines.push('计划兑现情况：' + icon + ' ' + data.completion + (data.unfinishedDevice ? '（' + data.unfinishedDevice + '）' : ''));
+                lines.push('');
             }
-
-            function gatherDevices() {
-                var devices = [];
-                var items = deviceList.querySelectorAll('.device-item');
-                for (var i=0; i<items.length; i++) {
-                    var item = items[i];
-                    var workArea = item.querySelector('.d-workArea').value;
-                    var line = item.querySelector('.d-line').value;
-                    var dir = item.querySelector('.d-dir').value;
-                    var section = item.querySelector('.d-section').value;
-                    var planLine = item.querySelector('.d-planLine').value.trim();
-                    var actualLine = item.querySelector('.d-actualLine').value.trim();
-                    var planSwitch = item.querySelector('.d-planSwitch').value.trim();
-                    var actualSwitch = item.querySelector('.d-actualSwitch').value.trim();
-                    var planTrack = item.querySelector('.d-planTrack').value.trim();
-                    var actualTrack = item.querySelector('.d-actualTrack').value.trim();
-                    if (workArea || line || dir || section || planLine || actualLine || planSwitch || actualSwitch || planTrack || actualTrack) {
-                        devices.push({ workArea: workArea, line: line, dir: dir, section: section, planLine: planLine, actualLine: actualLine, planSwitch: planSwitch, actualSwitch: actualSwitch, planTrack: planTrack, actualTrack: actualTrack });
-                    }
-                }
-                return devices;
-            }
-
-            function gatherFormData() {
-                var data = {
-                    date: document.getElementById('checkDate').value || todayStr,
-                    inspector: document.getElementById('inspector').value.trim(),
-                    devices: gatherDevices(),
-                    completion: '',
-                    unfinishedDevice: document.getElementById('unfinishedDevice').value.trim(),
-                    problems: [],
-                    remarks: document.getElementById('remarks').value.trim()
-                };
-                var selectedPill = document.querySelector('.check-pill.selected');
-                if (selectedPill) data.completion = selectedPill.getAttribute('data-value');
+            
+            lines.push('---');
+            lines.push('');
+            
+            if (data.problems && data.problems.length > 0) {
+                var statStr = '⑵ 突出问题（共' + stats.total + '条';
+                if (stats.serious > 0) statStr += '，严重' + stats.serious + '条';
+                if (stats.major > 0) statStr += '，较重' + stats.major + '条';
+                if (stats.normal > 0) statStr += '，一般' + stats.normal + '条';
+                lines.push(statStr + '）');
+                lines.push('');
                 
-                var items = problemList.querySelectorAll('.problem-item');
-                for (var i=0; i<items.length; i++) {
-                    var item = items[i];
-                    var type = item.querySelector('.p-type').value;
-                    var workArea = item.querySelector('.p-workArea').value;
-                    var line = item.querySelector('.p-line').value;
-                    var dir = item.querySelector('.p-dir').value;
-                    var section = item.querySelector('.p-section').value;
-                    var loc = item.querySelector('.p-location').value.trim();
-                    var desc = item.querySelector('.p-desc').value.trim();
-                    var sev = item.querySelector('.p-severity').value;
-                    if (loc || desc || type || workArea || line) {
-                        data.problems.push({ workArea: workArea, type: type, line: line, dir: dir, section: section, location: loc, desc: desc, severity: sev });
-                    }
-                }
-                return data;
-            }
-
-            // --- 导出文本 ---
-            function buildExportText(data) {
-                var lines = [];
-                lines.push('湖口检查工区' + formatDateCN(data.date) + '检查总结');
-                lines.push('='.repeat(36));
-                lines.push('检查日期：' + (data.date || ''));
-                lines.push('检查负责人：' + (data.inspector || ''));
-                lines.push('--- 检查设备 ---');
-                if (data.devices && data.devices.length > 0) {
-                    for(var i=0; i<data.devices.length; i++) {
-                        var d = data.devices[i];
-                        lines.push('设备' + (i+1) + '：' + (d.workArea||'') + ' | ' + (d.line || '') + ' ' + (d.dir || '') + ' [' + (d.section || '') + ']');
-                        if (d.planLine || d.actualLine) lines.push('   线路：计划 ' + (d.planLine || '—') + ' ｜ 实际 ' + (d.actualLine || '—'));
-                        if (d.planSwitch || d.actualSwitch) lines.push('   道岔：计划 ' + (d.planSwitch || '—') + ' ｜ 实际 ' + (d.actualSwitch || '—'));
-                        if (d.planTrack || d.actualTrack) lines.push('   股道：计划 ' + (d.planTrack || '—') + ' ｜ 实际 ' + (d.actualTrack || '—'));
-                    }
-                } else lines.push('（无）');
-                lines.push('--- 计划兑现情况 ---');
-                lines.push('计划兑现情况：' + (data.completion || ''));
-                if (data.unfinishedDevice) lines.push('未兑现设备：' + data.unfinishedDevice);
-                
-                var stats = getProblemStats(data.problems || []);
-                lines.push('--- 突出问题（共' + stats.total + '条，严重' + stats.serious + '条、较重' + stats.major + '条、一般' + stats.normal + '条） ---');
-                if (data.problems && data.problems.length > 0) {
-                    for(var j=0; j<data.problems.length; j++) {
-                        var p = data.problems[j];
-                        lines.push((j + 1) + '. [' + (p.type || '') + '] ' + (p.workArea||'') + ' ' + (p.line || '') + ' ' + (p.dir || '') + ' [' + (p.section || '') + '] 地点：' + (p.location || ''));
-                        lines.push('   病害：' + (p.desc || '未描述') + ' | 严重程度：' + (p.severity || '一般'));
-                    }
-                } else lines.push('本次检查未发现突出问题');
-                
-                var seriousProblems = [];
-                for(var k=0; k<(data.problems||[]).length; k++) { if(data.problems[k].severity === '严重') seriousProblems.push(data.problems[k]); }
-                if (seriousProblems.length > 0) {
-                    lines.push('--- 今日严重病害整改通知书 ---');
-                    for(var m=0; m<seriousProblems.length; m++) {
-                        var sp = seriousProblems[m];
-                        lines.push('严重病害 ' + (m + 1));
-                        lines.push('责任工区：' + (sp.workArea||'') + '     设备类型：' + (sp.type || ''));
-                        lines.push('线名：' + (sp.line || '') + '        行别：' + (sp.dir || '') + '       区间/站场：' + (sp.section || ''));
-                        lines.push('地点：' + (sp.location || ''));
-                        lines.push('病害描述：' + (sp.desc || '未描述'));
-                        lines.push('');
-                    }
-                }
-                if (data.remarks) { lines.push('--- 备注 ---'); lines.push(data.remarks); }
-                return lines.join('\n');
-            }
-
-            // --- 导出 Word ---
-            function buildWordHtml(data) {
-                var stats = getProblemStats(data.problems || []);
-                var esc = function(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); };
-                var h = '<p style="text-align:center;font-family:\'方正小标宋简体\',SimSun,serif;font-size:22pt;margin:0 0 22pt 0;">湖口检查工区' + formatDateCN(data.date) + '检查总结</p>';
-                var h1Style = 'font-family:SimHei,\'黑体\',sans-serif;font-size:16pt;line-height:28pt;margin:0;';
-                var bStyle = 'font-family:\'仿宋_GB2312\',FangSong,SimSun,serif;font-size:16pt;line-height:28pt;text-indent:2em;margin:0;';
-                var tStyle = 'border-collapse:collapse;width:100%;font-family:\'仿宋_GB2312\',FangSong,SimSun,serif;font-size:10.5pt;line-height:1.5;margin:6pt 0;';
-                
-                // 表头居中对齐，底色加深
-                var thStyle = 'border:1px solid #000;padding:4pt;text-align:center;vertical-align:middle;font-weight:bold;background:#f2f2f2;';
-                // 单元格全部水平居中和垂直居中
-                var tdStyle = 'border:1px solid #000;padding:4pt;text-align:center;vertical-align:middle;';
-
-                h += '<p style="' + h1Style + '">一、检查概况</p>';
-                h += '<p style="' + bStyle + '">检查日期：' + esc(data.date) + '；检查负责人：' + esc(data.inspector) + '。</p>';
-
-                h += '<p style="' + h1Style + '">二、检查设备</p>';
-                if (data.devices && data.devices.length > 0) {
-                    h += '<table style="' + tStyle + '"><tr>';
-                    h += '<th style="' + thStyle + 'width:20%;">设备工区</th>';
-                    h += '<th style="' + thStyle + 'width:12%;">线名</th>';
-                    h += '<th style="' + thStyle + 'width:12%;">行别</th>';
-                    h += '<th style="' + thStyle + 'width:16%;">区间/站场</th>';
-                    h += '<th style="' + thStyle + 'width:13%;">线路<br/>(计划/实际)</th>';
-                    h += '<th style="' + thStyle + 'width:13%;">道岔<br/>(计划/实际)</th>';
-                    h += '<th style="' + thStyle + 'width:14%;">股道<br/>(计划/实际)</th>';
-                    h += '</tr>';
-                    for(var i=0; i<data.devices.length; i++) {
-                        var d = data.devices[i];
-                        h += '<tr>';
-                        h += '<td style="' + tdStyle + '">' + esc(d.workArea || '—') + '</td>';
-                        h += '<td style="' + tdStyle + '">' + esc(d.line || '—') + '</td>';
-                        h += '<td style="' + tdStyle + '">' + esc(d.dir || '—') + '</td>';
-                        h += '<td style="' + tdStyle + '">' + esc(d.section || '—') + '</td>';
-                        h += '<td style="' + tdStyle + '">' + esc(d.planLine || '—') + '<br/>' + esc(d.actualLine || '—') + '</td>';
-                        h += '<td style="' + tdStyle + '">' + esc(d.planSwitch || '—') + '<br/>' + esc(d.actualSwitch || '—') + '</td>';
-                        h += '<td style="' + tdStyle + '">' + esc(d.planTrack || '—') + '<br/>' + esc(d.actualTrack || '—') + '</td>';
-                        h += '</tr>';
-                    }
-                    h += '</table>';
-                } else h += '<p style="' + bStyle + '">无。</p>';
-                h += '<p style="' + bStyle + '">计划兑现情况：' + esc(data.completion) + (data.unfinishedDevice ? '（' + esc(data.unfinishedDevice) + '）' : '') + '。</p>';
-
-                h += '<p style="' + h1Style + '">三、突出问题</p>';
-                if (data.problems && data.problems.length > 0) {
-                    h += '<table style="' + tStyle + '"><tr>';
-                    h += '<th style="' + thStyle + 'width:22%;">设备工区</th>';
-                    h += '<th style="' + thStyle + 'width:12%;">类型</th>';
-                    h += '<th style="' + thStyle + 'width:12%;">线名</th>';
-                    h += '<th style="' + thStyle + 'width:10%;">行别</th>';
-                    h += '<th style="' + thStyle + 'width:15%;">区间/站场</th>';
-                    h += '<th style="' + thStyle + 'width:10%;">地点</th>';
-                    h += '<th style="' + thStyle + 'width:19%;">病害描述</th>';
-                    // 删除了“严重程度”列
-                    h += '</tr>';
-                    for(var j=0; j<data.problems.length; j++) {
-                        var p = data.problems[j];
-                        h += '<tr>';
-                        h += '<td style="' + tdStyle + '">' + esc(p.workArea || '—') + '</td>';
-                        h += '<td style="' + tdStyle + '">' + esc(p.type || '—') + '</td>';
-                        h += '<td style="' + tdStyle + '">' + esc(p.line || '—') + '</td>';
-                        h += '<td style="' + tdStyle + '">' + esc(p.dir || '—') + '</td>';
-                        h += '<td style="' + tdStyle + '">' + esc(p.section || '—') + '</td>';
-                        h += '<td style="' + tdStyle + '">' + esc(p.location || '—') + '</td>';
-                        h += '<td style="' + tdStyle + '">' + esc(p.desc || '—') + '</td>'; 
-                        h += '</tr>';
-                    }
-                    h += '</table>';
-                } else h += '<p style="' + bStyle + '">本次检查未发现突出问题。</p>';
-
-                var seriousProblems = [];
-                for(var k=0; k<(data.problems||[]).length; k++) { if(data.problems[k].severity === '严重') seriousProblems.push(data.problems[k]); }
-                if (seriousProblems.length > 0) {
-                    h += '<p style="' + h1Style + '">四、今日严重病害整改通知书</p>';
+                for(var j=0; j<data.problems.length; j++) {
+                    var pr = data.problems[j];
+                    var locStr = (pr.workArea || '') + ' ' + (pr.line || '') + ' ' + (pr.dir || '') + ' ' + (pr.section || '');
                     
-                    h += '<table style="' + tStyle + '">';
+                    lines.push((j + 1) + '. ' + locStr.trim());
+                    lines.push((pr.type || '') + ' ' + (pr.location || ''));
+                    lines.push('病害：' + (pr.desc || '未描述'));
+                    lines.push('严重程度：' + pr.severity);
+                    lines.push('');
+                }
+            } else {
+                lines.push('⑵ 突出问题（0条）');
+                lines.push('本次检查未发现突出问题');
+                lines.push('');
+            }
+            
+            var seriousProblems = [];
+            for(var k=0; k<(data.problems||[]).length; k++) { if(data.problems[k].severity === '严重') seriousProblems.push(data.problems[k]); }
+            
+            var remarkIndex = '⑶';
+            if (seriousProblems.length > 0) {
+                lines.push('---');
+                lines.push('');
+                lines.push('🚨 ⑶ 今日严重病害整改通知书');
+                lines.push('');
+                for(var m=0; m<seriousProblems.length; m++) {
+                    var sp = seriousProblems[m];
+                    lines.push('严重病害 ' + (m+1));
+                    lines.push('责任工区：' + (sp.workArea||''));
+                    lines.push('线名/行别：' + (sp.line || '') + ' ' + (sp.dir || ''));
+                    lines.push('区间/站场：' + (sp.section || '—'));
+                    lines.push((sp.type || '') + '：' + (sp.location || ''));
+                    lines.push('病害描述：' + (sp.desc || ''));
+                    lines.push('');
+                }
+                remarkIndex = '⑷';
+            }
+            
+            if (data.remarks) {
+                lines.push('---');
+                lines.push('');
+                lines.push(remarkIndex + ' 备注 / 需协调事项：');
+                lines.push(data.remarks);
+            }
+            
+            return lines.join('\n').replace(/\n{3,}/g, '\n\n');
+        }
+
+        function buildWordHtml(data) {
+            var stats = getProblemStats(data.problems || []);
+            var esc = function(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); };
+            var h = '<p style="text-align:center;font-family:\'方正小标宋简体\',SimSun,serif;font-size:22pt;margin:0 0 22pt 0;">湖口检查工区' + formatDateCN(data.date) + '检查总结</p>';
+            var h1Style = 'font-family:SimHei,\'黑体\',sans-serif;font-size:16pt;line-height:28pt;margin:0;';
+            var bStyle = 'font-family:\'仿宋_GB2312\',FangSong,SimSun,serif;font-size:16pt;line-height:28pt;text-indent:2em;margin:0;';
+            var tStyle = 'border-collapse:collapse;width:100%;font-family:\'仿宋_GB2312\',FangSong,SimSun,serif;font-size:10.5pt;line-height:1.5;margin:6pt 0;';
+            
+            var thStyle = 'border:1px solid #000;padding:4pt;text-align:center;vertical-align:middle;font-weight:bold;background:#f2f2f2;';
+            var tdStyle = 'border:1px solid #000;padding:4pt;text-align:center;vertical-align:middle;';
+
+            h += '<p style="' + h1Style + '">一、检查概况</p>';
+            h += '<p style="' + bStyle + '">检查日期：' + esc(data.date) + '；检查负责人：' + esc(data.inspector) + '。</p>';
+
+            h += '<p style="' + h1Style + '">二、检查设备</p>';
+            if (data.devices && data.devices.length > 0) {
+                h += '<table style="' + tStyle + '"><tr>';
+                h += '<th style="' + thStyle + 'width:20%;">设备工区</th>';
+                h += '<th style="' + thStyle + 'width:12%;">线名</th>';
+                h += '<th style="' + thStyle + 'width:12%;">行别</th>';
+                h += '<th style="' + thStyle + 'width:16%;">区间/站场</th>';
+                h += '<th style="' + thStyle + 'width:13%;">线路<br/>(计划/实际)</th>';
+                h += '<th style="' + thStyle + 'width:13%;">道岔<br/>(计划/实际)</th>';
+                h += '<th style="' + thStyle + 'width:14%;">股道<br/>(计划/实际)</th>';
+                h += '</tr>';
+                for(var i=0; i<data.devices.length; i++) {
+                    var d = data.devices[i];
                     h += '<tr>';
-                    h += '<th style="' + thStyle + 'width:15%;">严重病害序号</th>';
-                    h += '<th style="' + thStyle + 'width:20%;">设备工区</th>';
-                    h += '<th style="' + thStyle + 'width:10%;">类型</th>';
-                    h += '<th style="' + thStyle + 'width:10%;">线名</th>';
-                    h += '<th style="' + thStyle + 'width:10%;">行别</th>';
-                    h += '<th style="' + thStyle + 'width:15%;">区间/站场</th>';
-                    h += '<th style="' + thStyle + 'width:10%;">地点</th>';
-                    h += '<th style="' + thStyle + 'width:20%;">病害描述</th>';
+                    h += '<td style="' + tdStyle + '">' + esc(d.workArea || '—') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(d.line || '—') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(d.dir || '—') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(d.section || '—') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(d.planLine || '—') + '<br/>' + esc(d.actualLine || '—') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(d.planSwitch || '—') + '<br/>' + esc(d.actualSwitch || '—') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(d.planTrack || '—') + '<br/>' + esc(d.actualTrack || '—') + '</td>';
                     h += '</tr>';
-                    for(var m=0; m<seriousProblems.length; m++) {
-                        var sp = seriousProblems[m];
-                        h += '<tr>';
-                        h += '<td style="' + tdStyle + '">严重病害 ' + (m+1) + '</td>';
-                        h += '<td style="' + tdStyle + '">' + esc(sp.workArea || '—') + '</td>';
-                        h += '<td style="' + tdStyle + '">' + esc(sp.type || '—') + '</td>';
-                        h += '<td style="' + tdStyle + '">' + esc(sp.line || '—') + '</td>';
-                        h += '<td style="' + tdStyle + '">' + esc(sp.dir || '—') + '</td>';
-                        h += '<td style="' + tdStyle + '">' + esc(sp.section || '—') + '</td>';
-                        h += '<td style="' + tdStyle + '">' + esc(sp.location || '—') + '</td>';
-                        h += '<td style="' + tdStyle + '">' + esc(sp.desc || '—') + '</td>';
-                        h += '</tr>';
-                    }
-                    h += '</table>';
                 }
-                if (data.remarks) {
-                    h += '<p style="' + h1Style + '">' + (seriousProblems.length > 0 ? '五' : '四') + '、备注 / 需协调事项</p>';
-                    h += '<p style="' + bStyle + 'white-space:pre-wrap;">' + esc(data.remarks) + '</p>';
+                h += '</table>';
+            } else h += '<p style="' + bStyle + '">无。</p>';
+            h += '<p style="' + bStyle + '">计划兑现情况：' + esc(data.completion) + (data.unfinishedDevice ? '（' + esc(data.unfinishedDevice) + '）' : '') + '。</p>';
+
+            h += '<p style="' + h1Style + '">三、突出问题</p>';
+            if (data.problems && data.problems.length > 0) {
+                h += '<table style="' + tStyle + '"><tr>';
+                h += '<th style="' + thStyle + 'width:22%;">设备工区</th>';
+                h += '<th style="' + thStyle + 'width:12%;">类型</th>';
+                h += '<th style="' + thStyle + 'width:12%;">线名</th>';
+                h += '<th style="' + thStyle + 'width:10%;">行别</th>';
+                h += '<th style="' + thStyle + 'width:15%;">区间/站场</th>';
+                h += '<th style="' + thStyle + 'width:10%;">地点</th>';
+                h += '<th style="' + thStyle + 'width:19%;">病害描述</th>';
+                h += '</tr>';
+                for(var j=0; j<data.problems.length; j++) {
+                    var p = data.problems[j];
+                    h += '<tr>';
+                    h += '<td style="' + tdStyle + '">' + esc(p.workArea || '—') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(p.type || '—') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(p.line || '—') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(p.dir || '—') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(p.section || '—') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(p.location || '—') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(p.desc || '—') + '</td>'; 
+                    h += '</tr>';
                 }
-                return h;
-            }
+                h += '</table>';
+            } else h += '<p style="' + bStyle + '">本次检查未发现突出问题。</p>';
 
-            document.getElementById('exportWord').addEventListener('click', function() {
-                var data = gatherFormData();
-                var body = buildWordHtml(data);
-                var docHtml = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8" /><title>湖口检查工区' + formatDateCN(data.date) + '检查总结</title><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]--><style>@page { size: A4; margin: 3.7cm 2.6cm 3.5cm 2.8cm; } body { font-family:"仿宋_GB2312",FangSong,SimSun,serif; font-size:16pt; line-height:28pt; }</style></head><body>' + body + '</body></html>';
-                try {
-                    var blob = new Blob(['\ufeff' + docHtml], { type: 'application/msword;charset=utf-8' });
-                    var url = URL.createObjectURL(blob);
-                    var a = document.createElement('a'); a.href = url; a.download = '湖口检查工区' + formatDateCN(data.date) + '检查总结.doc';
-                    document.body.appendChild(a); a.click();
-                    setTimeout(function() { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
-                    showToast('📘 Word 已导出');
-                } catch (e) { showToast('❌ 导出失败'); }
-            });
-
-            // 自动保存
-            var saveTimeout = null;
-            function autoSave() {
-                if (saveTimeout) clearTimeout(saveTimeout);
-                saveTimeout = setTimeout(function() {
-                    try {
-                        var data = gatherFormData();
-                        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-                        document.getElementById('saveStatus').textContent = '💾 已自动保存';
-                        setTimeout(function() { document.getElementById('saveStatus').textContent = '💾 自动保存'; }, 2000);
-                    } catch (e) {}
-                }, 500);
-            }
-            var allInputs = document.querySelectorAll('input, textarea, select');
-            for(var ai=0; ai<allInputs.length; ai++) {
-                if (allInputs[ai].id !== 'checkDate' && allInputs[ai].id !== 'inspector') {
-                    allInputs[ai].addEventListener('input', autoSave);
-                    allInputs[ai].addEventListener('change', autoSave);
+            var seriousProblems = [];
+            for(var k=0; k<(data.problems||[]).length; k++) { if(data.problems[k].severity === '严重') seriousProblems.push(data.problems[k]); }
+            if (seriousProblems.length > 0) {
+                h += '<p style="' + h1Style + '">四、今日严重病害整改通知书</p>';
+                
+                h += '<table style="' + tStyle + '">';
+                h += '<tr>';
+                h += '<th style="' + thStyle + 'width:15%;">严重病害序号</th>';
+                h += '<th style="' + thStyle + 'width:20%;">设备工区</th>';
+                h += '<th style="' + thStyle + 'width:10%;">类型</th>';
+                h += '<th style="' + thStyle + 'width:10%;">线名</th>';
+                h += '<th style="' + thStyle + 'width:10%;">行别</th>';
+                h += '<th style="' + thStyle + 'width:15%;">区间/站场</th>';
+                h += '<th style="' + thStyle + 'width:10%;">地点</th>';
+                h += '<th style="' + thStyle + 'width:20%;">病害描述</th>';
+                h += '</tr>';
+                for(var m=0; m<seriousProblems.length; m++) {
+                    var sp = seriousProblems[m];
+                    h += '<tr>';
+                    h += '<td style="' + tdStyle + '">严重病害 ' + (m+1) + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(sp.workArea || '—') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(sp.type || '—') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(sp.line || '—') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(sp.dir || '—') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(sp.section || '—') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(sp.location || '—') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(sp.desc || '—') + '</td>';
+                    h += '</tr>';
                 }
+                h += '</table>';
             }
-            document.getElementById('checkDate').addEventListener('change', autoSave);
-            document.getElementById('inspector').addEventListener('input', autoSave);
-
-            document.getElementById('saveDraftBtn').addEventListener('click', function() {
-                try { localStorage.setItem(STORAGE_KEY, JSON.stringify(gatherFormData())); showToast('✅ 草稿已保存'); } catch (e) { showToast('❌ 保存失败'); }
-            });
-
-            document.getElementById('resetBtn').addEventListener('click', function() {
-                if (!confirm('确定重置所有内容吗？')) return;
-                document.getElementById('checkDate').value = todayStr;
-                document.getElementById('inspector').value = '';
-                document.getElementById('remarks').value = '';
-                document.getElementById('unfinishedDevice').value = '';
-                for(var i=0; i<completionPills.length; i++) completionPills[i].classList.remove('selected');
-                unfinishedWrap.classList.add('hidden');
-                deviceList.innerHTML = ''; 
-                problemList.innerHTML = ''; 
-                localStorage.removeItem(STORAGE_KEY);
-                updateProblemStats(); showToast('已重置');
-            });
-
-            function validateData(data) {
-                if (!data.date) { showToast('请选择检查日期'); return false; }
-                if (!data.inspector) { showToast('请填写检查负责人'); return false; }
-                if (!data.devices || data.devices.length === 0) { showToast('请至少填写一条检查设备记录'); return false; }
-                if (!data.completion) { showToast('请选择计划兑现情况'); return false; }
-                return true;
+            if (data.remarks) {
+                h += '<p style="' + h1Style + '">' + (seriousProblems.length > 0 ? '五' : '四') + '、备注 / 需协调事项</p>';
+                h += '<p style="' + bStyle + 'white-space:pre-wrap;">' + esc(data.remarks) + '</p>';
             }
+            return h;
+        }
 
-            function buildDingTalkMarkdown(data) {
-                var stats = getProblemStats(data.problems || []);
-                var md = '**湖口检查工区' + formatDateCN(data.date) + '检查总结**\n\n';
-                md += '检查日期：' + data.date + '\n\n检查负责人：' + data.inspector + '\n\n';
-                if (data.devices && data.devices.length > 0) {
-                    md += '--- 检查设备 ---\n';
-                    for(var i=0; i<data.devices.length; i++) {
-                        var d = data.devices[i];
-                        md += '设备' + (i+1) + '：' + (d.workArea||'') + ' ' + (d.line || '') + ' ' + (d.dir || '') + ' [' + (d.section || '') + ']\n';
-                    }
+        function buildDingTalkMarkdown(data) {
+            var stats = getProblemStats(data.problems || []);
+            var md = '**湖口检查工区' + formatDateCN(data.date) + '检查总结**\n\n';
+            
+            md += '检查日期：' + data.date + '\n\n';
+            md += '检查负责人：' + data.inspector + '\n\n';
+            
+            if (data.devices && data.devices.length > 0) {
+                md += '**⑴ 检查设备**\n';
+                for(var i=0; i<data.devices.length; i++) {
+                    var d = data.devices[i];
+                    md += (d.workArea||'') + ' ' + (d.line || '') + ' ' + (d.dir || '') + ' ' + (d.section || '') + '\n';
+                    if (d.planLine || d.actualLine) md += '   线路：计划检查 ' + (d.planLine || '—') + ' ；实际兑现 ' + (d.actualLine || '—') + '\n';
+                    if (d.planSwitch || d.actualSwitch) md += '   道岔：计划检查 ' + (d.planSwitch || '—') + ' ；实际兑现 ' + (d.actualSwitch || '—') + '\n';
+                    if (d.planTrack || d.actualTrack) md += '   股道：计划检查 ' + (d.planTrack || '—') + ' ；实际兑现 ' + (d.actualTrack || '—') + '\n';
                     md += '\n';
                 }
-                if (data.completion) md += '计划兑现情况：' + data.completion + (data.unfinishedDevice ? '（' + data.unfinishedDevice + '）' : '') + '\n\n---\n\n';
+            }
+            
+            if (data.completion) {
+                var icon = data.completion === '已全部完成' ? '✅' : (data.completion === '部分完成' ? '⚠️' : '❌');
+                md += '计划兑现情况：' + icon + ' ' + data.completion + (data.unfinishedDevice ? '（' + data.unfinishedDevice + '）' : '') + '\n\n';
+            }
+            
+            md += '---\n\n';
+            
+            if (data.problems && data.problems.length > 0) {
+                md += '**⑵ 突出问题（共' + stats.total + '条';
+                if (stats.serious > 0) md += '，<font color="#b22234">严重' + stats.serious + '条</font>';
+                if (stats.major > 0) md += '，<font color="#b9770e">较重' + stats.major + '条</font>';
+                if (stats.normal > 0) md += '，<font color="#0b3b5c">一般' + stats.normal + '条</font>';
+                md += '）**\n\n';
                 
-                if (data.problems && data.problems.length > 0) {
-                    md += '**突出问题（共' + stats.total + '条，严重' + stats.serious + '条）**\n\n';
-                    for(var j=0; j<data.problems.length; j++) {
-                        var pr = data.problems[j];
-                        var line = (j + 1) + '. [' + pr.type + '] ' + (pr.workArea||'') + ' ' + (pr.line || '') + ' ' + (pr.dir || '') + ' ' + (pr.location || '') + '\n';
-                        line += '   病害：' + (pr.desc || '未描述') + ' | 程度：' + pr.severity;
-                        if (pr.severity === '严重') line = '**' + line + '**';
-                        md += line + '\n\n';
+                for(var j=0; j<data.problems.length; j++) {
+                    var pr = data.problems[j];
+                    
+                    var locStr = (pr.workArea || '') + ' ' + (pr.line || '') + ' ' + (pr.dir || '') + ' ' + (pr.section || '');
+                    
+                    var l1 = (j + 1) + '. ' + locStr.trim();
+                    var l2 = (pr.type || '') + ' ' + (pr.location || '');
+                    var l3 = '病害：' + (pr.desc || '未描述');
+                    
+                    var l4 = '';
+                    if (pr.severity === '严重') {
+                        l4 = '<font color="#b22234">严重程度：' + pr.severity + '</font>';
+                    } else if (pr.severity === '较重') {
+                        l4 = '严重程度：<font color="#b9770e">' + pr.severity + '</font>';
+                    } else {
+                        l4 = '严重程度：' + pr.severity;
                     }
-                } else md += '**突出问题（0条）**\n本次检查未发现突出问题\n\n';
-
-                var seriousProblems = [];
-                for(var k=0; k<(data.problems||[]).length; k++) { if(data.problems[k].severity === '严重') seriousProblems.push(data.problems[k]); }
-                if (seriousProblems.length > 0) {
-                    md += '---\n\n🚨 **今日严重病害整改通知书**\n\n';
-                    for(var m=0; m<seriousProblems.length; m++) {
-                        var sp = seriousProblems[m];
-                        md += '<font color="#b22234">**严重病害 ' + (m+1) + '**</font>\n';
-                        md += '责任工区：' + (sp.workArea||'') + ' | 设备类型：' + (sp.type || '') + '\n';
-                        md += '线名：' + (sp.line || '') + ' | 行别：' + (sp.dir || '') + ' | 区间/站场：' + (sp.section || '') + '\n';
-                        md += '地点：' + (sp.location || '') + '\n';
-                        md += '病害描述：' + (sp.desc || '') + '\n\n';
-                    }
+                    
+                    md += l1 + '\n' + l2 + '\n' + l3 + '\n' + l4 + '\n\n';
                 }
-                if (data.remarks) md += '---\n\n备注：' + data.remarks + '\n';
-                return md.replace(/\n{3,}/g, '\n\n');
+            } else {
+                md += '**⑵ 突出问题（0条）**\n本次检查未发现突出问题\n\n';
             }
 
-            document.getElementById('submitBtn').addEventListener('click', function() {
-                var data = gatherFormData();
-                if (!validateData(data)) return;
-                var markdown = buildDingTalkMarkdown(data);
-                fetch(DINGTALK_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ msgtype: 'markdown', markdown: { title: '日检查总结', text: markdown } }) })
-                .then(function(res) { return res.json(); })
-                .then(function(result) {
-                    if (result.errcode === 0) { showToast('✅ 已推送钉钉群'); }
-                    else throw new Error(result.errmsg);
-                })
-                .catch(function() {
-                    try { navigator.clipboard.writeText(markdown); showToast('📋 推送失败，内容已复制'); }
-                    catch (e2) { showToast('❌ 推送失败'); }
-                });
-            });
-
-            // 恢复草稿并初始化
-            try {
-                var raw = localStorage.getItem(STORAGE_KEY);
-                if (raw) {
-                    var saved = JSON.parse(raw);
-                    document.getElementById('checkDate').value = saved.date || todayStr;
-                    document.getElementById('inspector').value = saved.inspector || '';
-                    document.getElementById('remarks').value = saved.remarks || '';
-                    document.getElementById('unfinishedDevice').value = saved.unfinishedDevice || '';
-                    
-                    deviceList.innerHTML = '';
-                    if(saved.devices) for(var d=0; d<saved.devices.length; d++) addDeviceItem(saved.devices[d]);
-                    
-                    problemList.innerHTML = '';
-                    if(saved.problems) for(var p=0; p<saved.problems.length; p++) addProblemItem(saved.problems[p]);
-                    
-                    for(var c=0; c<completionPills.length; c++) {
-                        completionPills[c].classList.remove('selected');
-                        if (completionPills[c].getAttribute('data-value') === saved.completion) completionPills[c].classList.add('selected');
-                    }
-                }
-            } catch (e) {}
+            var seriousProblems = [];
+            for(var k=0; k<(data.problems||[]).length; k++) { if(data.problems[k].severity === '严重') seriousProblems.push(data.problems[k]); }
             
-            updateProblemStats();
-        })();
+            var remarkIndex = '⑶';
+            if (seriousProblems.length > 0) {
+                md += '---\n\n🚨 **⑶ 今日严重病害整改通知书**\n\n';
+                for(var m=0; m<seriousProblems.length; m++) {
+                    var sp = seriousProblems[m];
+                    md += '<font color="#b22234">**严重病害 ' + (m+1) + '**</font>\n';
+                    md += '责任工区：' + (sp.workArea||'') + '\n';
+                    md += '线名/行别：' + (sp.line || '') + ' ' + (sp.dir || '') + '\n';
+                    md += '区间/站场：' + (sp.section || '—') + '\n';
+                    md += (sp.type || '') + '：' + (sp.location || '') + '\n';
+                    md += '病害描述：' + (sp.desc || '') + '\n\n';
+                }
+                remarkIndex = '⑷';
+            }
+            
+            if (data.remarks) {
+                md += '---\n\n**' + remarkIndex + ' 备注 / 需协调事项：**\n' + data.remarks + '\n';
+            }
+            
+            return md.replace(/\n{3,}/g, '\n\n');
+        }
+
+        // ================== 自动保存与初始化 ==================
+        var saveTimeout = null;
+        function autoSave() {
+            if (saveTimeout) clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(function() {
+                try {
+                    var data = gatherFormData();
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                    document.getElementById('saveStatus').textContent = '💾 已自动保存';
+                    setTimeout(function() { document.getElementById('saveStatus').textContent = '💾 自动保存'; }, 2000);
+                } catch (e) {}
+            }, 500);
+        }
+
+        // 绑定全局事件
+        document.getElementById('addDeviceRow').addEventListener('click', function() { addDeviceItem(); });
+        document.getElementById('addProblemRow').addEventListener('click', function() { addProblemItem(); });
+        document.getElementById('clearDevices').addEventListener('click', function() {
+            if (confirm('确定清空所有检查设备记录吗？')) { document.getElementById('deviceList').innerHTML = ''; autoSave(); }
+        });
+        document.getElementById('clearProblems').addEventListener('click', function() {
+            if (confirm('确定清空所有问题记录吗？')) { document.getElementById('problemList').innerHTML = ''; updateProblemStats(); autoSave(); }
+        });
+
+        var pills = document.querySelectorAll('.check-pill');
+        for(var cp=0; cp<pills.length; cp++) {
+            pills[cp].addEventListener('click', function() {
+                for(var i=0; i<pills.length; i++) pills[i].classList.remove('selected');
+                this.classList.add('selected');
+                var radio = this.querySelector('input'); if (radio) radio.checked = true;
+                var val = this.getAttribute('data-value');
+                if (val === '部分完成' || val === '未完成') {
+                    document.getElementById('unfinishedWrap').classList.remove('hidden');
+                    document.getElementById('unfinishedDevice').placeholder = val === '未完成' ? '未检查原因及涉及设备' : '未兑现设备有哪些？';
+                } else { 
+                    document.getElementById('unfinishedWrap').classList.add('hidden'); 
+                    document.getElementById('unfinishedDevice').value = ''; 
+                }
+                autoSave();
+            });
+        }
+
+        document.getElementById('exportTxt').addEventListener('click', function() {
+            var data = gatherFormData();
+            var text = buildExportText(data);
+            try {
+                var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url; a.download = '湖口检查工区' + formatDateCN(data.date) + '检查总结.txt';
+                document.body.appendChild(a); a.click();
+                setTimeout(function() { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+                showToast('📄 文本已导出');
+            } catch (e) { showToast('❌ 导出失败'); }
+        });
+
+        function handleExportWord() {
+            var data = gatherFormData();
+            var body = buildWordHtml(data);
+            var docHtml = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8" /><title>湖口检查工区' + formatDateCN(data.date) + '检查总结</title><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]--><style>@page { size: A4; margin: 3.7cm 2.6cm 3.5cm 2.8cm; } body { font-family:"仿宋_GB2312",FangSong,SimSun,serif; font-size:16pt; line-height:28pt; }</style></head><body>' + body + '</body></html>';
+            try {
+                var blob = new Blob(['\ufeff' + docHtml], { type: 'application/msword;charset=utf-8' });
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a'); a.href = url; a.download = '湖口检查工区' + formatDateCN(data.date) + '检查总结.doc';
+                document.body.appendChild(a); a.click();
+                setTimeout(function() { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+                showToast('📘 Word 已导出');
+            } catch (e) { showToast('❌ 导出失败'); }
+        }
+        
+        document.getElementById('exportWord').addEventListener('click', handleExportWord);
+        document.getElementById('exportWordHistory').addEventListener('click', handleExportWord);
+
+        document.getElementById('saveDraftBtn').addEventListener('click', function() {
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(gatherFormData())); showToast('✅ 草稿已保存'); } catch (e) { showToast('❌ 保存失败'); }
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            if (!confirm('确定重置所有内容吗？')) return;
+            document.getElementById('checkDate').value = getTodayStr();
+            document.getElementById('inspector').value = '';
+            document.getElementById('remarks').value = '';
+            document.getElementById('unfinishedDevice').value = '';
+            for(var i=0; i<pills.length; i++) pills[i].classList.remove('selected');
+            document.getElementById('unfinishedWrap').classList.add('hidden');
+            document.getElementById('deviceList').innerHTML = ''; 
+            document.getElementById('problemList').innerHTML = ''; 
+            localStorage.removeItem(STORAGE_KEY);
+            updateProblemStats(); showToast('已重置');
+        });
+
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            var data = gatherFormData();
+            if (!data.date) { showToast('请选择检查日期'); return; }
+            if (!data.inspector) { showToast('请填写检查负责人'); return; }
+            if (!data.devices || data.devices.length === 0) { showToast('请至少填写一条检查设备记录'); return; }
+            if (!data.completion) { showToast('请选择计划兑现情况'); return; }
+
+            var markdown = buildDingTalkMarkdown(data);
+            fetch(DINGTALK_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ msgtype: 'markdown', markdown: { title: '日检查总结', text: markdown } }) })
+            .then(function(res) { return res.json(); })
+            .then(function(result) {
+                if (result.errcode === 0) { showToast('✅ 已推送钉钉群'); saveHistory({ time: new Date().toLocaleString(), data: data }); }
+                else throw new Error(result.errmsg);
+            })
+            .catch(function() {
+                try { navigator.clipboard.writeText(markdown); showToast('📋 推送失败，内容已复制'); }
+                catch (e2) { showToast('❌ 推送失败'); }
+            });
+        });
+
+        // 初始化
+        var dateInput = document.getElementById('checkDate');
+        var todayStr = getTodayStr();
+        try { dateInput.value = todayStr; } catch(e) {}
+        dateInput.setAttribute('max', todayStr);
+
+        var allInputs = document.querySelectorAll('input, textarea, select');
+        for(var ai=0; ai<allInputs.length; ai++) {
+            if (allInputs[ai].id !== 'checkDate' && allInputs[ai].id !== 'inspector') {
+                allInputs[ai].addEventListener('input', autoSave);
+                allInputs[ai].addEventListener('change', autoSave);
+            }
+        }
+        dateInput.addEventListener('change', autoSave);
+        document.getElementById('inspector').addEventListener('input', autoSave);
+
+        // 恢复草稿
+        try {
+            var raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+                var saved = JSON.parse(raw);
+                dateInput.value = saved.date || todayStr;
+                document.getElementById('inspector').value = saved.inspector || '';
+                document.getElementById('remarks').value = saved.remarks || '';
+                document.getElementById('unfinishedDevice').value = saved.unfinishedDevice || '';
+                
+                document.getElementById('deviceList').innerHTML = '';
+                if(saved.devices) for(var d=0; d<saved.devices.length; d++) addDeviceItem(saved.devices[d]);
+                
+                document.getElementById('problemList').innerHTML = '';
+                if(saved.problems) for(var p=0; p<saved.problems.length; p++) addProblemItem(saved.problems[p]);
+                
+                for(var c=0; c<pills.length; c++) {
+                    pills[c].classList.remove('selected');
+                    if (pills[c].getAttribute('data-value') === saved.completion) pills[c].classList.add('selected');
+                }
+            }
+        } catch (e) {}
+        
+        loadHistory();
+        updateProblemStats();
     </script>
 </body>
 </html>
