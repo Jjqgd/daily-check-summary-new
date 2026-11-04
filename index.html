@@ -44,9 +44,11 @@
             min-height: var(--touch-target); -webkit-appearance: none; appearance: none; transition: border 0.2s;
         }
         .form-group textarea { resize: vertical; min-height: 44px; max-height: 90px; }
+        
         .form-group select {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%233a5a78' stroke-width='2' fill='none'/%3E%3C/svg%3E");
             background-repeat: no-repeat; background-position: right 14px center; background-size: 12px;
+            padding-right: 36px;
         }
         .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
             outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(11, 59, 92, 0.08); background: #ffffff;
@@ -76,12 +78,20 @@
         .problem-item select, .problem-item input, .problem-item textarea {
             width: 100%; padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px;
             font-size: 0.85rem; background: #fff; font-family: inherit; min-height: 36px;
+            -webkit-appearance: none; appearance: none;
         }
         .problem-item select {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M1 1l3 3 3-3' stroke='%233a5a78' stroke-width='2' fill='none'/%3E%3C/svg%3E");
             background-repeat: no-repeat; background-position: right 8px center; background-size: 8px;
+            padding-right: 24px;
         }
-        .problem-item textarea { resize: vertical; min-height: 36px; max-height: 80px; }
+        
+        .problem-item textarea.d-multi {
+            resize: vertical; min-height: 50px; max-height: 120px; line-height: 1.4;
+        }
+        .problem-item textarea.p-desc { 
+            resize: vertical; min-height: 60px; max-height: 120px; 
+        }
         .problem-item .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .problem-item .remove-btn {
             position: absolute; top: 4px; right: 4px; background: #fee2e2; color: var(--danger);
@@ -89,6 +99,46 @@
             display: flex; align-items: center; justify-content: center; font-weight: 700; z-index: 5;
         }
         .problem-item .remove-btn:active { background: #fca5a5; }
+
+        /* 多选下拉框专用样式 */
+        .multi-select-wrap { position: relative; user-select: none; }
+        .ms-display {
+            width: 100%; padding: 6px 24px 6px 10px; border: 1px solid var(--border); border-radius: 6px;
+            font-size: 0.85rem; background: #fff; font-family: inherit; min-height: 36px; display: flex; align-items: center;
+            cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .ms-display::after {
+            content: ''; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+            width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid var(--text-light);
+        }
+        .ms-dropdown {
+            display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px;
+            background: #fff; border: 1px solid var(--border); border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 100; max-height: 200px; overflow-y: auto;
+        }
+        .ms-dropdown.show { display: block; }
+        .ms-option {
+            padding: 8px 10px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 8px;
+        }
+        .ms-option:hover { background: #f1f5f9; }
+        .ms-option input[type="checkbox"] { accent-color: var(--primary); width: 16px; height: 16px; }
+
+        /* 上传图片区域样式 */
+        .img-upload-wrap { display: none; background: #f8fafc; border: 1px dashed var(--border); border-radius: 6px; padding: 10px; margin-top: 4px; }
+        .img-upload-wrap.show { display: block; }
+        .img-thumbnails { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+        .img-thumb-box { position: relative; width: 64px; height: 64px; border-radius: 4px; border: 1px solid var(--border); overflow: hidden; }
+        .img-thumb-box img { width: 100%; height: 100%; object-fit: cover; }
+        .img-thumb-box .del-img {
+            position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.6); color: #fff;
+            border: none; border-radius: 50%; width: 16px; height: 16px; font-size: 12px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+        .upload-btn {
+            display: inline-flex; align-items: center; justify-content: center; background: #fff;
+            border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem;
+            color: var(--text); cursor: pointer; min-height: 32px;
+        }
 
         /* 整改通知书专属样式 */
         .notice-item {
@@ -158,7 +208,8 @@
             .summary-bar .btn { font-size: 0.8rem; }
             .toast { font-size: 0.8rem; padding: 8px 16px; bottom: 130px; }
             .problem-item .field { margin-bottom: 6px; }
-            .problem-item select, .problem-item input, .problem-item textarea { min-height: 32px; font-size: 0.8rem; padding: 5px 8px; }
+            .problem-item select, .problem-item input, .problem-item textarea, .ms-display { min-height: 32px; font-size: 0.8rem; padding: 5px 8px; }
+            .ms-display { padding-right: 24px; }
             .check-group { gap: 6px; }
             .check-pill { font-size: 0.8rem; padding: 8px 4px; min-height: 36px; }
         }
@@ -254,7 +305,6 @@
         </div>
     </div>
 
-    <!-- 底部 2x2 按钮功能栏 -->
     <div class="summary-bar">
         <div class="btn-grid">
             <button class="btn btn-primary" id="submitBtn">📤 提交并推送钉钉群</button>
@@ -269,13 +319,13 @@
     <script>
         // ================== 全局变量与工具函数 ==================
         var LINE_FILTERS = {
-            '衢九线': { directions: ['上行', '下行', '站内'], sections: ['湖口站', '湖口至琵琶湖', '琵琶湖站', '琵琶湖至九江'] },
+            '衢九线': { directions: ['上行', '下行', '站内'], sections: ['湖口站', '湖口至琵琶湖', '琵琶湖站', '琵琶湖至九江', '都昌至湖口'] },
             '铜九线': { directions: ['单线', '站内'], sections: ['香隅至马垱', '马垱站', '马垱至泉山', '泉山站', '泉山至彭泽', '彭泽站', '彭泽至流泗', '流泗站', '流泗至湖口', '湖口站'] },
             '湖口疏解线': { directions: ['单线', '站内'], sections: ['湖口站'] },
             '煤专线': { directions: ['单线', '站内'], sections: ['煤专线', '装卸站'] }
         };
         var ALL_DIRECTIONS = ['上行', '下行', '单线', '站内', '其他'];
-        var ALL_SECTIONS = ['香隅至马垱', '马垱站', '马垱至泉山', '泉山站', '泉山至彭泽', '彭泽站', '彭泽至流泗', '流泗站', '流泗至湖口', '湖口站', '湖口至琵琶湖', '琵琶湖站', '琵琶湖至九江', '煤专线', '装卸站'];
+        var ALL_SECTIONS = ['香隅至马垱', '马垱站', '马垱至泉山', '泉山站', '泉山至彭泽', '彭泽站', '彭泽至流泗', '流泗站', '流泗至湖口', '湖口站', '湖口至琵琶湖', '琵琶湖站', '琵琶湖至九江', '煤专线', '装卸站', '都昌至湖口'];
         var LINE_OPTIONS = ['衢九线', '铜九线', '湖口疏解线', '煤专线'];
         var WORK_AREAS = ['湖口道岔联整打磨工区', '湖口维修工区', '琵琶湖维修一工区', '琵琶湖维修二工区'];
         var DINGTALK_WEBHOOK = '/.netlify/functions/send-daily-check';
@@ -304,9 +354,35 @@
             return LINE_FILTERS[lineVal] || { directions: ALL_DIRECTIONS, sections: ALL_SECTIONS };
         }
 
+        function syncUnfinishedWrap(completion) {
+            var wrap = document.getElementById('unfinishedWrap');
+            var ta = document.getElementById('unfinishedDevice');
+            if (completion === '部分完成' || completion === '未完成') {
+                wrap.classList.remove('hidden');
+                ta.placeholder = completion === '未完成' ? '未检查原因及涉及设备' : '未兑现设备有哪些？';
+            } else {
+                wrap.classList.add('hidden');
+            }
+        }
+
+        // 点击空白处收起多选框
+        document.addEventListener('click', function(e) {
+            var isInside = e.target.closest('.multi-select-wrap');
+            var dropdowns = document.querySelectorAll('.ms-dropdown');
+            for(var i=0; i<dropdowns.length; i++) {
+                if(!isInside || isInside !== dropdowns[i].parentNode) {
+                    dropdowns[i].classList.remove('show');
+                }
+            }
+        });
+
         // ================== 检查设备模块 ==================
         function addDeviceItem(data) {
             data = data || {};
+            var selectedSecs = [];
+            if (data.section) {
+                selectedSecs = Array.isArray(data.section) ? data.section : String(data.section).split(/[，,]/).filter(Boolean);
+            }
             var f = getFiltered(data.line || '');
             
             var lineOpts = '<option value="">选择</option>';
@@ -317,17 +393,15 @@
             
             var workAreaOpts = '<option value="">选择</option>';
             for (var k=0; k<WORK_AREAS.length; k++) workAreaOpts += '<option value="'+WORK_AREAS[k]+'" '+(data.workArea===WORK_AREAS[k]?'selected':'')+'>'+WORK_AREAS[k]+'</option>';
-            
-            var secOpts = '<option value="">选择</option>';
-            for (var n=0; n<f.sections.length; n++) secOpts += '<option value="'+f.sections[n]+'" '+(data.section===f.sections[n]?'selected':'')+'>'+f.sections[n]+'</option>';
 
             var html = '<div class="problem-item device-item">';
             html += '<button class="remove-btn" type="button" onclick="this.parentNode.remove()">×</button>';
             html += '<div class="row-2"><div class="field"><label>设备工区</label><select class="d-workArea">' + workAreaOpts + '</select></div><div class="field"><label>线名</label><select class="d-line">' + lineOpts + '</select></div></div>';
-            html += '<div class="row-2"><div class="field"><label>行别</label><select class="d-dir">' + dirOpts + '</select></div><div class="field"><label>区间/站场</label><select class="d-section">' + secOpts + '</select></div></div>';
-            html += '<div class="row-2"><div class="field"><label>计划线路</label><input class="d-planLine" placeholder="K1250+000~K1252+000" value="' + (data.planLine||'') + '" /></div><div class="field"><label>实际线路</label><input class="d-actualLine" placeholder="默认同计划" value="' + (data.actualLine||'') + '" /></div></div>';
-            html += '<div class="row-2"><div class="field"><label>计划道岔</label><input class="d-planSwitch" placeholder="湖口站3#、5#" value="' + (data.planSwitch||'') + '" /></div><div class="field"><label>实际道岔</label><input class="d-actualSwitch" placeholder="默认同计划" value="' + (data.actualSwitch||'') + '" /></div></div>';
-            html += '<div class="row-2"><div class="field"><label>计划股道</label><input class="d-planTrack" placeholder="1道、3道" value="' + (data.planTrack||'') + '" /></div><div class="field"><label>实际股道</label><input class="d-actualTrack" placeholder="默认同计划" value="' + (data.actualTrack||'') + '" /></div></div>';
+            html += '<div class="row-2"><div class="field"><label>行别</label><select class="d-dir">' + dirOpts + '</select></div><div class="field"><label>区间/站场(多选)</label><div class="multi-select-wrap"><div class="ms-display">选择</div><div class="ms-dropdown"></div></div></div></div>';
+            
+            html += '<div class="row-2"><div class="field"><label>计划线路</label><textarea class="d-planLine d-multi" rows="2" placeholder="K1250+000~K1252+000" >' + (data.planLine||'') + '</textarea></div><div class="field"><label>实际线路</label><textarea class="d-actualLine d-multi" rows="2" placeholder="默认同计划" >' + (data.actualLine||'') + '</textarea></div></div>';
+            html += '<div class="row-2"><div class="field"><label>计划道岔</label><textarea class="d-planSwitch d-multi" rows="2" placeholder="湖口站3#、5#" >' + (data.planSwitch||'') + '</textarea></div><div class="field"><label>实际道岔</label><textarea class="d-actualSwitch d-multi" rows="2" placeholder="默认同计划" >' + (data.actualSwitch||'') + '</textarea></div></div>';
+            html += '<div class="row-2"><div class="field"><label>计划股道</label><textarea class="d-planTrack d-multi" rows="2" placeholder="1道、3道" >' + (data.planTrack||'') + '</textarea></div><div class="field"><label>实际股道</label><textarea class="d-actualTrack d-multi" rows="2" placeholder="默认同计划" >' + (data.actualTrack||'') + '</textarea></div></div>';
             html += '</div>';
 
             var div = document.createElement('div');
@@ -335,20 +409,61 @@
             var item = div.firstElementChild;
             document.getElementById('deviceList').appendChild(item);
 
-            // 事件绑定
+            // 多选组件初始化
+            var msWrap = item.querySelector('.multi-select-wrap');
+            var msDisplay = msWrap.querySelector('.ms-display');
+            var msDropdown = msWrap.querySelector('.ms-dropdown');
+
+            function renderMultiOptions(newSecs) {
+                var optsHtml = '';
+                for(var s=0; s<newSecs.length; s++) {
+                    var chk = selectedSecs.indexOf(newSecs[s]) > -1 ? 'checked' : '';
+                    optsHtml += '<label class="ms-option"><input type="checkbox" value="'+newSecs[s]+'" '+chk+'><span>'+newSecs[s]+'</span></label>';
+                }
+                msDropdown.innerHTML = optsHtml;
+                updateDisplay();
+
+                var boxes = msDropdown.querySelectorAll('input[type="checkbox"]');
+                for(var c=0; c<boxes.length; c++) {
+                    boxes[c].addEventListener('change', function() {
+                        if (this.checked) {
+                            if (selectedSecs.indexOf(this.value) === -1) selectedSecs.push(this.value);
+                        } else {
+                            selectedSecs = selectedSecs.filter(function(v){ return v !== this.value; }.bind(this));
+                        }
+                        updateDisplay(); autoSave();
+                    });
+                }
+            }
+            function updateDisplay() {
+                var arr = [];
+                for(var s=0; s<f.sections.length; s++) {
+                    if(selectedSecs.indexOf(f.sections[s]) > -1) arr.push(f.sections[s]);
+                }
+                msDisplay.textContent = arr.length > 0 ? arr.join('、') : '选择';
+            }
+            renderMultiOptions(f.sections);
+
+            msDisplay.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var isShow = msDropdown.classList.contains('show');
+                var allDrops = document.querySelectorAll('.ms-dropdown');
+                for(var i=0; i<allDrops.length; i++) allDrops[i].classList.remove('show');
+                if (!isShow) msDropdown.classList.add('show');
+            });
+
             var lineSel = item.querySelector('.d-line');
             lineSel.addEventListener('change', function() {
                 var newF = getFiltered(this.value);
                 var dirSel = item.querySelector('.d-dir'); var curDir = dirSel.value;
-                var secSel = item.querySelector('.d-section'); var curSec = secSel.value;
                 
                 var dOpts = '<option value="">选择</option>';
                 for (var i=0; i<newF.directions.length; i++) dOpts += '<option value="'+newF.directions[i]+'" '+(curDir===newF.directions[i]?'selected':'')+'>'+newF.directions[i]+'</option>';
                 dirSel.innerHTML = dOpts;
                 
-                var sOpts = '<option value="">选择</option>';
-                for (var j=0; j<newF.sections.length; j++) sOpts += '<option value="'+newF.sections[j]+'" '+(curSec===newF.sections[j]?'selected':'')+'>'+newF.sections[j]+'</option>';
-                secSel.innerHTML = sOpts;
+                f = newF;
+                selectedSecs = selectedSecs.filter(function(v) { return newF.sections.indexOf(v) > -1; });
+                renderMultiOptions(newF.sections);
                 autoSave();
             });
 
@@ -367,13 +482,17 @@
                 })(pairs[p]);
             }
 
-            var allInputs = item.querySelectorAll('select, input');
+            var allInputs = item.querySelectorAll('select, input:not([type="checkbox"]), textarea');
             for(var n=0; n<allInputs.length; n++) { allInputs[n].addEventListener('change', autoSave); allInputs[n].addEventListener('input', autoSave); }
         }
 
         // ================== 突出问题模块 ==================
         function addProblemItem(data) {
             data = data || {};
+            var selectedSecs = [];
+            if (data.section) {
+                selectedSecs = Array.isArray(data.section) ? data.section : String(data.section).split(/[，,]/).filter(Boolean);
+            }
             var f = getFiltered(data.line || '');
             
             var waOpts = '<option value="">选择</option>';
@@ -388,48 +507,244 @@
             
             var dirOpts = '<option value="">选择</option>';
             for (var m=0; m<f.directions.length; m++) dirOpts += '<option value="'+f.directions[m]+'" '+(data.dir===f.directions[m]?'selected':'')+'>'+f.directions[m]+'</option>';
-            
-            var secOpts = '<option value="">选择</option>';
-            for (var n=0; n<f.sections.length; n++) secOpts += '<option value="'+f.sections[n]+'" '+(data.section===f.sections[n]?'selected':'')+'>'+f.sections[n]+'</option>';
 
             var sevVal = data.severity || '一般';
+            var hasShowImg = (sevVal === '严重' || sevVal === '较重') ? 'show' : '';
+            
+            // 是否下发通知书逻辑判断
+            var defaultNotice = '否';
+            if (data.needNotice === true || data.needNotice === '是' || data.needNotice === undefined) {
+                 defaultNotice = (sevVal === '严重' || sevVal === '较重') ? '是' : '否';
+            } else {
+                 defaultNotice = data.needNotice;
+            }
+            var hasShowNotice = (defaultNotice === '是') ? 'show' : '';
+            var noticeNo = data.noticeNo || '';
 
             var html = '<div class="problem-item">';
             html += '<button class="remove-btn" type="button" onclick="this.parentNode.remove()">×</button>';
             html += '<div class="row-2"><div class="field"><label>设备工区</label><select class="p-workArea">' + waOpts + '</select></div><div class="field"><label>设备类型</label><select class="p-type">' + typeOpts + '</select></div></div>';
             html += '<div class="row-2"><div class="field"><label>线名</label><select class="p-line">' + lineOpts + '</select></div><div class="field"><label>行别</label><select class="p-dir">' + dirOpts + '</select></div></div>';
-            html += '<div class="field"><label>区间/站场</label><select class="p-section">' + secOpts + '</select></div>';
+            html += '<div class="field"><label>区间/站场(多选)</label><div class="multi-select-wrap"><div class="ms-display">选择</div><div class="ms-dropdown"></div></div></div>';
             html += '<div class="field"><label>地点</label><input class="p-location" placeholder="K___+___ / 道岔号 / 股道号" value="' + (data.location||'') + '" /></div>';
-            html += '<div class="field"><label>病害描述</label><textarea class="p-desc" rows="1" placeholder="请描述病害情况...">' + (data.desc||'') + '</textarea></div>';
+            html += '<div class="field"><label>病害描述</label><textarea class="p-desc" rows="3" placeholder="请描述病害情况...">' + (data.desc||'') + '</textarea></div>';
             html += '<div class="field"><label>严重程度</label><select class="p-severity"><option value="一般" '+(sevVal==='一般'?'selected':'')+'>一般</option><option value="较重" '+(sevVal==='较重'?'selected':'')+'>较重</option><option value="严重" '+(sevVal==='严重'?'selected':'')+'>严重</option></select></div>';
+            
+            // 是否下发通知书 & 通知书编号
+            html += '<div class="field notice-select-wrap ' + hasShowImg + '" style="display:none;">';
+            html += '<label>是否下发严重病害整改通知书</label><select class="p-needNotice"><option value="否" '+(defaultNotice==='否'?'selected':'')+'>否</option><option value="是" '+(defaultNotice==='是'?'selected':'')+'>是</option></select>';
+            html += '<div style="margin-top:6px;" class="notice-no-wrap ' + hasShowNotice + '"><label>通知书编号</label><input class="p-noticeNo" placeholder="如：001" value="' + noticeNo + '" /></div>';
+            html += '</div>';
+            
+            html += '<div class="field img-upload-wrap ' + hasShowImg + '">';
+            html += '<label>病害照片 (选填)</label>';
+            html += '<div><label class="upload-btn">📷 拍照/选择图片<input type="file" class="p-img-input" accept="image/*" multiple style="display:none;"></label></div>';
+            html += '<div class="img-thumbnails"></div>';
+            html += '</div>';
+            
             html += '</div>';
 
             var div = document.createElement('div');
             div.innerHTML = html;
             var item = div.firstElementChild;
             document.getElementById('problemList').appendChild(item);
+
+            // 多选组件初始化
+            var msWrap = item.querySelector('.multi-select-wrap');
+            var msDisplay = msWrap.querySelector('.ms-display');
+            var msDropdown = msWrap.querySelector('.ms-dropdown');
+
+            function renderMultiOptions(newSecs) {
+                var optsHtml = '';
+                for(var s=0; s<newSecs.length; s++) {
+                    var chk = selectedSecs.indexOf(newSecs[s]) > -1 ? 'checked' : '';
+                    optsHtml += '<label class="ms-option"><input type="checkbox" value="'+newSecs[s]+'" '+chk+'><span>'+newSecs[s]+'</span></label>';
+                }
+                msDropdown.innerHTML = optsHtml;
+                updateDisplay();
+
+                var boxes = msDropdown.querySelectorAll('input[type="checkbox"]');
+                for(var c=0; c<boxes.length; c++) {
+                    boxes[c].addEventListener('change', function() {
+                        if (this.checked) {
+                            if (selectedSecs.indexOf(this.value) === -1) selectedSecs.push(this.value);
+                        } else {
+                            selectedSecs = selectedSecs.filter(function(v){ return v !== this.value; }.bind(this));
+                        }
+                        updateDisplay(); updateProblemStats(); autoSave();
+                    });
+                }
+            }
+            function updateDisplay() {
+                var arr = [];
+                for(var s=0; s<f.sections.length; s++) {
+                    if(selectedSecs.indexOf(f.sections[s]) > -1) arr.push(f.sections[s]);
+                }
+                msDisplay.textContent = arr.length > 0 ? arr.join('、') : '选择';
+            }
+            renderMultiOptions(f.sections);
+
+            msDisplay.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var isShow = msDropdown.classList.contains('show');
+                var allDrops = document.querySelectorAll('.ms-dropdown');
+                for(var i=0; i<allDrops.length; i++) allDrops[i].classList.remove('show');
+                if (!isShow) msDropdown.classList.add('show');
+            });
             
             var lineSel = item.querySelector('.p-line');
             lineSel.addEventListener('change', function() {
                 var newF = getFiltered(this.value);
                 var dirSel = item.querySelector('.p-dir'); var curDir = dirSel.value;
-                var secSel = item.querySelector('.p-section'); var curSec = secSel.value;
                 
                 var dOpts = '<option value="">选择</option>';
                 for (var i=0; i<newF.directions.length; i++) dOpts += '<option value="'+newF.directions[i]+'" '+(curDir===newF.directions[i]?'selected':'')+'>'+newF.directions[i]+'</option>';
                 dirSel.innerHTML = dOpts;
                 
-                var sOpts = '<option value="">选择</option>';
-                for (var j=0; j<newF.sections.length; j++) sOpts += '<option value="'+newF.sections[j]+'" '+(curSec===newF.sections[j]?'selected':'')+'>'+newF.sections[j]+'</option>';
-                secSel.innerHTML = sOpts;
+                f = newF;
+                selectedSecs = selectedSecs.filter(function(v) { return newF.sections.indexOf(v) > -1; });
+                renderMultiOptions(newF.sections);
                 updateProblemStats(); autoSave();
             });
+
+            var sevSel = item.querySelector('.p-severity');
+            var imgWrap = item.querySelector('.img-upload-wrap');
+            var noticeWrap = item.querySelector('.notice-select-wrap');
+            var noticeNoWrap = item.querySelector('.notice-no-wrap');
+            var noticeSel = item.querySelector('.p-needNotice');
             
-            var fields = item.querySelectorAll('select, input, textarea');
+            sevSel.addEventListener('change', function() {
+                if (this.value === '较重' || this.value === '严重') {
+                    imgWrap.classList.add('show');
+                    noticeWrap.style.display = 'block';
+                    if (noticeSel.value === '否') {
+                        noticeSel.value = '是';
+                        noticeNoWrap.style.display = 'block';
+                    }
+                } else {
+                    imgWrap.classList.remove('show');
+                    noticeWrap.style.display = 'none';
+                    noticeSel.value = '否';
+                    noticeNoWrap.style.display = 'none';
+                }
+                updateProblemStats(); autoSave();
+            });
+
+            noticeSel.addEventListener('change', function() {
+                if (this.value === '是') {
+                    noticeNoWrap.style.display = 'block';
+                } else {
+                    noticeNoWrap.style.display = 'none';
+                }
+                updateProblemStats(); autoSave();
+            });
+
+            // 处理图片压缩与上传
+            var imgInput = item.querySelector('.p-img-input');
+            var thumbContainer = item.querySelector('.img-thumbnails');
+            var problemImages = data.images || []; 
+            
+            function renderThumbs() {
+                thumbContainer.innerHTML = '';
+                problemImages.forEach(function(imgObj, idx) {
+                    var divImg = document.createElement('div');
+                    divImg.className = 'img-thumb-box';
+                    divImg.innerHTML = '<img src="' + imgObj.base64 + '"><button type="button" class="del-img" data-idx="'+idx+'">×</button>';
+                    thumbContainer.appendChild(divImg);
+                });
+                var delBtns = thumbContainer.querySelectorAll('.del-img');
+                for(var d=0; d<delBtns.length; d++) {
+                    delBtns[d].addEventListener('click', function() {
+                        var i = parseInt(this.getAttribute('data-idx'));
+                        problemImages.splice(i, 1);
+                        renderThumbs(); autoSave();
+                    });
+                }
+            }
+            renderThumbs();
+
+            imgInput.addEventListener('change', function(e) {
+                var files = e.target.files;
+                if (!files || files.length === 0) return;
+                
+                showToast('正在处理图片...');
+                
+                var promises = [];
+                for (var i=0; i<files.length; i++) {
+                    (function(file) {
+                        var p = new Promise(function(resolve) {
+                            var reader = new FileReader();
+                            reader.onload = function(evt) {
+                                var img = new Image();
+                                img.onload = function() {
+                                    try {
+                                        var canvas = document.createElement('canvas');
+                                        var ctx = canvas.getContext('2d');
+                                        var maxW = 800, maxH = 800;
+                                        var width = img.width, height = img.height;
+                                        
+                                        if (width > height) {
+                                            if (width > maxW) { height = Math.round(height * maxW / width); width = maxW; }
+                                        } else {
+                                            if (height > maxH) { width = Math.round(width * maxH / height); height = maxH; }
+                                        }
+                                        canvas.width = width; canvas.height = height;
+                                        ctx.drawImage(img, 0, 0, width, height);
+                                        
+                                        var base64 = canvas.toDataURL('image/jpeg', 0.7);
+                                        resolve({ id: Date.now() + Math.random(), base64: base64 });
+                                    } catch (err) {
+                                        console.error('图片压缩失败', err);
+                                        resolve(null);
+                                    }
+                                };
+                                img.onerror = function() { resolve(null); };
+                                img.src = evt.target.result;
+                            };
+                            reader.onerror = function() { resolve(null); };
+                            reader.readAsDataURL(file);
+                        });
+                        promises.push(p);
+                    })(files[i]);
+                }
+                
+                Promise.all(promises).then(function(results) {
+                    var successCount = 0;
+                    results.forEach(function(imgObj) {
+                        if (imgObj) { problemImages.push(imgObj); successCount++; }
+                    });
+                    
+                    if (successCount > 0) {
+                        renderThumbs(); autoSave(); showToast('成功添加 ' + successCount + ' 张图片');
+                    } else {
+                        showToast('图片处理失败，请重试');
+                    }
+                }).catch(function(err) {
+                    console.error(err);
+                    showToast('图片处理发生错误');
+                });
+                
+                imgInput.value = ''; 
+            });
+
+            var fields = item.querySelectorAll('select, input:not([type="file"]):not([type="checkbox"]), textarea');
             for(var k=0; k<fields.length; k++) {
                 fields[k].addEventListener('change', function() { updateProblemStats(); autoSave(); });
                 fields[k].addEventListener('input', function() { updateProblemStats(); autoSave(); });
             }
+            
+            // 初始化触发一次显隐逻辑
+            if (sevVal === '较重' || sevVal === '严重') {
+                noticeWrap.style.display = 'block';
+                if (noticeSel.value === '是') {
+                    noticeNoWrap.style.display = 'block';
+                } else {
+                    noticeNoWrap.style.display = 'none';
+                }
+            } else {
+                noticeNoWrap.style.display = 'none';
+            }
+
             updateProblemStats();
         }
 
@@ -449,16 +764,35 @@
             var problems = [];
             for (var i=0; i<items.length; i++) {
                 var item = items[i];
-                var type = item.querySelector('.p-type').value;
-                var workArea = item.querySelector('.p-workArea').value;
-                var line = item.querySelector('.p-line').value;
-                var dir = item.querySelector('.p-dir').value;
-                var section = item.querySelector('.p-section').value;
-                var loc = item.querySelector('.p-location').value.trim();
-                var desc = item.querySelector('.p-desc').value.trim();
-                var sev = item.querySelector('.p-severity').value;
-                if (loc || desc || type || workArea || line) {
-                    problems.push({ workArea: workArea, type: type, line: line, dir: dir, section: section, location: loc, desc: desc, severity: sev });
+                
+                var typeEl = item.querySelector('.p-type'); var type = typeEl ? typeEl.value : '';
+                var waEl = item.querySelector('.p-workArea'); var workArea = waEl ? waEl.value : '';
+                var lineEl = item.querySelector('.p-line'); var line = lineEl ? lineEl.value : '';
+                var dirEl = item.querySelector('.p-dir'); var dir = dirEl ? dirEl.value : '';
+                
+                var chkBoxes = item.querySelectorAll('.ms-dropdown input:checked');
+                var secArr = [];
+                for(var b=0; b<chkBoxes.length; b++) secArr.push(chkBoxes[b].value);
+                var section = secArr.join('、');
+
+                var locEl = item.querySelector('.p-location'); var loc = locEl ? locEl.value.trim() : '';
+                var descEl = item.querySelector('.p-desc'); var desc = descEl ? descEl.value.trim() : '';
+                var sevEl = item.querySelector('.p-severity'); var sev = sevEl ? sevEl.value : '';
+                
+                var needNoticeVal = '否';
+                var noticeEl = item.querySelector('.p-needNotice');
+                if (noticeEl) needNoticeVal = noticeEl.value;
+
+                var noticeNo = '';
+                var noticeNoEl = item.querySelector('.p-noticeNo');
+                if (noticeNoEl) noticeNo = noticeNoEl.value.trim();
+                
+                var thumbImgs = item.querySelectorAll('.img-thumb-box img');
+                var images = [];
+                for(var im=0; im<thumbImgs.length; im++) { images.push({ base64: thumbImgs[im].src }); }
+
+                if (loc || desc || type || workArea || line || section || images.length > 0) {
+                    problems.push({ workArea: workArea, type: type, line: line, dir: dir, section: section, location: loc, desc: desc, severity: sev, images: images, needNotice: needNoticeVal, noticeNo: noticeNo });
                 }
             }
             var stats = getProblemStats(problems);
@@ -473,7 +807,11 @@
             }
 
             var seriousProblems = [];
-            for(var j=0; j<problems.length; j++) { if(problems[j].severity === '严重') seriousProblems.push(problems[j]); }
+            for(var j=0; j<problems.length; j++) { 
+                if(problems[j].needNotice === '是') {
+                    seriousProblems.push(problems[j]); 
+                }
+            }
             
             var noticeCard = document.getElementById('seriousNoticeCard');
             var noticeList = document.getElementById('seriousNoticeList');
@@ -482,8 +820,9 @@
                 var nHtml = '';
                 for (var k=0; k<seriousProblems.length; k++) {
                     var p = seriousProblems[k];
+                    var nTitle = p.noticeNo ? '编号：' + p.noticeNo : '严重病害 ' + (k+1);
                     nHtml += '<div class="notice-item">';
-                    nHtml += '<div class="n-title">严重病害 ' + (k+1) + '</div>';
+                    nHtml += '<div class="n-title">' + nTitle + '</div>';
                     nHtml += '<div class="n-row"><div><span class="n-label">责任工区：</span><span class="n-val">' + (p.workArea || '—') + '</span></div><div><span class="n-label">设备类型：</span><span class="n-val">' + (p.type || '—') + '</span></div></div>';
                     nHtml += '<div class="n-row"><div><span class="n-label">线&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名：</span><span class="n-val">' + (p.line || '—') + '</span></div><div><span class="n-label">行别：</span><span class="n-val">' + (p.dir || '—') + '</span></div></div>';
                     nHtml += '<div class="n-row"><div><span class="n-label">区间/站场：</span><span class="n-val">' + (p.section || '—') + '</span></div></div>';
@@ -504,13 +843,19 @@
                 var workArea = item.querySelector('.d-workArea').value;
                 var line = item.querySelector('.d-line').value;
                 var dir = item.querySelector('.d-dir').value;
-                var section = item.querySelector('.d-section').value;
+                
+                var chkBoxes = item.querySelectorAll('.ms-dropdown input:checked');
+                var secArr = [];
+                for(var b=0; b<chkBoxes.length; b++) secArr.push(chkBoxes[b].value);
+                var section = secArr.join('、');
+                
                 var planLine = item.querySelector('.d-planLine').value.trim();
                 var actualLine = item.querySelector('.d-actualLine').value.trim();
                 var planSwitch = item.querySelector('.d-planSwitch').value.trim();
                 var actualSwitch = item.querySelector('.d-actualSwitch').value.trim();
                 var planTrack = item.querySelector('.d-planTrack').value.trim();
                 var actualTrack = item.querySelector('.d-actualTrack').value.trim();
+                
                 if (workArea || line || dir || section || planLine || actualLine || planSwitch || actualSwitch || planTrack || actualTrack) {
                     devices.push({ workArea: workArea, line: line, dir: dir, section: section, planLine: planLine, actualLine: actualLine, planSwitch: planSwitch, actualSwitch: actualSwitch, planTrack: planTrack, actualTrack: actualTrack });
                 }
@@ -535,16 +880,34 @@
             var items = document.getElementById('problemList').querySelectorAll('.problem-item');
             for (var i=0; i<items.length; i++) {
                 var item = items[i];
-                var type = item.querySelector('.p-type').value;
-                var workArea = item.querySelector('.p-workArea').value;
-                var line = item.querySelector('.p-line').value;
-                var dir = item.querySelector('.p-dir').value;
-                var section = item.querySelector('.p-section').value;
-                var loc = item.querySelector('.p-location').value.trim();
-                var desc = item.querySelector('.p-desc').value.trim();
-                var sev = item.querySelector('.p-severity').value;
-                if (loc || desc || type || workArea || line) {
-                    data.problems.push({ workArea: workArea, type: type, line: line, dir: dir, section: section, location: loc, desc: desc, severity: sev });
+                var typeEl = item.querySelector('.p-type'); var type = typeEl ? typeEl.value : '';
+                var waEl = item.querySelector('.p-workArea'); var workArea = waEl ? waEl.value : '';
+                var lineEl = item.querySelector('.p-line'); var line = lineEl ? lineEl.value : '';
+                var dirEl = item.querySelector('.p-dir'); var dir = dirEl ? dirEl.value : '';
+                
+                var chkBoxes = item.querySelectorAll('.ms-dropdown input:checked');
+                var secArr = [];
+                for(var b=0; b<chkBoxes.length; b++) secArr.push(chkBoxes[b].value);
+                var section = secArr.join('、');
+
+                var locEl = item.querySelector('.p-location'); var loc = locEl ? locEl.value.trim() : '';
+                var descEl = item.querySelector('.p-desc'); var desc = descEl ? descEl.value.trim() : '';
+                var sevEl = item.querySelector('.p-severity'); var sev = sevEl ? sevEl.value : '';
+                
+                var needNoticeVal = '否';
+                var noticeEl = item.querySelector('.p-needNotice');
+                if (noticeEl) needNoticeVal = noticeEl.value;
+
+                var noticeNo = '';
+                var noticeNoEl = item.querySelector('.p-noticeNo');
+                if (noticeNoEl) noticeNo = noticeNoEl.value.trim();
+                
+                var thumbImgs = item.querySelectorAll('.img-thumb-box img');
+                var images = [];
+                for(var im=0; im<thumbImgs.length; im++) { images.push({ base64: thumbImgs[im].src }); }
+
+                if (loc || desc || type || workArea || line || section || images.length > 0) {
+                    data.problems.push({ workArea: workArea, type: type, line: line, dir: dir, section: section, location: loc, desc: desc, severity: sev, images: images, needNotice: needNoticeVal, noticeNo: noticeNo });
                 }
             }
             return data;
@@ -567,7 +930,7 @@
                 var preview = '无设备';
                 if (h.data && h.data.devices && h.data.devices.length) {
                     var dev = h.data.devices[0];
-                    preview = dev.planLine || dev.planSwitch || dev.planTrack || dev.line || '设备记录';
+                    preview = dev.planLine || dev.planSwitch || dev.planTrack || dev.line || dev.section || '设备记录';
                 }
                 if (preview.length > 20) preview = preview.substring(0, 20) + '…';
                 html += '<div class="history-item" data-index="' + i + '"><span class="time">' + (h.time || '') + '</span><span class="preview" title="' + preview + '">' + preview + '</span><span class="actions"><button class="load-history" data-index="' + i + '" title="加载">📂</button><button class="del-history" data-index="' + i + '" title="删除">🗑️</button></span></div>';
@@ -597,6 +960,7 @@
                                 pills[c].classList.remove('selected');
                                 if (pills[c].getAttribute('data-value') === data.completion) pills[c].classList.add('selected');
                             }
+                            syncUnfinishedWrap(data.completion);
                             updateProblemStats();
                             showToast('📂 已加载历史记录'); 
                         } 
@@ -671,7 +1035,7 @@
             }
             
             var seriousProblems = [];
-            for(var k=0; k<(data.problems||[]).length; k++) { if(data.problems[k].severity === '严重') seriousProblems.push(data.problems[k]); }
+            for(var k=0; k<(data.problems||[]).length; k++) { if(data.problems[k].needNotice === '是') seriousProblems.push(data.problems[k]); }
             
             var remarkIndex = '⑶';
             if (seriousProblems.length > 0) {
@@ -681,7 +1045,8 @@
                 lines.push('');
                 for(var m=0; m<seriousProblems.length; m++) {
                     var sp = seriousProblems[m];
-                    lines.push('严重病害 ' + (m+1));
+                    var spTitle = sp.noticeNo ? '编号：' + sp.noticeNo : '严重病害 ' + (m+1);
+                    lines.push(spTitle);
                     lines.push('责任工区：' + (sp.workArea||''));
                     lines.push('线名/行别：' + (sp.line || '') + ' ' + (sp.dir || ''));
                     lines.push('区间/站场：' + (sp.section || '—'));
@@ -719,24 +1084,30 @@
             h += '<p style="' + h1Style + '">二、检查设备</p>';
             if (data.devices && data.devices.length > 0) {
                 h += '<table style="' + tStyle + '"><tr>';
-                h += '<th style="' + thStyle + 'width:20%;">设备工区</th>';
-                h += '<th style="' + thStyle + 'width:12%;">线名</th>';
-                h += '<th style="' + thStyle + 'width:12%;">行别</th>';
-                h += '<th style="' + thStyle + 'width:16%;">区间/站场</th>';
-                h += '<th style="' + thStyle + 'width:13%;">线路<br/>(计划/实际)</th>';
-                h += '<th style="' + thStyle + 'width:13%;">道岔<br/>(计划/实际)</th>';
-                h += '<th style="' + thStyle + 'width:14%;">股道<br/>(计划/实际)</th>';
+                h += '<th style="' + thStyle + 'width:16%;">设备工区</th>';
+                h += '<th style="' + thStyle + 'width:9%;">线名</th>';
+                h += '<th style="' + thStyle + 'width:8%;">行别</th>';
+                h += '<th style="' + thStyle + 'width:13%;">区间/站场</th>';
+                h += '<th style="' + thStyle + 'width:11%;">计划线路</th>';
+                h += '<th style="' + thStyle + 'width:11%;">实际线路</th>';
+                h += '<th style="' + thStyle + 'width:10%;">计划道岔</th>';
+                h += '<th style="' + thStyle + 'width:10%;">实际道岔</th>';
+                h += '<th style="' + thStyle + 'width:6%;">计划股道</th>';
+                h += '<th style="' + thStyle + 'width:6%;">实际股道</th>';
                 h += '</tr>';
                 for(var i=0; i<data.devices.length; i++) {
                     var d = data.devices[i];
                     h += '<tr>';
-                    h += '<td style="' + tdStyle + '">' + esc(d.workArea || '—') + '</td>';
-                    h += '<td style="' + tdStyle + '">' + esc(d.line || '—') + '</td>';
-                    h += '<td style="' + tdStyle + '">' + esc(d.dir || '—') + '</td>';
-                    h += '<td style="' + tdStyle + '">' + esc(d.section || '—') + '</td>';
-                    h += '<td style="' + tdStyle + '">' + esc(d.planLine || '—') + '<br/>' + esc(d.actualLine || '—') + '</td>';
-                    h += '<td style="' + tdStyle + '">' + esc(d.planSwitch || '—') + '<br/>' + esc(d.actualSwitch || '—') + '</td>';
-                    h += '<td style="' + tdStyle + '">' + esc(d.planTrack || '—') + '<br/>' + esc(d.actualTrack || '—') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(d.workArea || '') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(d.line || '') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(d.dir || '') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(d.section || '') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(d.planLine || '') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(d.actualLine || '') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(d.planSwitch || '') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(d.actualSwitch || '') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(d.planTrack || '') + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(d.actualTrack || '') + '</td>';
                     h += '</tr>';
                 }
                 h += '</table>';
@@ -767,12 +1138,51 @@
                     h += '</tr>';
                 }
                 h += '</table>';
+
+                var hasProblemImgs = false;
+                for(var pimg=0; pimg<data.problems.length; pimg++) {
+                    if(data.problems[pimg].images && data.problems[pimg].images.length > 0) { hasProblemImgs = true; break; }
+                }
+                if (hasProblemImgs) {
+                    h += '<p style="' + h1Style + 'font-size:14pt;margin-top:12pt;">突出问题病害照片</p>';
+                    for(var j2=0; j2<data.problems.length; j2++) {
+                        var pr = data.problems[j2];
+                        if (pr.images && pr.images.length > 0) {
+                            var pTitle = '对应问题 ' + (j2+1) + '：';
+                            var titleParts = [];
+                            if(pr.line) titleParts.push(pr.line);
+                            if(pr.dir) titleParts.push(pr.dir);
+                            if(pr.section) titleParts.push(pr.section);
+                            if(pr.type) titleParts.push(pr.type);
+                            if(pr.location) titleParts.push(pr.location);
+                            pTitle += titleParts.join('');
+                            if(pr.desc) pTitle += ' ' + pr.desc;
+                            
+                            // 【修改】文字改为与正文一致的仿宋字号（16pt），不加粗，图片使用table居中显示
+                            h += '<div style="margin-bottom:12pt;">';
+                            h += '<div style="font-family:\'仿宋_GB2312\',FangSong,SimSun,serif; font-size:16pt; line-height:28pt; margin-bottom:6pt;">' + esc(pTitle) + '</div>';
+                            
+                            h += '<table width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse:collapse;"><tr>';
+                            for(var im=0; im<pr.images.length; im++) {
+                                h += '<td align="center" style="padding-bottom:10pt; width:50%;">';
+                                h += '<img src="'+pr.images[im].base64+'" width="260" style="width:260px; max-width:100%; height:auto; border:1px solid #ccc;" />';
+                                h += '</td>';
+                                if ((im+1) % 2 === 0 && im !== pr.images.length - 1) {
+                                    h += '</tr><tr>';
+                                }
+                            }
+                            h += '</tr></table>';
+                            h += '</div>';
+                        }
+                    }
+                }
             } else h += '<p style="' + bStyle + '">本次检查未发现突出问题。</p>';
 
             var seriousProblems = [];
-            for(var k=0; k<(data.problems||[]).length; k++) { if(data.problems[k].severity === '严重') seriousProblems.push(data.problems[k]); }
+            for(var k=0; k<(data.problems||[]).length; k++) { if(data.problems[k].needNotice === '是') seriousProblems.push(data.problems[k]); }
+            
             if (seriousProblems.length > 0) {
-                h += '<p style="' + h1Style + '">四、今日严重病害整改通知书</p>';
+                h += '<p style="' + h1Style + 'margin-top:12pt;">四、今日严重病害整改通知书</p>';
                 
                 h += '<table style="' + tStyle + '">';
                 h += '<tr>';
@@ -787,8 +1197,10 @@
                 h += '</tr>';
                 for(var m=0; m<seriousProblems.length; m++) {
                     var sp = seriousProblems[m];
+                    // 【修改】Word 里去掉“编号：”前缀
+                    var spTitle = sp.noticeNo ? sp.noticeNo : '严重病害 ' + (m+1);
                     h += '<tr>';
-                    h += '<td style="' + tdStyle + '">严重病害 ' + (m+1) + '</td>';
+                    h += '<td style="' + tdStyle + '">' + esc(spTitle) + '</td>';
                     h += '<td style="' + tdStyle + '">' + esc(sp.workArea || '—') + '</td>';
                     h += '<td style="' + tdStyle + '">' + esc(sp.type || '—') + '</td>';
                     h += '<td style="' + tdStyle + '">' + esc(sp.line || '—') + '</td>';
@@ -800,6 +1212,7 @@
                 }
                 h += '</table>';
             }
+            
             if (data.remarks) {
                 h += '<p style="' + h1Style + '">' + (seriousProblems.length > 0 ? '五' : '四') + '、备注 / 需协调事项</p>';
                 h += '<p style="' + bStyle + 'white-space:pre-wrap;">' + esc(data.remarks) + '</p>';
@@ -842,7 +1255,6 @@
                 
                 for(var j=0; j<data.problems.length; j++) {
                     var pr = data.problems[j];
-                    
                     var locStr = (pr.workArea || '') + ' ' + (pr.line || '') + ' ' + (pr.dir || '') + ' ' + (pr.section || '');
                     
                     var l1 = (j + 1) + '. ' + locStr.trim();
@@ -865,14 +1277,16 @@
             }
 
             var seriousProblems = [];
-            for(var k=0; k<(data.problems||[]).length; k++) { if(data.problems[k].severity === '严重') seriousProblems.push(data.problems[k]); }
+            for(var k=0; k<(data.problems||[]).length; k++) { if(data.problems[k].needNotice === '是') seriousProblems.push(data.problems[k]); }
             
             var remarkIndex = '⑶';
             if (seriousProblems.length > 0) {
                 md += '---\n\n🚨 **⑶ 今日严重病害整改通知书**\n\n';
                 for(var m=0; m<seriousProblems.length; m++) {
                     var sp = seriousProblems[m];
-                    md += '<font color="#b22234">**严重病害 ' + (m+1) + '**</font>\n';
+                    // 【修改】钉钉恢复“编号：”前缀
+                    var spTitle = sp.noticeNo ? '编号：' + sp.noticeNo : '严重病害 ' + (m+1);
+                    md += '<font color="#b22234">**' + spTitle + '**</font>\n';
                     md += '责任工区：' + (sp.workArea||'') + '\n';
                     md += '线名/行别：' + (sp.line || '') + ' ' + (sp.dir || '') + '\n';
                     md += '区间/站场：' + (sp.section || '—') + '\n';
@@ -903,7 +1317,6 @@
             }, 500);
         }
 
-        // 绑定全局事件
         document.getElementById('addDeviceRow').addEventListener('click', function() { addDeviceItem(); });
         document.getElementById('addProblemRow').addEventListener('click', function() { addProblemItem(); });
         document.getElementById('clearDevices').addEventListener('click', function() {
@@ -920,13 +1333,8 @@
                 this.classList.add('selected');
                 var radio = this.querySelector('input'); if (radio) radio.checked = true;
                 var val = this.getAttribute('data-value');
-                if (val === '部分完成' || val === '未完成') {
-                    document.getElementById('unfinishedWrap').classList.remove('hidden');
-                    document.getElementById('unfinishedDevice').placeholder = val === '未完成' ? '未检查原因及涉及设备' : '未兑现设备有哪些？';
-                } else { 
-                    document.getElementById('unfinishedWrap').classList.add('hidden'); 
-                    document.getElementById('unfinishedDevice').value = ''; 
-                }
+                syncUnfinishedWrap(val);
+                if (val === '已全部完成') { document.getElementById('unfinishedDevice').value = ''; }
                 autoSave();
             });
         }
@@ -1036,6 +1444,7 @@
                     pills[c].classList.remove('selected');
                     if (pills[c].getAttribute('data-value') === saved.completion) pills[c].classList.add('selected');
                 }
+                syncUnfinishedWrap(saved.completion);
             }
         } catch (e) {}
         
