@@ -100,7 +100,6 @@
         }
         .problem-item .remove-btn:active { background: #fca5a5; }
 
-        /* 多选下拉框专用样式 */
         .multi-select-wrap { position: relative; user-select: none; }
         .ms-display {
             width: 100%; padding: 6px 24px 6px 10px; border: 1px solid var(--border); border-radius: 6px;
@@ -123,7 +122,6 @@
         .ms-option:hover { background: #f1f5f9; }
         .ms-option input[type="checkbox"] { accent-color: var(--primary); width: 16px; height: 16px; }
 
-        /* 上传图片区域样式 */
         .img-upload-wrap { display: none; background: #f8fafc; border: 1px dashed var(--border); border-radius: 6px; padding: 10px; margin-top: 4px; }
         .img-upload-wrap.show { display: block; }
         .img-thumbnails { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
@@ -140,7 +138,6 @@
             color: var(--text); cursor: pointer; min-height: 32px;
         }
 
-        /* 整改通知书专属样式 */
         .notice-item {
             background: #fff; border: 1.5px solid var(--danger); border-radius: 8px;
             padding: 12px; font-size: 0.85rem; color: #333; line-height: 1.8; margin-bottom: 10px;
@@ -169,11 +166,9 @@
             display: flex; flex-direction: column; gap: 8px;
         }
         
-        /* 按钮网格布局优化 */
         .btn-grid { display: grid; gap: 8px; }
-        .btn-row-1 { grid-template-columns: 1fr 1fr; } /* 第一排两个大按钮 */
-        .btn-row-2 { grid-template-columns: 1fr 1fr 1fr; } /* 第二排三个均分 */
-
+        .btn-row-1 { grid-template-columns: 1fr 1fr; }
+        .btn-row-2 { grid-template-columns: 1fr 1fr 1fr; }
         .summary-bar .btn { padding: 10px 6px; font-size: 0.85rem; }
 
         .toast {
@@ -307,14 +302,11 @@
         </div>
     </div>
 
-    <!-- 底部功能栏 -->
     <div class="summary-bar">
-        <!-- 第一排：两个大按钮 -->
         <div class="btn-grid btn-row-1">
             <button class="btn btn-primary" id="submitBtn">📤 推送钉钉</button>
             <button class="btn btn-outline" id="exportWord" style="background:var(--primary-light);">📘 导出Word</button>
         </div>
-        <!-- 第二排：三个均分按钮 -->
         <div class="btn-grid btn-row-2">
             <button class="btn btn-outline" id="exportPdf" style="background:#fff5f5; color:var(--danger); border-color:#feb2b2;">📄 导出PDF</button>
             <button class="btn btn-outline" id="saveDraftBtn">💾 保存草稿</button>
@@ -515,7 +507,8 @@
             for (var m=0; m<f.directions.length; m++) dirOpts += '<option value="'+f.directions[m]+'" '+(data.dir===f.directions[m]?'selected':'')+'>'+f.directions[m]+'</option>';
 
             var sevVal = data.severity || '一般';
-            var hasShowImg = (sevVal === '严重' || sevVal === '较重') ? 'show' : '';
+            // 图片上传框不再受严重程度控制，默认都显示
+            var hasShowImg = 'show';
             
             var defaultNotice = '否';
             if (data.needNotice === true || data.needNotice === '是' || data.needNotice === undefined) {
@@ -525,6 +518,8 @@
             }
             var hasShowNotice = (defaultNotice === '是') ? 'show' : '';
             var noticeNo = data.noticeNo || '';
+            // 控制下发通知书容器的显隐（只有较重/严重才显示）
+            var showNoticeContainer = (sevVal === '严重' || sevVal === '较重') ? 'block' : 'none';
 
             var html = '<div class="problem-item">';
             html += '<button class="remove-btn" type="button" onclick="this.parentNode.remove()">×</button>';
@@ -535,11 +530,13 @@
             html += '<div class="field"><label>病害描述</label><textarea class="p-desc" rows="3" placeholder="请描述病害情况...">' + (data.desc||'') + '</textarea></div>';
             html += '<div class="field"><label>严重程度</label><select class="p-severity"><option value="一般" '+(sevVal==='一般'?'selected':'')+'>一般</option><option value="较重" '+(sevVal==='较重'?'selected':'')+'>较重</option><option value="严重" '+(sevVal==='严重'?'selected':'')+'>严重</option></select></div>';
             
-            html += '<div class="field notice-select-wrap ' + hasShowImg + '" style="display:none;">';
+            // 通知书容器
+            html += '<div class="field notice-select-wrap" style="display:' + showNoticeContainer + ';">';
             html += '<label>是否下发严重病害整改通知书</label><select class="p-needNotice"><option value="否" '+(defaultNotice==='否'?'selected':'')+'>否</option><option value="是" '+(defaultNotice==='是'?'selected':'')+'>是</option></select>';
             html += '<div style="margin-top:6px;" class="notice-no-wrap ' + hasShowNotice + '"><label>通知书编号</label><input class="p-noticeNo" placeholder="如：001" value="' + noticeNo + '" /></div>';
             html += '</div>';
             
+            // 图片容器始终显示
             html += '<div class="field img-upload-wrap ' + hasShowImg + '">';
             html += '<label>病害照片 (选填)</label>';
             html += '<div><label class="upload-btn">📷 拍照/选择图片<input type="file" class="p-img-input" accept="image/*" multiple style="display:none;"></label></div>';
@@ -611,21 +608,18 @@
             });
 
             var sevSel = item.querySelector('.p-severity');
-            var imgWrap = item.querySelector('.img-upload-wrap');
             var noticeWrap = item.querySelector('.notice-select-wrap');
             var noticeNoWrap = item.querySelector('.notice-no-wrap');
             var noticeSel = item.querySelector('.p-needNotice');
             
             sevSel.addEventListener('change', function() {
                 if (this.value === '较重' || this.value === '严重') {
-                    imgWrap.classList.add('show');
                     noticeWrap.style.display = 'block';
                     if (noticeSel.value === '否') {
                         noticeSel.value = '是';
                         noticeNoWrap.style.display = 'block';
                     }
                 } else {
-                    imgWrap.classList.remove('show');
                     noticeWrap.style.display = 'none';
                     noticeSel.value = '否';
                     noticeNoWrap.style.display = 'none';
@@ -735,6 +729,7 @@
                 fields[k].addEventListener('input', function() { updateProblemStats(); autoSave(); });
             }
             
+            // 初始显隐状态纠正
             if (sevVal === '较重' || sevVal === '严重') {
                 noticeWrap.style.display = 'block';
                 if (noticeSel.value === '是') {
@@ -985,7 +980,7 @@
             
             lines.push('湖口检查工区' + formatDateCN(data.date) + '检查总结');
             lines.push('');
-            lines.push('检查日期：' + data.date);
+            lines.push('检查日期：' + formatDateCN(data.date));
             lines.push('');
             lines.push('检查负责人：' + data.inspector);
             lines.push('');
@@ -1074,27 +1069,28 @@
             var h = '<p style="text-align:center;font-family:\'方正小标宋简体\',SimSun,serif;font-size:22pt;margin:0 0 22pt 0;">湖口检查工区' + formatDateCN(data.date) + '检查总结</p>';
             var h1Style = 'font-family:SimHei,\'黑体\',sans-serif;font-size:16pt;line-height:28pt;margin:0;';
             var bStyle = 'font-family:\'仿宋_GB2312\',FangSong,SimSun,serif;font-size:16pt;line-height:28pt;text-indent:2em;margin:0;';
-            var tStyle = 'border-collapse:collapse;width:100%;font-family:\'仿宋_GB2312\',FangSong,SimSun,serif;font-size:10.5pt;line-height:1.5;margin:6pt 0;';
             
+            var tStyle = 'border-collapse:collapse;width:100%;table-layout:fixed;font-family:\'仿宋_GB2312\',FangSong,SimSun,serif;font-size:10.5pt;line-height:1.5;margin:6pt 0;';
             var thStyle = 'border:1px solid #000;padding:4pt;text-align:center;vertical-align:middle;font-weight:bold;background:#f2f2f2;';
-            var tdStyle = 'border:1px solid #000;padding:4pt;text-align:center;vertical-align:middle;';
+            
+            var tdStyle = 'border:1px solid #000;padding:4pt;text-align:center;vertical-align:middle;word-break:break-all;word-wrap:break-word;';
 
             h += '<p style="' + h1Style + '">一、检查概况</p>';
-            h += '<p style="' + bStyle + '">检查日期：' + esc(data.date) + '；检查负责人：' + esc(data.inspector) + '。</p>';
+            h += '<p style="' + bStyle + '">检查日期：' + formatDateCN(data.date) + '；检查负责人：' + esc(data.inspector) + '。</p>';
 
             h += '<p style="' + h1Style + '">二、检查设备</p>';
             if (data.devices && data.devices.length > 0) {
                 h += '<table style="' + tStyle + '"><tr>';
-                h += '<th style="' + thStyle + 'width:16%;">设备工区</th>';
-                h += '<th style="' + thStyle + 'width:9%;">线名</th>';
-                h += '<th style="' + thStyle + 'width:8%;">行别</th>';
-                h += '<th style="' + thStyle + 'width:13%;">区间/站场</th>';
+                h += '<th style="' + thStyle + 'width:12%;">设备工区</th>';
+                h += '<th style="' + thStyle + 'width:7%;">线名</th>';
+                h += '<th style="' + thStyle + 'width:5%;">行别</th>';
+                h += '<th style="' + thStyle + 'width:10%;">区间/站场</th>';
                 h += '<th style="' + thStyle + 'width:11%;">计划线路</th>';
                 h += '<th style="' + thStyle + 'width:11%;">实际线路</th>';
-                h += '<th style="' + thStyle + 'width:10%;">计划道岔</th>';
-                h += '<th style="' + thStyle + 'width:10%;">实际道岔</th>';
-                h += '<th style="' + thStyle + 'width:6%;">计划股道</th>';
-                h += '<th style="' + thStyle + 'width:6%;">实际股道</th>';
+                h += '<th style="' + thStyle + 'width:14%;">计划道岔</th>';
+                h += '<th style="' + thStyle + 'width:14%;">实际道岔</th>';
+                h += '<th style="' + thStyle + 'width:8%;">计划股道</th>';
+                h += '<th style="' + thStyle + 'width:8%;">实际股道</th>';
                 h += '</tr>';
                 for(var i=0; i<data.devices.length; i++) {
                     var d = data.devices[i];
@@ -1118,13 +1114,13 @@
             h += '<p style="' + h1Style + '">三、突出问题</p>';
             if (data.problems && data.problems.length > 0) {
                 h += '<table style="' + tStyle + '"><tr>';
-                h += '<th style="' + thStyle + 'width:22%;">设备工区</th>';
-                h += '<th style="' + thStyle + 'width:12%;">类型</th>';
-                h += '<th style="' + thStyle + 'width:12%;">线名</th>';
-                h += '<th style="' + thStyle + 'width:10%;">行别</th>';
-                h += '<th style="' + thStyle + 'width:15%;">区间/站场</th>';
+                h += '<th style="' + thStyle + 'width:12%;">设备工区</th>';
+                h += '<th style="' + thStyle + 'width:8%;">类型</th>';
+                h += '<th style="' + thStyle + 'width:8%;">线名</th>';
+                h += '<th style="' + thStyle + 'width:6%;">行别</th>';
+                h += '<th style="' + thStyle + 'width:12%;">区间/站场</th>';
                 h += '<th style="' + thStyle + 'width:10%;">地点</th>';
-                h += '<th style="' + thStyle + 'width:19%;">病害描述</th>';
+                h += '<th style="' + thStyle + 'width:44%;">病害描述</th>'; // 【核心修复】病害描述占据超大宽幅
                 h += '</tr>';
                 for(var j=0; j<data.problems.length; j++) {
                     var p = data.problems[j];
@@ -1145,8 +1141,7 @@
                     if(data.problems[pimg].images && data.problems[pimg].images.length > 0) { hasProblemImgs = true; break; }
                 }
                 if (hasProblemImgs) {
-                    // 【修改】突出问题病害照片字号改为与全文一致的16pt
-                    h += '<p style="' + h1Style + 'font-size:16pt;margin-top:12pt;">突出问题病害照片</p>';
+                    h += '<p style="' + h1Style + 'font-size:14pt;margin-top:12pt;">突出问题病害照片</p>';
                     for(var j2=0; j2<data.problems.length; j2++) {
                         var pr = data.problems[j2];
                         if (pr.images && pr.images.length > 0) {
@@ -1160,17 +1155,24 @@
                             pTitle += titleParts.join('');
                             if(pr.desc) pTitle += ' ' + pr.desc;
                             
-                            h += '<div style="margin-bottom:12pt;">';
-                            h += '<div style="font-family:\'仿宋_GB2312\',FangSong,SimSun,serif; font-size:16pt; line-height:28pt; margin-bottom:6pt;">' + esc(pTitle) + '</div>';
+                            h += '<div style="font-family:\'仿宋_GB2312\',FangSong,serif;margin-bottom:12pt;">';
+                            h += '<div style="font-size:12pt; font-weight:bold; margin-bottom:6pt;">' + esc(pTitle) + '</div>';
                             
+                            // 【核心修复】单张/两张并排自动排版
                             h += '<table width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse:collapse;"><tr>';
                             for(var im=0; im<pr.images.length; im++) {
-                                h += '<td align="center" style="padding-bottom:10pt; width:50%;">';
-                                h += '<img src="'+pr.images[im].base64+'" width="260" style="width:260px; max-width:100%; height:auto; border:1px solid #ccc;" />';
+                                h += '<td align="center" style="padding-bottom:10pt; width:50%; vertical-align:top;">';
+                                // 宽度 240px，两张图自动按 50% 居中显示
+                                h += '<img src="'+pr.images[im].base64+'" width="240" style="width:240px; max-width:100%; height:auto; border:1px solid #ccc;" />';
                                 h += '</td>';
+                                // 每两张换行
                                 if ((im+1) % 2 === 0 && im !== pr.images.length - 1) {
                                     h += '</tr><tr>';
                                 }
+                            }
+                            // 如果最后一行只有一张图，补一个空单元格占位
+                            if (pr.images.length % 2 !== 0) {
+                                h += '<td align="center" style="width:50%;"></td>';
                             }
                             h += '</tr></table>';
                             h += '</div>';
@@ -1224,7 +1226,7 @@
             var stats = getProblemStats(data.problems || []);
             var md = '**湖口检查工区' + formatDateCN(data.date) + '检查总结**\n\n';
             
-            md += '检查日期：' + data.date + '\n\n';
+            md += '检查日期：' + formatDateCN(data.date) + '\n\n';
             md += '检查负责人：' + data.inspector + '\n\n';
             
             if (data.devices && data.devices.length > 0) {
@@ -1352,7 +1354,6 @@
             } catch (e) { showToast('❌ 导出失败'); }
         });
 
-        // 导出 Word
         function handleExportWord() {
             var data = gatherFormData();
             var body = buildWordHtml(data);
@@ -1367,30 +1368,15 @@
             } catch (e) { showToast('❌ 导出失败'); }
         }
         
-        // 导出 PDF
         function handleExportPdf() {
             var data = gatherFormData();
             var body = buildWordHtml(data);
             var printWindow = window.open('', '_blank');
-            if (!printWindow) {
-                showToast('请允许弹窗以导出PDF');
-                return;
-            }
+            if (!printWindow) { showToast('请允许弹窗以导出PDF'); return; }
             var html = '<html><head><meta charset="utf-8" /><title>湖口检查工区' + formatDateCN(data.date) + '检查总结</title>'
-                + '<style>'
-                + '@page { size: A4; margin: 2cm 2cm 2cm 2cm; }'
-                + 'body { font-family:"仿宋_GB2312",FangSong,SimSun,serif; font-size:16pt; line-height:28pt; }'
-                + '</style></head><body>' + body + '</body></html>';
-            
-            printWindow.document.open();
-            printWindow.document.write(html);
-            printWindow.document.close();
-            
-            printWindow.onload = function() {
-                setTimeout(function() {
-                    printWindow.print();
-                }, 300);
-            };
+                + '<style>@page { size: A4; margin: 2cm 2cm 2cm 2cm; } body { font-family:"仿宋_GB2312",FangSong,SimSun,serif; font-size:16pt; line-height:28pt; }</style></head><body>' + body + '</body></html>';
+            printWindow.document.open(); printWindow.document.write(html); printWindow.document.close();
+            printWindow.onload = function() { setTimeout(function() { printWindow.print(); }, 300); };
             showToast('请在弹出页面选择"另存为PDF"');
         }
 
