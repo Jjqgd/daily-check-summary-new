@@ -43,7 +43,9 @@
             font-size: 0.95rem; background: #f8fcff; font-family: inherit; color: var(--text);
             min-height: var(--touch-target); -webkit-appearance: none; appearance: none; transition: border 0.2s;
         }
-        .form-group textarea { resize: vertical; min-height: 44px; max-height: 90px; }
+        
+        /* 【核心修改】放大了文本框的默认高度和最大高度 */
+        .form-group textarea { resize: vertical; min-height: 80px; max-height: 200px; }
         
         .form-group select {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%233a5a78' stroke-width='2' fill='none'/%3E%3C/svg%3E");
@@ -87,10 +89,10 @@
         }
         
         .problem-item textarea.d-multi {
-            resize: vertical; min-height: 50px; max-height: 120px; line-height: 1.4;
+            resize: vertical; min-height: 60px; max-height: 150px; line-height: 1.4;
         }
         .problem-item textarea.p-desc { 
-            resize: vertical; min-height: 60px; max-height: 120px; 
+            resize: vertical; min-height: 80px; max-height: 160px; 
         }
         .problem-item .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .problem-item .remove-btn {
@@ -256,7 +258,7 @@
                     <label class="check-pill danger" data-value="未完成"><input type="radio" name="completion" value="未完成" /> ❌ 未完成</label>
                 </div>
                 <div id="unfinishedWrap" class="hidden" style="margin-top:6px;">
-                    <textarea id="unfinishedDevice" rows="1" placeholder="未兑现设备有哪些？"></textarea>
+                    <textarea id="unfinishedDevice" rows="2" placeholder="未兑现设备有哪些？"></textarea>
                 </div>
             </div>
         </div>
@@ -279,9 +281,10 @@
         </div>
 
         <div class="card">
-            <div class="card-title">📝 备注 / 需协调事项</div>
+            <!-- 【修改】改名为养修建议，并增加 textarea 默认行数 -->
+            <div class="card-title">📝 养修建议</div>
             <div class="form-group" style="margin-bottom:0;">
-                <textarea id="remarks" rows="1" placeholder="填写备注或需协调事项..."></textarea>
+                <textarea id="remarks" rows="4" placeholder="请填写对维修工区的养修建议..."></textarea>
             </div>
         </div>
 
@@ -398,9 +401,9 @@
             html += '<div class="row-2"><div class="field"><label>设备工区</label><select class="d-workArea">' + workAreaOpts + '</select></div><div class="field"><label>线名</label><select class="d-line">' + lineOpts + '</select></div></div>';
             html += '<div class="row-2"><div class="field"><label>行别</label><select class="d-dir">' + dirOpts + '</select></div><div class="field"><label>区间/站场(多选)</label><div class="multi-select-wrap"><div class="ms-display">选择</div><div class="ms-dropdown"></div></div></div></div>';
             
-            html += '<div class="row-2"><div class="field"><label>计划线路</label><textarea class="d-planLine d-multi" rows="2" placeholder="K1250+000~K1252+000" >' + (data.planLine||'') + '</textarea></div><div class="field"><label>实际线路</label><textarea class="d-actualLine d-multi" rows="2" placeholder="默认同计划" >' + (data.actualLine||'') + '</textarea></div></div>';
-            html += '<div class="row-2"><div class="field"><label>计划道岔</label><textarea class="d-planSwitch d-multi" rows="2" placeholder="湖口站3#、5#" >' + (data.planSwitch||'') + '</textarea></div><div class="field"><label>实际道岔</label><textarea class="d-actualSwitch d-multi" rows="2" placeholder="默认同计划" >' + (data.actualSwitch||'') + '</textarea></div></div>';
-            html += '<div class="row-2"><div class="field"><label>计划股道</label><textarea class="d-planTrack d-multi" rows="2" placeholder="1道、3道" >' + (data.planTrack||'') + '</textarea></div><div class="field"><label>实际股道</label><textarea class="d-actualTrack d-multi" rows="2" placeholder="默认同计划" >' + (data.actualTrack||'') + '</textarea></div></div>';
+            html += '<div class="row-2"><div class="field"><label>计划线路</label><textarea class="d-planLine d-multi" rows="3" placeholder="K1250+000~K1252+000" >' + (data.planLine||'') + '</textarea></div><div class="field"><label>实际线路</label><textarea class="d-actualLine d-multi" rows="3" placeholder="默认同计划" >' + (data.actualLine||'') + '</textarea></div></div>';
+            html += '<div class="row-2"><div class="field"><label>计划道岔</label><textarea class="d-planSwitch d-multi" rows="3" placeholder="湖口站3#、5#" >' + (data.planSwitch||'') + '</textarea></div><div class="field"><label>实际道岔</label><textarea class="d-actualSwitch d-multi" rows="3" placeholder="默认同计划" >' + (data.actualSwitch||'') + '</textarea></div></div>';
+            html += '<div class="row-2"><div class="field"><label>计划股道</label><textarea class="d-planTrack d-multi" rows="3" placeholder="1道、3道" >' + (data.planTrack||'') + '</textarea></div><div class="field"><label>实际股道</label><textarea class="d-actualTrack d-multi" rows="3" placeholder="默认同计划" >' + (data.actualTrack||'') + '</textarea></div></div>';
             html += '</div>';
 
             var div = document.createElement('div');
@@ -507,7 +510,6 @@
             for (var m=0; m<f.directions.length; m++) dirOpts += '<option value="'+f.directions[m]+'" '+(data.dir===f.directions[m]?'selected':'')+'>'+f.directions[m]+'</option>';
 
             var sevVal = data.severity || '一般';
-            // 图片上传框不再受严重程度控制，默认都显示
             var hasShowImg = 'show';
             
             var defaultNotice = '否';
@@ -518,7 +520,6 @@
             }
             var hasShowNotice = (defaultNotice === '是') ? 'show' : '';
             var noticeNo = data.noticeNo || '';
-            // 控制下发通知书容器的显隐（只有较重/严重才显示）
             var showNoticeContainer = (sevVal === '严重' || sevVal === '较重') ? 'block' : 'none';
 
             var html = '<div class="problem-item">';
@@ -527,16 +528,14 @@
             html += '<div class="row-2"><div class="field"><label>线名</label><select class="p-line">' + lineOpts + '</select></div><div class="field"><label>行别</label><select class="p-dir">' + dirOpts + '</select></div></div>';
             html += '<div class="field"><label>区间/站场(多选)</label><div class="multi-select-wrap"><div class="ms-display">选择</div><div class="ms-dropdown"></div></div></div>';
             html += '<div class="field"><label>地点</label><input class="p-location" placeholder="K___+___ / 道岔号 / 股道号" value="' + (data.location||'') + '" /></div>';
-            html += '<div class="field"><label>病害描述</label><textarea class="p-desc" rows="3" placeholder="请描述病害情况...">' + (data.desc||'') + '</textarea></div>';
+            html += '<div class="field"><label>病害描述</label><textarea class="p-desc" rows="4" placeholder="请描述病害情况...">' + (data.desc||'') + '</textarea></div>';
             html += '<div class="field"><label>严重程度</label><select class="p-severity"><option value="一般" '+(sevVal==='一般'?'selected':'')+'>一般</option><option value="较重" '+(sevVal==='较重'?'selected':'')+'>较重</option><option value="严重" '+(sevVal==='严重'?'selected':'')+'>严重</option></select></div>';
             
-            // 通知书容器
             html += '<div class="field notice-select-wrap" style="display:' + showNoticeContainer + ';">';
             html += '<label>是否下发严重病害整改通知书</label><select class="p-needNotice"><option value="否" '+(defaultNotice==='否'?'selected':'')+'>否</option><option value="是" '+(defaultNotice==='是'?'selected':'')+'>是</option></select>';
             html += '<div style="margin-top:6px;" class="notice-no-wrap ' + hasShowNotice + '"><label>通知书编号</label><input class="p-noticeNo" placeholder="如：001" value="' + noticeNo + '" /></div>';
             html += '</div>';
             
-            // 图片容器始终显示
             html += '<div class="field img-upload-wrap ' + hasShowImg + '">';
             html += '<label>病害照片 (选填)</label>';
             html += '<div><label class="upload-btn">📷 拍照/选择图片<input type="file" class="p-img-input" accept="image/*" multiple style="display:none;"></label></div>';
@@ -729,7 +728,6 @@
                 fields[k].addEventListener('input', function() { updateProblemStats(); autoSave(); });
             }
             
-            // 初始显隐状态纠正
             if (sevVal === '较重' || sevVal === '严重') {
                 noticeWrap.style.display = 'block';
                 if (noticeSel.value === '是') {
@@ -868,7 +866,7 @@
                 completion: '',
                 unfinishedDevice: document.getElementById('unfinishedDevice').value.trim(),
                 problems: [],
-                remarks: document.getElementById('remarks').value.trim()
+                remarks: document.getElementById('remarks').value.trim() // 这里保存的是养修建议
             };
             var selectedPill = document.querySelector('.check-pill.selected');
             if (selectedPill) data.completion = selectedPill.getAttribute('data-value');
@@ -942,7 +940,7 @@
                         if (data) { 
                             document.getElementById('checkDate').value = data.date || '';
                             document.getElementById('inspector').value = data.inspector || '';
-                            document.getElementById('remarks').value = data.remarks || '';
+                            document.getElementById('remarks').value = data.remarks || ''; // 养修建议回填
                             document.getElementById('unfinishedDevice').value = data.unfinishedDevice || '';
                             
                             document.getElementById('deviceList').innerHTML = '';
@@ -1056,7 +1054,7 @@
             if (data.remarks) {
                 lines.push('---');
                 lines.push('');
-                lines.push(remarkIndex + ' 备注 / 需协调事项：');
+                lines.push(remarkIndex + ' 养修建议：');
                 lines.push(data.remarks);
             }
             
@@ -1120,7 +1118,7 @@
                 h += '<th style="' + thStyle + 'width:6%;">行别</th>';
                 h += '<th style="' + thStyle + 'width:12%;">区间/站场</th>';
                 h += '<th style="' + thStyle + 'width:10%;">地点</th>';
-                h += '<th style="' + thStyle + 'width:44%;">病害描述</th>'; // 【核心修复】病害描述占据超大宽幅
+                h += '<th style="' + thStyle + 'width:44%;">病害描述</th>'; 
                 h += '</tr>';
                 for(var j=0; j<data.problems.length; j++) {
                     var p = data.problems[j];
@@ -1158,19 +1156,15 @@
                             h += '<div style="font-family:\'仿宋_GB2312\',FangSong,serif;margin-bottom:12pt;">';
                             h += '<div style="font-size:12pt; font-weight:bold; margin-bottom:6pt;">' + esc(pTitle) + '</div>';
                             
-                            // 【核心修复】单张/两张并排自动排版
                             h += '<table width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse:collapse;"><tr>';
                             for(var im=0; im<pr.images.length; im++) {
                                 h += '<td align="center" style="padding-bottom:10pt; width:50%; vertical-align:top;">';
-                                // 宽度 240px，两张图自动按 50% 居中显示
                                 h += '<img src="'+pr.images[im].base64+'" width="240" style="width:240px; max-width:100%; height:auto; border:1px solid #ccc;" />';
                                 h += '</td>';
-                                // 每两张换行
                                 if ((im+1) % 2 === 0 && im !== pr.images.length - 1) {
                                     h += '</tr><tr>';
                                 }
                             }
-                            // 如果最后一行只有一张图，补一个空单元格占位
                             if (pr.images.length % 2 !== 0) {
                                 h += '<td align="center" style="width:50%;"></td>';
                             }
@@ -1216,7 +1210,7 @@
             }
             
             if (data.remarks) {
-                h += '<p style="' + h1Style + '">' + (seriousProblems.length > 0 ? '五' : '四') + '、备注 / 需协调事项</p>';
+                h += '<p style="' + h1Style + '">' + (seriousProblems.length > 0 ? '五' : '四') + '、养修建议</p>';
                 h += '<p style="' + bStyle + 'white-space:pre-wrap;">' + esc(data.remarks) + '</p>';
             }
             return h;
@@ -1298,7 +1292,7 @@
             }
             
             if (data.remarks) {
-                md += '---\n\n**' + remarkIndex + ' 备注 / 需协调事项：**\n' + data.remarks + '\n';
+                md += '---\n\n**' + remarkIndex + ' 养修建议：**\n' + data.remarks + '\n';
             }
             
             return md.replace(/\n{3,}/g, '\n\n');
@@ -1368,16 +1362,57 @@
             } catch (e) { showToast('❌ 导出失败'); }
         }
         
+        // 【核心修改】苹果手机的 PDF 导出兼容
         function handleExportPdf() {
             var data = gatherFormData();
             var body = buildWordHtml(data);
-            var printWindow = window.open('', '_blank');
-            if (!printWindow) { showToast('请允许弹窗以导出PDF'); return; }
-            var html = '<html><head><meta charset="utf-8" /><title>湖口检查工区' + formatDateCN(data.date) + '检查总结</title>'
-                + '<style>@page { size: A4; margin: 2cm 2cm 2cm 2cm; } body { font-family:"仿宋_GB2312",FangSong,SimSun,serif; font-size:16pt; line-height:28pt; }</style></head><body>' + body + '</body></html>';
-            printWindow.document.open(); printWindow.document.write(html); printWindow.document.close();
-            printWindow.onload = function() { setTimeout(function() { printWindow.print(); }, 300); };
-            showToast('请在弹出页面选择"另存为PDF"');
+            
+            var isApple = /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent);
+
+            if (isApple) {
+                // 苹果系统专用：利用隐藏 iframe 唤起打印
+                var iframe = document.createElement('iframe');
+                iframe.style.position = 'fixed';
+                iframe.style.right = '0';
+                iframe.style.bottom = '0';
+                iframe.style.width = '0';
+                iframe.style.height = '0';
+                iframe.style.border = '0';
+                document.body.appendChild(iframe);
+
+                var doc = iframe.contentWindow.document;
+                var html = '<html><head><meta charset="utf-8" /><title>湖口检查工区' + formatDateCN(data.date) + '检查总结</title>'
+                    + '<style>@page { size: A4; margin: 2cm 2cm 2cm 2cm; } body { font-family:"仿宋_GB2312",FangSong,SimSun,serif; font-size:16pt; line-height:28pt; }</style></head><body>' 
+                    + body + '</body></html>';
+
+                doc.open();
+                doc.write(html);
+                doc.close();
+
+                setTimeout(function() {
+                    iframe.contentWindow.focus();
+                    iframe.contentWindow.print();
+                    showToast('📄 请在弹出的菜单中选择“存储到文件”或分享');
+                    setTimeout(function() {
+                        document.body.removeChild(iframe);
+                    }, 2000);
+                }, 500);
+                
+            } else {
+                // 安卓/电脑端：新窗口打印
+                var printWindow = window.open('', '_blank');
+                if (!printWindow) { showToast('请允许弹窗以导出PDF'); return; }
+                var html = '<html><head><meta charset="utf-8" /><title>湖口检查工区' + formatDateCN(data.date) + '检查总结</title>'
+                    + '<style>@page { size: A4; margin: 2cm 2cm 2cm 2cm; } body { font-family:"仿宋_GB2312",FangSong,SimSun,serif; font-size:16pt; line-height:28pt; }</style></head><body>' 
+                    + body + '</body></html>';
+                printWindow.document.open(); 
+                printWindow.document.write(html); 
+                printWindow.document.close();
+                printWindow.onload = function() { 
+                    setTimeout(function() { printWindow.print(); }, 500); 
+                };
+                showToast('请在弹出页面选择"另存为PDF"');
+            }
         }
 
         document.getElementById('exportWord').addEventListener('click', handleExportWord);
